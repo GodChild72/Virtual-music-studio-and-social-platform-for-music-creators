@@ -5,6 +5,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import authRoutes from './routes/auth.js';
 import meRoutes from './routes/me.js';
+import billingRouter, { billingWebhookHandler } from './routes/billing.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -14,6 +15,8 @@ const clientOrigin = process.env.CLIENT_ORIGIN || 'http://localhost:5173';
 dotenv.config();
 
 app.use(cors({ origin: clientOrigin, credentials: true }));
+
+app.post('/api/billing/webhook', express.raw({ type: 'application/json' }), billingWebhookHandler);
 app.use(express.json());
 
 app.get('/api/health', (req, res) => {
@@ -35,6 +38,7 @@ app.get('/api/roadmap', (req, res) => {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/auth', meRoutes);
+app.use('/api/billing', billingRouter);
 
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '..', 'dist')));

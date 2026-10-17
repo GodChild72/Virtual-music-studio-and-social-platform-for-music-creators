@@ -12,7 +12,15 @@ router.get('/me', authMiddleware, (req, res) => {
     return res.status(404).json({ error: 'User not found' });
   }
 
-  const safeUser = { id: user.id, email: user.email, name: user.name, plan: user.plan };
+  const safeUser = {
+    id: user.id,
+    email: user.email,
+    name: user.name,
+    plan: user.plan,
+    billingStatus: user.billingStatus || 'free',
+    currentPeriodEnd: user.currentPeriodEnd || null
+  };
+
   return res.json({ user: safeUser });
 });
 

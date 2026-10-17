@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { readDb } from './db.js';
+import { readDb, writeDb } from './db.js';
 
 const SECRET = process.env.SESSION_SECRET || 'change-me-in-production';
 const TOKEN_EXP = '30d';
@@ -12,7 +12,9 @@ export function findUserByEmail(email) {
 
 export function createUser({ email, password, name }) {
   const db = readDb();
-  if (findUserByEmail(email)) throw new Error('User already exists');
+  if (findUserByEmail(email)) {
+    throw new Error('User already exists');
+  }
 
   const user = {
     id: `u_${Date.now()}`,
@@ -20,11 +22,15 @@ export function createUser({ email, password, name }) {
     name: name || '',
     password: bcrypt.hashSync(password, 10),
     plan: 'free',
+    billingStatus: 'free',
+    stripeCustomerId: null,
+    stripeSubscriptionId: null,
+    currentPeriodEnd: null,
     createdAt: new Date().toISOString()
   };
 
   db.users.push(user);
-  fsWriteDb(db);
+  writeDb(db);
   return user;
 }
 
@@ -33,7 +39,7 @@ export function verifyPassword(user, password) {
 }
 
 export function createToken(user) {
-  return jwt.sign({ id: user.id, email: user.email, plan: user.plan }, SECRET, {
+  return jwt.sign({ id: user.id, email: user.email, plan: user.plan, billingStatus: user.billingStatus }, SECRET, {
     expiresIn: TOKEN_EXP
   });
 }
@@ -44,13 +50,4 @@ export function verifyToken(token) {
   } catch (error) {
     return null;
   }
-}
-
-function fsWriteDb(db) {
-  const fs = awaitableFs();
-  fs.writeFileSync(new URL('./data/db.json', import.meta.url), JSON.stringify(db, null, 2));
-}
-
-function awaitableFs() {
-  return await import('node:fs');
 }
