@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Studio Pro</title>
+  <style>
+    :root {
+      --bg: #0c0d14;
+      --bg-2: #121623;
+      --panel: rgba(18, 20, 32, 0.9);
+      --panel-strong: #181d2d;
+      --panel-soft: #1d2336;
+      --line: rgba(255,255,255,0.08);
+      --text: #edf3ff;
+      --muted: #a9b3c8;
+      --accent: #8b5cf6;
+      --accent-2: #4f8cff;
+      --accent-3: #27d7a3;
+      --warning: #ff9f43;
+      --danger: #ff5d8f;
+      --shadow: rgba(5, 8, 22, 0.65);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      height: 100%;
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(139,92,246,0.2), transparent 24%),
+        radial-gradient(circle at bottom right, rgba(79,140,255,0.14), transparent 22%),
+        linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 100%);
+      color: var(--text);
+      line-height: 1.4;
+    }
+
+    body {
+      min-height: 100vh;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    button, input, select {
+      font: inherit;
+    }
+
+    .app-shell {
+      max-width: 1340px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 12px 20px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(16, 18, 29, 0.8);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 10px 28px rgba(0,0,0,0.18);
+      position: sticky;
+      top: 18px;
+      z-index: 30;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      color: white;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 14px 32px rgba(139,92,246,0.34);
+    }
+
+    .brand-text {
+      min-width: 0;
+    }
+
+    .brand-title {
+      margin: 0;
+      font-size: 1.1rem;
+      letter-spacing: 0.04em;
+      color: #f3f0ff;
+    }
+
+    .brand-tag {
+      margin: 2px 0 0;
+      color: var(--muted);
+      font-size: 0.76rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .chip,
+    .btn,
+    .mini-btn,
+    .icon-btn {
+      border: 1px solid transparent;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: transform 0.18s ease, opacity 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .chip {
+      background: rgba(255,255,255,0.04);
+      color: var(--muted);
+      border-color: var(--line);
+      padding: 9px 12px;
+      font-size: 0.84rem;
+    }
+
+    .btn {
+      padding: 11px 16px;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      border-color: rgba(255,255,255,0.06);
+    }
+
+    .btn:hover,
+    .mini-btn:hover,
+    .icon-btn:hover,
+    .chip:hover { transform: translateY(-1px); }
+
+    .btn-primary {
+      color: white;
+      background: linear-gradient(135deg, var(--accent), #6d3bf6);
+      box-shadow: 0 10px 22px rgba(139,92,246,0.34);
+    }
+
+    .btn-secondary {
+      color: var(--text);
+      background: rgba(255,255,255,0.04);
+      border-color: var(--line);
+    }
+
+    .btn-ghost {
+      color: var(--text);
+      background: rgba(255,255,255,0.02);
+      border-color: var(--line);
+    }
+
+    .main-grid {
+      margin-top: 26px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.8fr) minmax(300px, 0.82fr);
+      gap: 22px;
+    }
+
+    .panel {
+      background: rgba(17, 20, 31, 0.82);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .hero {
+      padding: 28px 26px 22px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.02), transparent),
+        radial-gradient(circle at top right, rgba(139,92,246,0.22), transparent 22%);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(139,92,246,0.12);
+      border: 1px solid rgba(139,92,246,0.2);
+      color: #d7c9ff;
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .hero h2 {
+      font-size: clamp(2.1rem, 3vw, 3.5rem);
+      margin: 18px 0 12px;
+      letter-spacing: -0.04em;
+      line-height: 1.04;
+    }
+
+    .hero h2 .gradient {
+      background: linear-gradient(135deg, #f9ebff 0%, #d4b7ff 28%, var(--accent) 55%, #7ad0ff 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .lead {
+      color: var(--muted);
+      font-size: 1.04rem;
+      max-width: 720px;
+      margin: 0 0 18px;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .big-btn {
+      padding: 14px 18px;
+      border-radius: 14px;
+      font-weight: 800;
+      border: 1px solid transparent;
+      cursor: pointer;
+    }
+
+    .big-btn.primary {
+      color: white;
+      background: linear-gradient(135deg, var(--accent), #7d3df4);
+      box-shadow: 0 18px 28px rgba(139,92,246,0.28);
+    }
+
+    .big-btn.secondary {
+      color: var(--text);
+      background: rgba(255,255,255,0.04);
+      border-color: var(--line);
+    }
+
+    .stats-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .stat {
+      min-width: 120px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 1.2rem;
+      letter-spacing: -0.04em;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    .studio-panel {
+      margin-top: 20px;
+      padding: 20px 18px 8px;
+    }
+
+    .studio-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 14px;
+      padding: 0 6px;
+    }
+
+    .studio-title {
+      font-size: 1.1rem;
+      letter-spacing: 0.01em;
+      font-weight: 700;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(39,215,163,0.08);
+      border: 1px solid rgba(39,215,163,0.18);
+      color: #bafae3;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .status-pill::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-3);
+      box-shadow: 0 0 14px rgba(39,215,163,0.9);
+    }
+
+    .transport {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      padding: 12px 6px 10px;
+    }
+
+    .left-group,
+    .right-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .mini-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 40px;
+      padding: 0 14px;
+      font-weight: 700;
+      color: var(--text);
+      background: rgba(255,255,255,0.04);
+      border-color: var(--line);
+    }
+
+    .mini-btn.primary {
+      background: linear-gradient(135deg, var(--warning), #ff7f6b);
+      color: #1f1720;
+      border-color: rgba(255,255,255,0.06);
+    }
+
+    .mini-btn.destructive {
+      background: rgba(255,93,143,0.08);
+      border-color: rgba(255,93,143,0.2);
+      color: #ffd9ea;
+    }
+
+    .mini-btn.good {
+      background: rgba(39,215,163,0.08);
+      border-color: rgba(39,215,163,0.2);
+      color: #d5ffef;
+    }
+
+    .record-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(255,93,143,0.08);
+      border: 1px solid rgba(255,93,143,0.2);
+      color: #ffd4e2;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .record-indicator::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--danger);
+      box-shadow: 0 0 12px rgba(255,93,143,0.9);
+      animation: pulse 1.3s infinite ease-in-out;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.25); opacity: 0.7; }
+    }
+
+    .project-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 10px 0 16px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.025);
+      border: 1px solid var(--line);
+      color: var(--muted);
+    }
+
+    .session-metrics {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      font-size: 0.82rem;
+    }
+
+    .session-metrics strong {
+      color: var(--text);
+    }
+
+    .track-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-height: 200px;
+      padding: 0 4px 18px;
+    }
+
+    .track-card {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(180px, 0.8fr);
+      gap: 14px;
+      align-items: center;
+      padding: 14px 12px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.06);
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    }
+
+    .track-main {
+      min-width: 0;
+    }
+
+    .track-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 6px;
+    }
+
+    .track-name {
+      font-size: 1rem;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .track-tags {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+
+    .track-tag {
+      font-size: 0.7rem;
+      padding: 5px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.02);
+      color: var(--muted);
+    }
+
+    .track-tag.live {
+      color: #dfffe8;
+      border-color: rgba(39,215,163,0.25);
+      background: rgba(39,215,163,0.08);
+    }
+
+    audio {
+      width: 100%;
+      max-width: 100%;
+      display: block;
+      border-radius: 10px;
+      margin-top: 4px;
+    }
+
+    .track-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      justify-self: stretch;
+    }
+
+    .slider-row {
+      display: grid;
+      grid-template-columns: 36px 1fr 50px;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 0.76rem;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+    }
+
+    .send-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .icon-btn {
+      min-height: 36px;
+      padding: 0 10px;
+      font-size: 0.76rem;
+      color: var(--text);
+      background: rgba(255,255,255,0.03);
+      border-color: var(--line);
+    }
+
+    .icon-btn.active {
+      background: rgba(139,92,246,0.14);
+      border-color: rgba(139,92,246,0.28);
+      color: #f1eaff;
+    }
+
+    .icon-btn.warn {
+      background: rgba(255,159,67,0.08);
+      border-color: rgba(255,159,67,0.2);
+      color: #ffe1b9;
+    }
+
+    .icon-btn.danger {
+      background: rgba(255,93,143,0.08);
+      border-color: rgba(255,93,143,0.2);
+      color: #ffdce8;
+    }
+
+    .empty-state {
+      display: grid;
+      place-items: center;
+      min-height: 180px;
+      text-align: center;
+      color: var(--muted);
+      border: 1px dashed rgba(255,255,255,0.12);
+      border-radius: 16px;
+      background: rgba(255,255,255,0.015);
+      padding: 20px;
+    }
+
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .side-panel {
+      padding: 18px 16px;
+    }
+
+    .side-panel h3 {
+      margin: 0 0 12px;
+      font-size: 1rem;
+      letter-spacing: 0.01em;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .feature-card {
+      padding: 12px 10px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.025);
+      border: 1px solid rgba(255,255,255,0.04);
+      min-height: 104px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .feature-card strong {
+      font-size: 0.92rem;
+    }
+
+    .feature-card span {
+      color: var(--muted);
+      font-size: 0.77rem;
+    }
+
+    .feature-card button {
+      align-self: flex-start;
+      font-size: 0.72rem;
+      padding: 6px 8px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.02);
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .small-list {
+      margin: 10px 0 0;
+      padding-left: 18px;
+      color: var(--muted);
+      display: grid;
+      gap: 8px;
+      font-size: 0.82rem;
+    }
+
+    .footer-note {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.78rem;
+      margin: 24px 0 8px;
+      letter-spacing: 0.02em;
+    }
+
+    @media (max-width: 980px) {
+      .main-grid {
+        grid-template-columns: 1fr;
+      }
+      .topbar {
+        flex-wrap: wrap;
+      }
+      .track-card {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .app-shell {
+        padding: 16px;
+      }
+      .hero {
+        padding: 20px 16px 18px;
+      }
+      .feature-grid {
+        grid-template-columns: 1fr;
+      }
+      .brand {
+        width: 100%;
+      }
+      .top-actions {
+        width: 100%;
+      }
+      .btn, .chip, .mini-btn, .big-btn {
+        flex: 1 1 auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand" aria-label="Studio Pro brand">
+        <div class="brand-mark">SP</div>
+        <div class="brand-text">
+          <h1 class="brand-title">Studio Pro</h1>
+          <div class="brand-tag">Create. Record. Mix. Release.</div>
+        </div>
+      </div>
+
+      <div class="top-actions">
+        <button class="chip" type="button" id="exploreBtn">Explore Music</button>
+        <button class="btn btn-primary" type="button" id="enterStudioBtn">Enter Studio</button>
+      </div>
+    </header>
+
+    <main class="main-grid">
+      <section>
+        <div class="panel hero">
+          <div class="eyebrow">Premium Studio Suite</div>
+          <h2>Build your <span class="gradient">next hit</span> in one creative space.</h2>
+          <p class="lead">
+            Record vocals, layer beats, import your own stems, fine-tune volume, and export a clean lossless mix for distribution.
+          </p>
+
+          <div class="hero-actions">
+            <button class="big-btn primary" type="button" id="heroRecordBtn">Start Recording</button>
+            <label class="big-btn secondary" for="fileInput" style="display: inline-flex; align-items: center; justify-content: center; cursor: pointer;">Upload Audio</label>
+            <input id="fileInput" type="file" accept="audio/*" multiple style="display:none;" />
+          </div>
+
+          <div class="stats-row">
+            <div class="stat">
+              <strong id="trackCount">0</strong>
+              <span>Active tracks</span>
+            </div>
+            <div class="stat">
+              <strong>48kHz</strong>
+              <span>Studio sample rate</span>
+            </div>
+            <div class="stat">
+              <strong>WAV</strong>
+              <span>Lossless export</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel studio-panel">
+          <div class="studio-header">
+            <div class="studio-title">Session Console</div>
+            <div class="status-pill" id="sessionStatus">Ready to record</div>
+          </div>
+
+          <div class="transport">
+            <div class="left-group">
+              <button class="mini-btn primary" type="button" id="recordToggleBtn">Record</button>
+              <button class="mini-btn" type="button" id="pauseToggleBtn">Pause</button>
+              <button class="mini-btn good" type="button" id="exportBtn">Export Mixdown</button>
+            </div>
+
+            <div class="right-group">
+              <div class="record-indicator" id="recIndicator" style="display:none;">Live input</div>
+              <button class="mini-btn" type="button" id="stopAllBtn">Stop All</button>
+              <button class="mini-btn destructive" type="button" id="clearAllBtn">Clear Session</button>
+            </div>
+          </div>
+
+          <div class="project-toolbar">
+            <div class="session-metrics">
+              <span><strong id="sessionTime">00:00</strong> runtime</span>
+              <span><strong id="outputFormat">WAV 24-bit</strong> lossless</span>
+            </div>
+
+            <div class="chip" id="gainReadout">Master: 0 dB</div>
+          </div>
+
+          <div class="track-list" id="trackList">
+            <div class="empty-state">
+              Your session is empty. Record a vocal, import a beat, and start creating your mix.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="sidebar">
+        <div class="panel side-panel">
+          <h3>Production Toolkit</h3>
+          <div class="feature-grid">
+            <div class="feature-card">
+              <strong>Record</strong>
+              <span>Capture vocals, instruments, and room ambience in one pass.</span>
+              <button type="button" id="sideRecordBtn">Launch</button>
+            </div>
+
+            <div class="feature-card">
+              <strong>Import</strong>
+              <span>Pull in WAV, MP3, OGG, and other production stems.</span>
+              <button type="button" id="sideUploadBtn">Browse</button>
+            </div>
+
+            <div class="feature-card">
+              <strong>Mix</strong>
+              <span>Dial levels, mute, solo, and shape your arrangement.</span>
+              <button type="button">Open</button>
+            </div>
+
+            <div class="feature-card">
+              <strong>Master</strong>
+              <span>Export polished audio with clean, distributable mixdowns.</span>
+              <button type="button" id="sideExportBtn">Export</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel side-panel">
+          <h3>Creator Notes</h3>
+          <ul class="small-list">
+            <li>Browser recording works best in Chrome/Edge on secure origins.</li>
+            <li>Lossless export is delivered as WAV/PCM, the standard uncompressed studio format.</li>
+            <li>Use mix, level, and mute controls to build a polished arrangement.</li>
+            <li>For deeper collaboration and cloud storage, add a backend later.</li>
+          </ul>
+        </div>
+      </aside>
+    </main>
+
+    <div class="footer-note">Studio Pro — premium single-file demo for creators, producers, and collaborators.</div>
+  </div>
+
+  <script>
+    const trackListEl = document.getElementById('trackList');
+    const fileInput = document.getElementById('fileInput');
+    const recordToggleBtn = document.getElementById('recordToggleBtn');
+    const pauseToggleBtn = document.getElementById('pauseToggleBtn');
+    const heroRecordBtn = document.getElementById('heroRecordBtn');
+    const stopAllBtn = document.getElementById('stopAllBtn');
+    const clearAllBtn = document.getElementById('clearAllBtn');
+    const exportBtn = document.getElementById('exportBtn');
+    const sessionStatus = document.getElementById('sessionStatus');
+    const recIndicator = document.getElementById('recIndicator');
+    const trackCountEl = document.getElementById('trackCount');
+    const sessionTimeEl = document.getElementById('sessionTime');
+    const gainReadout = document.getElementById('gainReadout');
+
+    let tracks = [];
+    let trackCounter = 1;
+    let mediaRecorder = null;
+    let recordingChunks = [];
+    let recordingStream = null;
+    let isRecording = false;
+    let isPaused = false;
+    let sessionStartAt = 0;
+    let sessionTimer = null;
+
+    function formatDuration(seconds) {
+      const total = Math.max(0, Math.floor(seconds));
+      const mins = String(Math.floor(total / 60)).padStart(2, '0');
+      const secs = String(total % 60).padStart(2, '0');
+      return `${mins}:${secs}`;
+    }
+
+    function updateSessionTime() {
+      if (!sessionStartAt) {
+        sessionTimeEl.textContent = '00:00';
+        return;
+      }
+      const elapsed = (Date.now() - sessionStartAt) / 1000;
+      sessionTimeEl.textContent = formatDuration(elapsed);
+    }
+
+    function startSessionTimer() {
+      if (sessionTimer) return;
+      sessionStartAt = Date.now();
+      sessionTimer = setInterval(updateSessionTime, 250);
+      updateSessionTime();
+    }
+
+    function stopSessionTimer() {
+      if (sessionTimer) {
+        clearInterval(sessionTimer);
+        sessionTimer = null;
+      }
+      sessionStartAt = 0;
+      updateSessionTime();
+    }
+
+    function updateTrackCount() {
+      trackCountEl.textContent = String(tracks.length);
+    }
+
+    function createHtmlElement(tag, className, text) {
+      const el = document.createElement(tag);
+      if (className) el.className = className;
+      if (text !== undefined && text !== null) el.textContent = text;
+      return el;
+    }
+
+    function getMasterGainText() {
+      return `Master: ${Math.max(0, Math.min(1, 1)).toFixed(2)} dB`;
+    }
+
+    function updateGainReadout() {
+      gainReadout.textContent = getMasterGainText();
+    }
+
+    function escapeFileName(name) {
+      return (name || 'track').replace(/[\\/:*?"<>|]+/g, '_').replace(/\s+/g, '_');
+    }
+
+    function addTrack(track) {
+      tracks.unshift(track);
+      renderTracks();
+      updateTrackCount();
+    }
+
+    function addTrackFromBlob(blob, fileName = 'recording') {
+      const url = URL.createObjectURL(blob);
+      const track = {
+        id: `track-${Date.now()}-${trackCounter++}`,
+        name: fileName,
+        blob,
+        url,
+        volume: 1,
+        muted: false,
+        solo: false,
+        duration: 0
+      };
+      const audio = document.createElement('audio');
+      audio.preload = 'metadata';
+      audio.src = url;
+      audio.addEventListener('loadedmetadata', () => {
+        track.duration = audio.duration || 0;
+        renderTracks();
+      });
+      addTrack(track);
+    }
+
+    function addTrackFromFile(file) {
+      if (!file || !file.type.startsWith('audio/')) return;
+      const url = URL.createObjectURL(file);
+      const track = {
+        id: `track-${Date.now()}-${trackCounter++}`,
+        name: file.name || `audio-track-${trackCounter}`,
+        blob: file,
+        url,
+        volume: 1,
+        muted: false,
+        solo: false,
+        duration: 0
+      };
+      const audio = document.createElement('audio');
+      audio.preload = 'metadata';
+      audio.src = url;
+      audio.addEventListener('loadedmetadata', () => {
+        track.duration = audio.duration || 0;
+        renderTracks();
+      });
+      addTrack(track);
+    }
+
+    function renderTracks() {
+      if (!tracks.length) {
+        trackListEl.innerHTML = `
+          <div class="empty-state">
+            Your session is empty. Record a vocal, import a beat, and start creating your mix.
+          </div>
+        `;
+        return;
+      }
+
+      trackListEl.innerHTML = tracks.map((track) => {
+        const durationText = Number.isFinite(track.duration) && track.duration > 0 ? formatDuration(track.duration) : '00:00';
+        return `
+          <div class="track-card" data-id="${track.id}">
+            <div class="track-main">
+              <div class="track-head">
+                <div class="track-name">${escapeHtml(track.name)}</div>
+                <div class="chip">${durationText}</div>
+              </div>
+
+              <div class="track-tags">
+                <span class="track-tag ${track.muted ? '' : 'live'}">${track.muted ? 'Muted' : 'Live'}</span>
+                <span class="track-tag">Gain ${track.volume.toFixed(2)}x</span>
+                <span class="track-tag">${track.blob && track.blob.type ? track.blob.type.split('/')[1]?.toUpperCase() || 'AUDIO' : 'AUDIO'}</span>
+              </div>
+
+              <audio controls preload="metadata" src="${track.url}"></audio>
+            </div>
+
+            <div class="track-controls">
+              <div class="slider-row">
+                <span>Vol</span>
+                <input type="range" min="0" max="1.8" step="0.01" value="${track.volume}" data-role="volume" data-id="${track.id}" />
+                <span>${track.volume.toFixed(2)}</span>
+              </div>
+
+              <div class="send-row">
+                <button class="icon-btn ${track.muted ? 'active' : ''}" type="button" data-role="mute" data-id="${track.id}">${track.muted ? 'Unmute' : 'Mute'}</button>
+                <button class="icon-btn ${track.solo ? 'warn' : ''}" type="button" data-role="solo" data-id="${track.id}">${track.solo ? 'Solo On' : 'Solo'}</button>
+                <button class="icon-btn danger" type="button" data-role="delete" data-id="${track.id}">Delete</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      document.querySelectorAll('[data-role="volume"]').forEach(slider => {
+        slider.addEventListener('input', (event) => {
+          const id = event.target.dataset.id;
+          const track = tracks.find(t => t.id === id);
+          if (!track) return;
+          track.volume = Number(event.target.value);
+          const audio = trackListEl.querySelector(`audio[src="${track.url}"]`);
+          if (audio) audio.volume = track.muted ? 0 : track.volume;
+          renderTracks();
+        });
+      });
+
+      document.querySelectorAll('[data-role="mute"]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = btn.dataset.id;
+          const track = tracks.find(t => t.id === id);
+          if (!track) return;
+          track.muted = !track.muted;
+          const audio = trackListEl.querySelector(`audio[src="${track.url}"]`);
+          if (audio) audio.volume = track.muted ? 0 : track.volume;
+          renderTracks();
+        });
+      });
+
+      document.querySelectorAll('[data-role="solo"]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = btn.dataset.id;
+          const track = tracks.find(t => t.id === id);
+          if (!track) return;
+          track.solo = !track.solo;
+          renderTracks();
+        });
+      });
+
+      document.querySelectorAll('[data-role="delete"]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = btn.dataset.id;
+          const idx = tracks.findIndex(t => t.id === id);
+          if (idx < 0) return;
+          const track = tracks[idx];
+          URL.revokeObjectURL(track.url);
+          tracks.splice(idx, 1);
+          renderTracks();
+          updateTrackCount();
+        });
+      });
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    async function startRecording() {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        alert('This browser does not support microphone capture. Please use a modern Chrome/Edge browser.');
+        return;
+      }
+
+      try {
+        recordingStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(recordingStream);
+        recordingChunks = [];
+
+        mediaRecorder.ondataavailable = (event) => {
+          if (event.data && event.data.size > 0) recordingChunks.push(event.data);
+        };
+
+        mediaRecorder.onstop = () => {
+          const blob = new Blob(recordingChunks, { type: 'audio/webm' });
+          const safeName = `recording-${new Date().toISOString().replace(/[:.]/g, '-')}.webm`;
+          addTrackFromBlob(blob, safeName);
+          if (recordingStream) {
+            recordingStream.getTracks().forEach((track) => track.stop());
+          }
+          recordingStream = null;
+          mediaRecorder = null;
+          isRecording = false;
+          recIndicator.style.display = 'none';
+          sessionStatus.textContent = 'Ready to record';
+          recordToggleBtn.textContent = 'Record';
+          heroRecordBtn.textContent = 'Start Recording';
+          pauseToggleBtn.textContent = 'Pause';
+          pauseToggleBtn.disabled = false;
+          if (!tracks.length) stopSessionTimer();
+        };
+
+        mediaRecorder.start();
+        isRecording = true;
+        isPaused = false;
+        recIndicator.style.display = 'inline-flex';
+        sessionStatus.textContent = 'Recording';
+        recordToggleBtn.textContent = 'Stop';
+        heroRecordBtn.textContent = 'Stop Recording';
+        pauseToggleBtn.textContent = 'Pause';
+        pauseToggleBtn.disabled = false;
+        startSessionTimer();
+      } catch (error) {
+        console.error(error);
+        alert('Microphone access was denied or unavailable. Please allow mic access and try again.');
+      }
+    }
+
+    function stopRecording() {
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        mediaRecorder.stop();
+      }
+      isRecording = false;
+      isPaused = false;
+      recIndicator.style.display = 'none';
+      sessionStatus.textContent = 'Saved';
+      recordToggleBtn.textContent = 'Record';
+      heroRecordBtn.textContent = 'Start Recording';
+      pauseToggleBtn.textContent = 'Pause';
+      pauseToggleBtn.disabled = false;
+    }
+
+    function toggleRecording() {
+      if (isRecording) {
+        stopRecording();
+      } else {
+        startRecording();
+      }
+    }
+
+    function togglePauseRecording() {
+      if (!mediaRecorder) return;
+      if (mediaRecorder.state === 'recording') {
+        mediaRecorder.pause();
+        isPaused = true;
+        sessionStatus.textContent = 'Paused';
+        pauseToggleBtn.textContent = 'Resume';
+        recIndicator.style.display = 'none';
+      } else if (mediaRecorder.state === 'paused') {
+        mediaRecorder.resume();
+        isPaused = false;
+        sessionStatus.textContent = 'Recording';
+        pauseToggleBtn.textContent = 'Pause';
+        recIndicator.style.display = 'inline-flex';
+      }
+    }
+
+    function stopAllPlayback() {
+      document.querySelectorAll('audio').forEach((audio) => {
+        audio.pause();
+        audio.currentTime = 0;
+      });
+    }
+
+    function clearAll() {
+      tracks.forEach((track) => URL.revokeObjectURL(track.url));
+      tracks = [];
+      renderTracks();
+      updateTrackCount();
+      stopAllPlayback();
+      stopSessionTimer();
+      sessionStatus.textContent = 'Session cleared';
+    }
+
+    function audioBufferToWav(audioBuffer, bitDepth = 24) {
+      const numberOfChannels = audioBuffer.numberOfChannels;
+      const sampleRate = audioBuffer.sampleRate;
+      const length = audioBuffer.length;
+      const bytesPerSample = bitDepth / 8;
+      const blockAlign = numberOfChannels * bytesPerSample;
+      const dataLength = length * blockAlign;
+      const buffer = new ArrayBuffer(44 + dataLength);
+      const view = new DataView(buffer);
+
+      function writeString(offset, str) {
+        for (let i = 0; i < str.length; i++) {
+          view.setUint8(offset + i, str.charCodeAt(i));
+        }
+      }
+
+      writeString(0, 'RIFF');
+      view.setUint32(4, 36 + dataLength, true);
+      writeString(8, 'WAVE');
+      writeString(12, 'fmt ');
+      view.setUint32(16, 16, true);
+      view.setUint16(20, 1, true);
+      view.setUint16(22, numberOfChannels, true);
+      view.setUint32(24, sampleRate, true);
+      view.setUint32(28, sampleRate * blockAlign, true);
+      view.setUint16(32, blockAlign, true);
+      view.setUint16(34, bitDepth, true);
+      writeString(36, 'data');
+      view.setUint32(40, dataLength, true);
+
+      let offset = 44;
+      const channelData = Array.from({ length: numberOfChannels }, (_, ch) => audioBuffer.getChannelData(ch));
+
+      for (let i = 0; i < length; i++) {
+        for (let ch = 0; ch < numberOfChannels; ch++) {
+          let sample = channelData[ch][i];
+          sample = Math.max(-1, Math.min(1, sample));
+          let intValue;
+
+          if (bitDepth === 16) {
+            intValue = Math.round(sample < 0 ? sample * 0x8000 : sample * 0x7fff);
+            view.setInt16(offset, intValue, true);
+            offset += 2;
+          } else {
+            intValue = Math.round(sample < 0 ? sample * 0x800000 : sample * 0x7fffff);
+            view.setUint8(offset, intValue & 0xff);
+            view.setUint8(offset + 1, (intValue >> 8) & 0xff);
+            view.setUint8(offset + 2, (intValue >> 16) & 0xff);
+            offset += 3;
+          }
+        }
+      }
+
+      return new Blob([buffer], { type: 'audio/wav' });
+    }
+
+    async function exportMixdown() {
+      if (!tracks.length) {
+        alert('Add at least one track before exporting.');
+        return;
+      }
+
+      exportBtn.disabled = true;
+      exportBtn.textContent = 'Rendering...';
+      sessionStatus.textContent = 'Rendering mixdown';
+
+      try {
+        const decodeContext = new (window.AudioContext || window.webkitAudioContext)();
+        const buffers = [];
+
+        for (const track of tracks) {
+          try {
+            const arrayBuffer = await track.blob.arrayBuffer();
+            const decoded = await decodeContext.decodeAudioData(arrayBuffer.slice(0));
+            buffers.push({
+              buffer: decoded,
+              gain: track.muted ? 0 : track.volume
+            });
+          } catch (error) {
+            console.warn('Unable to decode track:', track.name, error);
+          }
+        }
+
+        if (!buffers.length) {
+          throw new Error('No valid audio files were decoded for export.');
+        }
+
+        const totalSamples = Math.max(...buffers.map(({ buffer }) => buffer.length));
+        const sampleRate = 48000;
+        const offline = new (window.OfflineAudioContext || window.webkitOfflineAudioContext)(2, totalSamples, sampleRate);
+
+        for (const item of buffers) {
+          const source = offline.createBufferSource();
+          source.buffer = item.buffer;
+          const gain = offline.createGain();
+          gain.gain.value = item.gain;
+          source.connect(gain);
+          gain.connect(offline.destination);
+          source.start(0);
+        }
+
+        const rendered = await offline.startRendering();
+        const wavBlob = audioBufferToWav(rendered, 24);
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(wavBlob);
+        link.href = url;
+        link.download = 'studio-pro-lossless-mix.wav';
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 30000);
+
+        sessionStatus.textContent = 'Mix exported';
+      } catch (error) {
+        console.error(error);
+        alert(`Export failed: ${error.message || 'Unknown error'}`);
+        sessionStatus.textContent = 'Export failed';
+      } finally {
+        exportBtn.disabled = false;
+        exportBtn.textContent = 'Export Mixdown';
+      }
+    }
+
+    fileInput.addEventListener('change', (event) => {
+      const files = Array.from(event.target.files || []);
+      files.forEach((file) => addTrackFromFile(file));
+      event.target.value = '';
+      if (tracks.length) startSessionTimer();
+    });
+
+    recordToggleBtn.addEventListener('click', toggleRecording);
+    heroRecordBtn.addEventListener('click', toggleRecording);
+    document.getElementById('sideRecordBtn').addEventListener('click', toggleRecording);
+    document.getElementById('sideUploadBtn').addEventListener('click', () => fileInput.click());
+    document.getElementById('sideExportBtn').addEventListener('click', exportMixdown);
+    exportBtn.addEventListener('click', exportMixdown);
+    pauseToggleBtn.addEventListener('click', togglePauseRecording);
+    stopAllBtn.addEventListener('click', stopAllPlayback);
+    clearAllBtn.addEventListener('click', clearAll);
+
+    document.getElementById('exploreBtn').addEventListener('click', () => {
+      document.querySelector('.feature-card').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+
+    document.getElementById('enterStudioBtn').addEventListener('click', () => {
+      document.querySelector('.studio-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    updateGainReadout();
+    renderTracks();
+    updateTrackCount();
+    updateSessionTime();
+  </script>
+</body>
+</html>
