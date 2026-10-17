@@ -1,337 +1,148 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Studio Pro — Pricing</title>
-  <style>
-    :root {
-      --bg: #0b1020;
-      --panel: #121b2d;
-      --panel-alt: #18243d;
-      --card: #101827;
-      --muted: #b9c4d6;
-      --text: #edf2ff;
-      --accent: #8b5cf6;
-      --accent-2: #52d3ff;
-      --success: #39d98a;
-      --border: rgba(255,255,255,0.08);
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Studio Pro</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-mark">SP</div>
+          <div>
+            <h1>Studio Pro</h1>
+            <p>Record. Build. Mix. Release.</p>
+          </div>
+        </div>
 
-    * { box-sizing: border-box; }
+        <div class="top-actions">
+          <button class="chip" id="loadSoundBankBtn">Load Sound Bank</button>
+          <button class="primary-btn" id="enterStudioBtn">Enter Studio</button>
+        </div>
+      </header>
 
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(180deg, #0b1020 0%, #0d1528 100%);
-      color: var(--text);
-    }
+      <main class="main-grid">
+        <section class="main-column">
+          <section class="hero panel">
+            <div class="eyebrow">Premium studio suite</div>
+            <h2>Build your <span class="gradient">next hit</span> in one creative space.</h2>
+            <p>
+              Create with synths, a drum machine, layered percussion, recorded vocals,
+              imported tracks, and lossless WAV exports.
+            </p>
 
-    .container {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 40px 20px 80px;
-    }
+            <div class="hero-actions">
+              <button class="big-btn primary" id="recordBtn">Start Recording</button>
+              <label class="big-btn secondary" for="audioUpload">Upload Audio</label>
+              <input id="audioUpload" type="file" accept="audio/*" multiple hidden />
+            </div>
 
-    .topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 18px;
-      padding: 18px 0 32px;
-    }
+            <div class="stats-row">
+              <div class="stat">
+                <strong id="trackCount">0</strong>
+                <span>tracks</span>
+              </div>
+              <div class="stat">
+                <strong id="qualityLabel">48kHz</strong>
+                <span>studio quality</span>
+              </div>
+              <div class="stat">
+                <strong>WAV</strong>
+                <span>lossless</span>
+              </div>
+            </div>
+          </section>
 
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-    }
+          <section class="studio panel">
+            <div class="panel-header">
+              <h3>Session Console</h3>
+              <span class="status-pill" id="statusPill">Ready</span>
+            </div>
 
-    .logo {
-      width: 38px;
-      height: 38px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      display: grid;
-      place-items: center;
-      font-weight: 800;
-      color: white;
-    }
+            <div class="transport-row">
+              <div class="left">
+                <button class="mini-btn primary" id="recordMicBtn">Record</button>
+                <button class="mini-btn" id="pauseBtn">Pause</button>
+                <button class="mini-btn good" id="exportBtn">Export Mix</button>
+              </div>
+              <div class="right">
+                <button class="mini-btn" id="stopPlaybackBtn">Stop All</button>
+                <button class="mini-btn danger" id="clearSessionBtn">Clear Session</button>
+              </div>
+            </div>
 
-    .cta-link {
-      color: var(--text);
-      text-decoration: none;
-      border: 1px solid var(--border);
-      padding: 10px 16px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.02);
-    }
+            <div class="session-toolbar">
+              <div class="session-metrics">
+                <span><strong id="runtimeLabel">00:00</strong> runtime</span>
+                <span><strong>24-bit WAV</strong> export</span>
+              </div>
+              <div class="chip" id="masterMeter">Master: 0.00 dB</div>
+            </div>
 
-    .hero {
-      text-align: center;
-      padding: 32px 0 12px;
-    }
+            <div id="trackList" class="track-list"></div>
+          </section>
+        </section>
 
-    .eyebrow {
-      color: var(--accent-2);
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      font-weight: 700;
-    }
+        <aside class="side-column">
+          <section class="side-panel panel">
+            <h3>Sound Bank</h3>
+            <div class="sound-bank-list" id="soundBankList"></div>
+          </section>
 
-    h1 {
-      font-size: clamp(2.5rem, 6vw, 4.5rem);
-      margin: 14px 0 10px;
-      line-height: 1.1;
-    }
+          <section class="side-panel panel">
+            <h3>Drum Machine</h3>
+            <div class="sequencer" id="sequencer"></div>
+            <div class="drum-pad-grid" id="drumPads">
+              <button class="drum-pad" data-drum="kick">Kick</button>
+              <button class="drum-pad" data-drum="snare">Snare</button>
+              <button class="drum-pad" data-drum="hihat">Hi-Hat</button>
+              <button class="drum-pad" data-drum="bongo">Bongo</button>
+              <button class="drum-pad" data-drum="tom">Tom</button>
+              <button class="drum-pad" data-drum="clap">Clap</button>
+            </div>
+            <div class="pattern-controls">
+              <button class="mini-btn good" id="playPatternBtn">Play Pattern</button>
+              <button class="mini-btn" id="stopPatternBtn">Stop</button>
+              <input id="bpmInput" type="number" min="60" max="180" value="110" />
+            </div>
+          </section>
 
-    .subhead {
-      max-width: 760px;
-      margin: 0 auto;
-      color: var(--muted);
-      font-size: 1.1rem;
-      line-height: 1.6;
-    }
+          <section class="side-panel panel">
+            <h3>Synth Keyboard</h3>
+            <div class="keyboard" id="keyboard"></div>
+            <div class="preset-row">
+              <label for="presetSelect">Preset</label>
+              <select id="presetSelect">
+                <option value="heavybass">Heavy Sub Bass</option>
+                <option value="lead">Lead</option>
+                <option value="pad">Pad</option>
+                <option value="epiano">Electric Piano</option>
+              </select>
+            </div>
+            <div class="record-toggle-row">
+              <label for="recordInstruments">Record instruments</label>
+              <input id="recordInstruments" type="checkbox" />
+            </div>
+          </section>
 
-    .pricing-grid {
-      margin-top: 46px;
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 24px;
-    }
-
-    .plan {
-      background: rgba(16,24,39,0.9);
-      border: 1px solid var(--border);
-      border-radius: 22px;
-      padding: 28px 24px;
-      display: flex;
-      flex-direction: column;
-      min-height: 100%;
-    }
-
-    .plan.popular {
-      border-color: rgba(139, 92, 246, 0.6);
-      background: linear-gradient(180deg, rgba(139, 92, 246, 0.12), rgba(16,24,39,0.9));
-      transform: translateY(-8px);
-    }
-
-    .tag {
-      display: inline-block;
-      align-self: flex-start;
-      padding: 7px 10px;
-      border-radius: 999px;
-      background: rgba(82, 211, 255, 0.12);
-      color: var(--accent-2);
-      font-size: 0.72rem;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      margin-bottom: 18px;
-    }
-
-    .plan h2 {
-      margin: 0;
-      font-size: 1.5rem;
-    }
-
-    .price {
-      margin: 18px 0 6px;
-      font-size: 2.7rem;
-      font-weight: 800;
-      line-height: 1;
-    }
-
-    .price small {
-      font-size: 1rem;
-      color: var(--muted);
-      font-weight: 400;
-    }
-
-    .description {
-      margin: 0 0 18px;
-      color: var(--muted);
-      line-height: 1.5;
-    }
-
-    ul {
-      list-style: none;
-      margin: 0 0 22px;
-      padding: 0;
-      display: grid;
-      gap: 10px;
-      color: var(--text);
-    }
-
-    li::before {
-      content: "✓";
-      color: var(--success);
-      margin-right: 10px;
-      font-weight: 700;
-    }
-
-    .btn {
-      display: inline-block;
-      width: 100%;
-      text-align: center;
-      background: var(--accent);
-      color: white;
-      text-decoration: none;
-      font-weight: 700;
-      border-radius: 12px;
-      padding: 14px 18px;
-      border: none;
-      cursor: pointer;
-      margin-top: auto;
-      transition: opacity 0.2s ease;
-    }
-
-    .btn:hover { opacity: 0.94; }
-
-    .btn.secondary {
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--text);
-    }
-
-    .bottom-note {
-      margin-top: 26px;
-      text-align: center;
-      color: var(--muted);
-      font-size: 0.95rem;
-    }
-
-    .checkout-wrap {
-      margin-top: 40px;
-      background: rgba(255,255,255,0.02);
-      border: 1px solid var(--border);
-      border-radius: 22px;
-      padding: 24px;
-    }
-
-    .checkout-wrap h3 {
-      margin-top: 0;
-      margin-bottom: 12px;
-      font-size: 1.2rem;
-    }
-
-    .pay-buttons {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 14px;
-      align-items: center;
-    }
-
-    .pay-buttons form {
-      display: inline-block;
-      margin: 0;
-    }
-
-    .paypal-btn {
-      background: #003087;
-      color: white;
-      border: none;
-      border-radius: 12px;
-      padding: 14px 18px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    @media (max-width: 840px) {
-      .pricing-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .plan.popular {
-        transform: none;
-      }
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="topbar">
-      <div class="brand">
-        <div class="logo">S</div>
-        <span>STUDIO PRO</span>
-      </div>
-      <a class="cta-link" href="https://github.com/GodChild72/Virtual-music-studio-and-social-platform-for-music-creators" target="_blank" rel="noreferrer">View project</a>
+          <section class="side-panel panel">
+            <h3>Session Settings</h3>
+            <div class="setting-group">
+              <label for="qualitySelect">Quality</label>
+              <select id="qualitySelect">
+                <option value="22050">22.05 kHz / 16-bit</option>
+                <option value="44100" selected>44.1 kHz / 24-bit</option>
+                <option value="48000">48 kHz / 24-bit</option>
+                <option value="96000">96 kHz / 24-bit</option>
+              </select>
+            </div>
+          </section>
+        </aside>
+      </main>
     </div>
 
-    <header class="hero">
-      <div class="eyebrow">Music creation platform</div>
-      <h1>Simple pricing for creators.</h1>
-      <p class="subhead">
-        Record, collaborate, mix, and share music from one virtual studio built for independent creators and growing teams.
-      </p>
-    </header>
-
-    <main class="pricing-grid">
-      <section class="plan">
-        <div class="tag">Starter</div>
-        <h2>Free</h2>
-        <div class="price">$0 <small>/month</small></div>
-        <p class="description">Great for trying Studio Pro and creating early demos.</p>
-        <ul>
-          <li>1 active project</li>
-          <li>Basic recording tools</li>
-          <li>Community access</li>
-          <li>Limited collaboration</li>
-        </ul>
-        <a class="btn secondary" href="#checkout">Get started</a>
-      </section>
-
-      <section class="plan popular">
-        <div class="tag">Most popular</div>
-        <h2>Pro</h2>
-        <div class="price">$29 <small>/month</small></div>
-        <p class="description">For creators who want full access to production tools and collaboration.</p>
-        <ul>
-          <li>Unlimited projects</li>
-          <li>Full recording & mixing suite</li>
-          <li>Priority support</li>
-          <li>Unlimited collaboration</li>
-        </ul>
-        <a class="btn" href="#checkout">Choose Pro</a>
-      </section>
-
-      <section class="plan">
-        <div class="tag">Studio+</div>
-        <h2>Team</h2>
-        <div class="price">$79 <small>/month</small></div>
-        <p class="description">For teams and production groups that need shared workflows and scaling.</p>
-        <ul>
-          <li>Team workspace</li>
-          <li>Shared project folders</li>
-          <li>Advanced analytics</li>
-          <li>Custom onboarding</li>
-        </ul>
-        <a class="btn secondary" href="#checkout">Talk to sales</a>
-      </section>
-    </main>
-
-    <div id="checkout" class="checkout-wrap">
-      <h3>Checkout</h3>
-      <div class="pay-buttons">
-        <a class="btn" href="YOUR_STRIPE_PAYMENT_LINK" target="_blank" rel="noopener">Buy with Stripe</a>
-
-        <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
-          <input type="hidden" name="cmd" value="_xclick" />
-          <input type="hidden" name="business" value="YOUR_PAYPAL_EMAIL@example.com" />
-          <input type="hidden" name="item_name" value="Studio Pro — Pro Plan" />
-          <input type="hidden" name="amount" value="29.00" />
-          <input type="hidden" name="currency_code" value="USD" />
-          <input type="hidden" name="return" value="https://your-site.example.com/success" />
-          <input type="hidden" name="cancel_return" value="https://your-site.example.com/cancel" />
-          <button class="paypal-btn" type="submit">Buy with PayPal</button>
-        </form>
-      </div>
-    </div>
-
-    <p class="bottom-note">Replace the placeholder Stripe and PayPal links before publishing this page.</p>
-  </div>
-</body>
+    <script src="js/app.js"></script>
+  </body>
 </html>
-
