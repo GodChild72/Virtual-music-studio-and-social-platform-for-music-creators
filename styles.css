@@ -1,0 +1,15 @@
+/* basic styles for prototype */
+:root{--bg:#0f1720;--card:#0b1220;--accent:#06b6d4;--muted:#94a3b8;color-scheme:dark}
+html,body{height:100%}
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto; background:var(--bg);color:#e6eef6;margin:0;padding:24px}
+.studio{max-width:980px;margin:0 auto}
+.controls{display:flex;gap:8px;margin-bottom:12px}
+button{background:#10212a;border:1px solid rgba(255,255,255,0.06);color:inherit;padding:8px 12px;border-radius:8px;cursor:pointer}
+button:disabled{opacity:0.4;cursor:not-allowed}
+.tracks{display:flex;flex-direction:column;gap:12px}
+.track{background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);padding:12px;border-radius:10px;display:flex;gap:12px;align-items:center}
+.track .meta{flex:1}
+.track .controls{display:flex;gap:8px;align-items:center}
+.progress{height:8px;background:#071018;border-radius:6px;overflow:hidden;flex-basis:200px}
+.slider{width:120px}
+.downloads ul{list-style:none;padding:0;margin:0}

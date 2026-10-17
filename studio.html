@@ -1,24 +1,29 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Studio Pro — Prototype</title>
-  <style>
-    body { font-family: Arial, sans-serif; background:#0f0f12; color:#fff; text-align:center; padding:40px; }
-    button { margin:8px; padding:12px 18px; border-radius:8px; border:none; background:#8b5cf6; color:white; cursor:pointer; }
-    #tracks { margin-top:20px; display:flex; flex-direction:column; gap:10px; align-items:center; }
-    audio { width:320px; outline:none; }
-  </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Studio Prototype</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h1>Studio Pro — Local Recorder Prototype</h1>
-  <div>
-    <button id="startBtn">Start Recording</button>
-    <button id="stopBtn" disabled>Stop</button>
-  </div>
+  <main class="studio">
+    <h1>Studio Prototype</h1>
+    <section class="controls">
+      <button id="startBtn">Start Recording</button>
+      <button id="stopBtn" disabled>Stop Recording</button>
+      <button id="mixdownBtn" disabled>Export Mixdown (WAV)</button>
+    </section>
 
-  <div id="tracks"></div>
+    <section id="tracks" class="tracks">
+      <!-- Tracks will be appended here -->
+    </section>
+
+    <section class="downloads">
+      <h2>Downloads</h2>
+      <ul id="downloadsList"></ul>
+    </section>
+  </main>
 
   <script src="src/studio.js"></script>
 </body>
