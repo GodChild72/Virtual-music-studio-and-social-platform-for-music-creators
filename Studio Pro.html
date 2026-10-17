@@ -1,277 +1,159 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Studio Pro — Ultimate Web Studio</title>
-<style>
-:root{--bg:#05060a;--panel:#0f1622;--muted:#9aa7c4;--accent:#8b5cf6;--accent2:#4f8cff;--glass:rgba(255,255,255,0.03);--radius:14px}
-*{box-sizing:border-box}
-html,body{height:100%;margin:0;font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(180deg,#05060a,#0a1220);color:#e9f0ff}
-.app{max-width:1400px;margin:18px auto;padding:18px}
-.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);border:1px solid rgba(255,255,255,0.04)}
-.brand{display:flex;align-items:center;gap:12px}
-.mark{width:52px;height:52px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent),var(--accent2));font-weight:800}
-.title{margin:0}
-.controls{display:flex;gap:8px;align-items:center}
-.btn{padding:10px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:var(--glass);cursor:pointer}
-.primary{background:linear-gradient(135deg,var(--accent),#6b34f0);color:white;border:none}
-.grid{display:grid;grid-template-columns:1.6fr 0.9fr;gap:18px;margin-top:18px}
-.panel{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.04);border-radius:var(--radius);padding:14px;overflow:hidden}
-.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.h2{font-size:22px;margin:0}
-.row{display:flex;gap:10px;align-items:center}
-.mixer{display:flex;gap:8px;align-items:flex-end;height:180px;padding:8px}
-.meter{width:12px;background:rgba(255,255,255,0.03);border-radius:6px;overflow:hidden}
-.meter > i{display:block;width:100%;background:linear-gradient(180deg,#38ffb0,#2dc8ff);height:30%}
-.track-list{display:flex;flex-direction:column;gap:10px}
-.track{display:flex;gap:10px;align-items:center;padding:8px;border-radius:10px;background:rgba(255,255,255,0.01);border:1px solid rgba(255,255,255,0.02)}
-.track audio{width:100%}
-.side{display:flex;flex-direction:column;gap:12px}
-.section{padding:12px;border-radius:10px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.03)}
-.kb{display:flex;gap:3px;overflow:auto;padding:6px}
-.key{width:36px;height:120px;border-radius:6px;background:#fff6;color:#111;display:flex;align-items:flex-end;justify-content:center;padding-bottom:8px;font-size:12px}
-.key.black{background:#14161b;color:#eaf2ff;width:26px;height:80px;margin-left:-14px;margin-right:-14px;z-index:3}
-.pads{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
-.pad{padding:12px;border-radius:8px;background:rgba(255,255,255,0.02);text-align:center;cursor:pointer}
-.seq{display:grid;grid-template-columns:repeat(16,1fr);gap:6px}
-.step{padding:8px;border-radius:6px;background:rgba(255,255,255,0.02);text-align:center;cursor:pointer}
-.step.active{background:linear-gradient(135deg,var(--accent),var(--accent2));color:white}
-.controls-row{display:flex;gap:8px;align-items:center}
-.slider{width:120px}
-.small{font-size:12px;color:var(--muted)}
-.footer{margin-top:14px;text-align:center;color:var(--muted);font-size:13px}
-@media(max-width:980px){.grid{grid-template-columns:1fr}.kb{flex-wrap:nowrap}.key{width:28px;height:80px}}
-</style>
-</head>
-<body>
-<div class="app">
-  <div class="top">
-    <div class="brand"><div class="mark">SP</div><div><h1 class="title">Studio Pro — Ultimate Web Studio</h1><div class="small">Create. Record. Mix. Master. Export Lossless.</div></div></div>
-    <div class="controls">
-      <button class="btn" id="loadSamplesBtn">Load Pro Soundbank</button>
-      <button class="btn" id="undoBtn">Undo</button>
-      <button class="btn primary" id="commitBtn">Commit</button>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Studio Pro</title>
+    <link rel="stylesheet" href="styles/studio-pro.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-mark">SP</div>
+          <div>
+            <h1 class="brand-title">Studio Pro</h1>
+            <div class="brand-tag">Create. Record. Mix. Release.</div>
+          </div>
+        </div>
+
+        <div class="top-actions">
+          <button class="chip" id="exploreBtn" type="button">Explore Music</button>
+          <button class="btn btn-primary" id="enterStudioBtn" type="button">Enter Studio</button>
+        </div>
+      </header>
+
+      <main class="main-grid">
+        <section>
+          <div class="panel hero">
+            <div class="eyebrow">Premium Studio Suite</div>
+            <h2>Build your <span class="gradient">next hit</span> in one creative space.</h2>
+            <p class="lead">
+              Record vocals, layer beats, import stems, shape your mix, and export a
+              clean lossless WAV for distribution.
+            </p>
+
+            <div class="hero-actions">
+              <button class="big-btn primary" id="heroRecordBtn" type="button">Start Recording</button>
+              <label class="big-btn secondary" for="fileInput" style="display:inline-flex;align-items:center;justify-content:center;cursor:pointer">Upload Audio</label>
+              <input id="fileInput" type="file" accept="audio/*" multiple style="display:none" />
+            </div>
+
+            <div class="stats-row">
+              <div class="stat">
+                <strong id="trackCount">0</strong>
+                <span>Active tracks</span>
+              </div>
+              <div class="stat">
+                <strong id="qualityBadge">48kHz</strong>
+                <span>Studio quality</span>
+              </div>
+              <div class="stat">
+                <strong>WAV</strong>
+                <span>Lossless export</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel studio-panel">
+            <div class="studio-header">
+              <div class="studio-title">Session Console</div>
+              <div class="status-pill" id="sessionStatus">Ready</div>
+            </div>
+
+            <div class="transport">
+              <div class="left-group">
+                <button class="mini-btn primary" id="recordToggleBtn" type="button">Record</button>
+                <button class="mini-btn" id="pauseToggleBtn" type="button">Pause</button>
+                <button class="mini-btn good" id="exportBtn" type="button">Export Mixdown</button>
+              </div>
+
+              <div class="right-group">
+                <div class="record-indicator" id="recIndicator" style="display:none">Live input</div>
+                <button class="mini-btn" id="stopAllBtn" type="button">Stop All</button>
+                <button class="mini-btn destructive" id="clearAllBtn" type="button">Clear Session</button>
+              </div>
+            </div>
+
+            <div class="project-toolbar">
+              <div class="session-metrics">
+                <span><strong id="sessionTime">00:00</strong> runtime</span>
+                <span><strong>24-bit WAV</strong> lossless</span>
+              </div>
+              <div class="chip" id="gainReadout">Master: 0.00 dB</div>
+            </div>
+
+            <div class="track-list" id="trackList">
+              <div class="empty-state">Your session is empty. Record or import a voice, beat, or instrument.</div>
+            </div>
+          </div>
+        </section>
+
+        <aside class="sidebar">
+          <div class="panel side-panel">
+            <h3>Sound Bank</h3>
+            <div class="sound-bank-list" id="soundBankList"></div>
+          </div>
+
+          <div class="panel side-panel">
+            <h3>Drum Machine</h3>
+            <div class="drum-grid" id="drumPads">
+              <button class="drum-pad" data-drum="kick" type="button">Kick</button>
+              <button class="drum-pad" data-drum="snare" type="button">Snare</button>
+              <button class="drum-pad" data-drum="hihat" type="button">Hi-Hat</button>
+              <button class="drum-pad" data-drum="bongo" type="button">Bongo</button>
+              <button class="drum-pad" data-drum="tom" type="button">Tom</button>
+              <button class="drum-pad" data-drum="clap" type="button">Clap</button>
+            </div>
+
+            <div class="seq-block">
+              <div class="seq-grid" id="seqGrid"></div>
+            </div>
+
+            <div class="action-row">
+              <button class="mini-btn good" id="playPatternBtn" type="button">Play Pattern</button>
+              <button class="mini-btn" id="stopPatternBtn" type="button">Stop</button>
+            </div>
+          </div>
+
+          <div class="panel side-panel">
+            <h3>Keyboard & Synth</h3>
+            <div class="keyboard" id="keyboard"></div>
+
+            <div class="preset-group">
+              <label for="synthPreset">Preset</label>
+              <select id="synthPreset">
+                <option value="heavybass">Heavy Sub Bass</option>
+                <option value="lead">Fat Lead</option>
+                <option value="pad">Ambient Pad</option>
+                <option value="epiano">Electric Piano</option>
+              </select>
+            </div>
+
+            <div class="toggle-row">
+              <label for="recordInstruments">Record instruments</label>
+              <input id="recordInstruments" type="checkbox" />
+            </div>
+          </div>
+
+          <div class="panel side-panel">
+            <h3>Session Settings</h3>
+            <div class="quality-box">
+              <label for="qualitySelect">Recording / Export Quality</label>
+              <select id="qualitySelect">
+                <option value="22050">Voice / Draft (22.05 kHz, 16-bit)</option>
+                <option value="44100">Studio Standard (44.1 kHz, 24-bit)</option>
+                <option value="48000" selected>Broadcast Ready (48 kHz, 24-bit)</option>
+                <option value="96000">High Fidelity (96 kHz, 24-bit)</option>
+              </select>
+            </div>
+          </div>
+        </aside>
+      </main>
+
+      <div class="footer-note">Studio Pro — premium single-file music studio for recording, mixing, and lossless export.</div>
     </div>
-  </div>
 
-  <div class="grid">
-    <main class="panel">
-      <div class="header"><div><h2 class="h2">Arrangement & Mixer</h2><div class="small">16-step sequencer, multi-track mixer, effects, and stem export</div></div>
-        <div class="row"><div class="small">Tracks <strong id="trackCount">0</strong></div><button class="btn" id="addAudioBtn">Import Audio</button><button class="btn primary" id="recordBtn">Record</button><button class="btn" id="exportAllBtn">Export Mix</button><button class="btn" id="exportStemsBtn">Export Stems</button></div>
-      </div>
-
-      <div class="mixer" id="mixer"></div>
-
-      <div style="margin-top:12px;">
-        <div class="header"><h3 class="h2">Tracks</h3><div class="small">Drag to reorder | Per-track pan, mute, solo, fx</div></div>
-        <div class="track-list" id="trackList"><div class="small">No tracks yet — record or import audio, or play the instruments.</div></div>
-      </div>
-    </main>
-
-    <aside class="side">
-      <div class="section">
-        <h3>Sound Bank & Instruments</h3>
-        <div style="display:flex;gap:8px;margin-bottom:8px"><select id="presetSelect"><option value="heavybass">Heavy Sub Bass</option><option value="lead">Analog Lead</option><option value="pad">Ambient Pad</option><option value="epiano">Electric Piano</option></select><button class="btn" id="savePreset">Save</button></div>
-        <div class="kb" id="keyboard"></div>
-        <div style="margin-top:8px;display:flex;gap:8px;align-items:center"><label class="small">Record Instruments</label><input type="checkbox" id="recordInstr" /></div>
-      </div>
-
-      <div class="section">
-        <h3>Drum Machine</h3>
-        <div style="display:flex;gap:8px;margin-bottom:8px"><button class="btn" id="playPattern">Play</button><button class="btn" id="stopPattern">Stop</button><input id="bpm" type="number" value="110" style="width:80px" /></div>
-        <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px"><div class="small">Pads</div><div class="pads"><div class="pad" data-drum="kick">Kick</div><div class="pad" data-drum="snare">Snare</div><div class="pad" data-drum="hihat">Hi-Hat</div><div class="pad" data-drum="bongo">Bongo</div><div class="pad" data-drum="tom">Tom</div><div class="pad" data-drum="clap">Clap</div></div></div>
-        <div class="seq" id="seqGrid"></div>
-      </div>
-
-      <div class="section">
-        <h3>Master FX</h3>
-        <div class="small">Reverb</div><input type="range" id="reverbMix" min="0" max="1" step="0.01" value="0.12" class="slider" />
-        <div class="small">Delay</div><input type="range" id="delayTime" min="0" max="0.8" step="0.01" value="0.28" class="slider" />
-        <div class="small">Comp/Glue</div><input type="range" id="compAmount" min="0" max="1" step="0.01" value="0.3" class="slider" />
-      </div>
-    </aside>
-  </div>
-
-  <div class="footer">Studio Pro — a high-fidelity web music workstation. WAV lossless export included. For full pro sample bank, use the Load Pro Soundbank button.</div>
-</div>
-
-<script>
-// Advanced single-file web studio
-const trackListEl = document.getElementById('trackList');
-const trackCountEl = document.getElementById('trackCount');
-const mixerEl = document.getElementById('mixer');
-const addAudioBtn = document.getElementById('addAudioBtn');
-const importInput = document.createElement('input'); importInput.type='file'; importInput.accept='audio/*'; importInput.multiple=true;
-const recordBtn = document.getElementById('recordBtn');
-const exportAllBtn = document.getElementById('exportAllBtn');
-const exportStemsBtn = document.getElementById('exportStemsBtn');
-const keyboardEl = document.getElementById('keyboard');
-const presetSelect = document.getElementById('presetSelect');
-const recordInstr = document.getElementById('recordInstr');
-const seqGrid = document.getElementById('seqGrid');
-const playPattern = document.getElementById('playPattern');
-const stopPattern = document.getElementById('stopPattern');
-const bpmInput = document.getElementById('bpm');
-const loadSamplesBtn = document.getElementById('loadSamplesBtn');
-const reverbMix = document.getElementById('reverbMix');
-const delayTime = document.getElementById('delayTime');
-const compAmount = document.getElementById('compAmount');
-const commitBtn = document.getElementById('commitBtn');
-
-let audioCtx, masterGain, fxSend, reverbNode, delayNode, delayFeedback, compNode;
-let instrumentDest, instrumentRecorder, instrumentChunks=[];let mediaRecorder, micStream, micChunks=[];
-let tracks = []; // {id,name,blob,url,buffer,volume,pan,muted,solo,fx}
-let seqSteps = 16; let seq = {}; let isPlayingPattern=false; let patternTimer=null; let currentStep=0;
-let proSamplesLoaded=false;
-
-function initAudio(){ if(audioCtx) return; audioCtx = new (window.AudioContext || window.webkitAudioContext)(); masterGain = audioCtx.createGain(); masterGain.gain.value = 0.98; masterGain.connect(audioCtx.destination);
-  // FX send chain
-  fxSend = audioCtx.createGain(); fxSend.gain.value = 0.8; fxSend.connect(masterGain);
-  // reverb (simple feedback convolver placeholder using short noise if no IR)
-  reverbNode = createReverb(); reverbNode.connect(fxSend);
-  // delay
-  delayNode = audioCtx.createDelay(); delayNode.delayTime.value = Number(delayTime.value); delayFeedback = audioCtx.createGain(); delayFeedback.gain.value = 0.28; delayNode.connect(delayFeedback); delayFeedback.connect(delayNode); delayNode.connect(fxSend);
-  // compressor
-  compNode = audioCtx.createDynamicsCompressor(); compNode.threshold.value = -24; compNode.ratio.value = 3; masterGain.connect(compNode); compNode.connect(audioCtx.destination);
-  // instrument recorder destination
-  instrumentDest = audioCtx.createMediaStreamDestination();
-}
-
-function createReverb(){ // simple reverb using a feedback delay network
-  const node = audioCtx.createGain(); const con = audioCtx.createDelay(); con.delayTime.value = 0.08; const fb = audioCtx.createGain(); fb.gain.value = 0.6; fb.connect(con); con.connect(fb); const wet = audioCtx.createGain(); wet.gain.value = Number(reverbMix.value); con.connect(wet); wet.connect(node); // dry pass
-  return node;
-}
-
-async function resumeAudio(){ initAudio(); if(audioCtx.state === 'suspended') await audioCtx.resume(); }
-
-// track helpers
-function addTrackFromBlob(blob,name){ const url = URL.createObjectURL(blob); const id = 't'+Date.now()+Math.floor(Math.random()*999); const track = {id,name,blob,url,buffer:null,volume:1,pan:0,muted:false,solo:false,fx:{reverb:0.12,delay:0.0}}; tracks.push(track); decodeTrackBuffer(track).then(()=>renderTracks()); }
-async function addTrackFromFile(file){ if(!file) return; const name=file.name||'audio'; const url=URL.createObjectURL(file); const id='t'+Date.now()+Math.floor(Math.random()*999); const track={id,name,blob:file,url,buffer:null,volume:1,pan:0,muted:false,solo:false,fx:{reverb:0.12,delay:0}}; tracks.push(track); decodeTrackBuffer(track).then(()=>renderTracks()); }
-async function decodeTrackBuffer(track){ try{ const ab = await track.blob.arrayBuffer(); const ctx=getAudioContext(); track.buffer = await ctx.decodeAudioData(ab.slice(0)); }catch(e){ console.warn('decode failed',e); } }
-function getAudioContext(){ initAudio(); return audioCtx; }
-
-function renderMixer(){ mixerEl.innerHTML=''; tracks.forEach(t=>{ const col = document.createElement('div'); col.style.flex='1'; col.style.display='flex'; col.style.flexDirection='column'; col.style.alignItems='center'; const name=document.createElement('div'); name.textContent=t.name; name.style.fontSize='12px'; name.style.marginBottom='8px'; const meter=document.createElement('div'); meter.className='meter'; const level=document.createElement('i'); level.style.height = (Math.random()*60+10)+'%'; meter.appendChild(level); const vol=document.createElement('input'); vol.type='range'; vol.min=0; vol.max=1.6; vol.step=0.01; vol.value=t.volume; vol.className='slider'; vol.addEventListener('input',()=>{ t.volume=Number(vol.value); renderTracks(); }); const mute=document.createElement('button'); mute.className='btn'; mute.textContent=t.muted? 'Unmute':'Mute'; mute.addEventListener('click',()=>{ t.muted=!t.muted; renderTracks(); }); col.appendChild(name); col.appendChild(meter); col.appendChild(vol); col.appendChild(mute); mixerEl.appendChild(col); }); }
-
-function renderTracks(){ trackCountEl.textContent = String(tracks.length); renderMixer(); if(tracks.length===0){ trackListEl.innerHTML='<div class="small">No tracks yet — record or import audio, or play the instruments.</div>'; return; }
-  trackListEl.innerHTML = '';
-  tracks.forEach(t=>{
-    const el = document.createElement('div'); el.className='track';
-    const info = document.createElement('div'); info.style.flex='1';
-    const h = document.createElement('div'); h.textContent=t.name; h.style.fontWeight='700'; info.appendChild(h);
-    const audio = document.createElement('audio'); audio.controls=true; audio.src=t.url; audio.preload='metadata'; audio.style.marginTop='6px'; info.appendChild(audio);
-    const controls = document.createElement('div'); controls.style.display='flex'; controls.style.flexDirection='column'; controls.style.gap='8px'; controls.style.width='220px';
-    const vol = document.createElement('input'); vol.type='range'; vol.min=0;vol.max=1.8;vol.step=0.01;vol.value=t.volume; vol.className='slider'; vol.addEventListener('input',()=>{ t.volume=Number(vol.value); });
-    const pan = document.createElement('input'); pan.type='range'; pan.min=-1; pan.max=1; pan.step=0.01; pan.value=t.pan; pan.addEventListener('input',()=>{ t.pan=Number(pan.value); });
-    const btnRow = document.createElement('div'); btnRow.style.display='flex'; btnRow.style.gap='6px'; const mute=document.createElement('button'); mute.className='btn'; mute.textContent=t.muted? 'Unmute':'Mute'; mute.addEventListener('click',()=>{ t.muted=!t.muted; renderTracks(); }); const del=document.createElement('button'); del.className='btn'; del.textContent='Delete'; del.addEventListener('click',()=>{ URL.revokeObjectURL(t.url); tracks = tracks.filter(x=>x!==t); renderTracks(); }); btnRow.appendChild(mute); btnRow.appendChild(del);
-    controls.appendChild(vol); controls.appendChild(pan); controls.appendChild(btnRow);
-    el.appendChild(info); el.appendChild(controls); trackListEl.appendChild(el);
-  }); }
-
-// Sequencer grid
-function buildSeq(){ seqGrid.innerHTML=''; for(let i=0;i<seqSteps;i++){ const s = document.createElement('div'); s.className='step'; s.dataset.index=i; s.textContent = i+1; s.addEventListener('click',()=>{ s.classList.toggle('active'); }); seqGrid.appendChild(s); } }
-
-// Instruments & synth engine
-function playSynth(freq,preset='heavybass',duration=0.6,opts={}){
-  const ctx=getAudioContext(); const now=ctx.currentTime; const out = ctx.createGain(); out.gain.value=1; out.connect(instrumentGain || masterGain);
-  const oscA = ctx.createOscillator(); const oscB = ctx.createOscillator(); oscA.type = preset==='lead' ? 'sawtooth' : preset==='pad'?'sawtooth':'sine'; oscB.type = preset==='lead'?'square':preset==='pad'?'triangle':'sine'; oscA.frequency.value = freq; oscB.frequency.value = freq * (preset==='heavybass'?0.5:1);
-  const filter = ctx.createBiquadFilter(); filter.type='lowpass'; filter.frequency.value = preset==='heavybass'?900:3000; filter.Q.value=0.6;
-  const gain = ctx.createGain(); gain.gain.setValueAtTime(0.0001, now); gain.gain.linearRampToValueAtTime(0.8, now+0.01); gain.gain.linearRampToValueAtTime(0.4, now+0.08);
-  oscA.connect(filter); oscB.connect(filter); filter.connect(gain); gain.connect(out);
-  // fx sends
-  const send = ctx.createGain(); send.gain.value = Number(reverbMix.value); out.connect(send); send.connect(reverbNode);
-  const delaySend = ctx.createGain(); delaySend.gain.value = 0.2; out.connect(delaySend); delaySend.connect(delayNode);
-  oscA.start(now); oscB.start(now); setTimeout(()=>{ const t=ctx.currentTime; gain.gain.exponentialRampToValueAtTime(0.0001, t+0.6); oscA.stop(t+0.7); oscB.stop(t+0.7); try{ out.disconnect(); }catch(e){} }, duration*1000);
-}
-
-// Drum synthesis (layered)
-function kickSynth(time){ const ctx=getAudioContext(); const now = time || ctx.currentTime; const osc = ctx.createOscillator(); const g = ctx.createGain(); const low = ctx.createBiquadFilter(); low.type='lowpass'; low.frequency.value = 900; osc.type='sine'; osc.frequency.setValueAtTime(150, now); osc.frequency.exponentialRampToValueAtTime(45, now+0.35); g.gain.setValueAtTime(1,now); g.gain.exponentialRampToValueAtTime(0.001,now+0.5); osc.connect(low); low.connect(g); g.connect(instrumentGain); osc.start(now); osc.stop(now+0.6); }
-function snareSynth(time){ const ctx=getAudioContext(); const now = time || ctx.currentTime; const noise = ctx.createBufferSource(); const buffer = ctx.createBuffer(1, ctx.sampleRate*0.2, ctx.sampleRate); const d=buffer.getChannelData(0); for(let i=0;i<d.length;i++) d[i]=Math.random()*2-1; noise.buffer=buffer; const hf=ctx.createBiquadFilter(); hf.type='bandpass'; hf.frequency.value=1800; const g=ctx.createGain(); g.gain.setValueAtTime(1,now); g.gain.exponentialRampToValueAtTime(0.001,now+0.18); noise.connect(hf); hf.connect(g); g.connect(instrumentGain); noise.start(now); noise.stop(now+0.2); }
-function hihatSynth(time){ const ctx=getAudioContext(); const now=time||ctx.currentTime; const buffer=ctx.createBuffer(1,ctx.sampleRate*0.03,ctx.sampleRate); const d=buffer.getChannelData(0); for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1); const src=ctx.createBufferSource(); src.buffer=buffer; const hp=ctx.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=7000; const g=ctx.createGain(); g.gain.setValueAtTime(0.8,now); g.gain.exponentialRampToValueAtTime(0.001,now+0.06); src.connect(hp); hp.connect(g); g.connect(instrumentGain); src.start(now); src.stop(now+0.08); }
-function bongoSynth(time){ const ctx=getAudioContext(); const now=time||ctx.currentTime; const osc=ctx.createOscillator(); const g=ctx.createGain(); osc.type='triangle'; osc.frequency.setValueAtTime(220,now); osc.frequency.exponentialRampToValueAtTime(120,now+0.16); g.gain.setValueAtTime(0.9,now); g.gain.exponentialRampToValueAtTime(0.001,now+0.28); osc.connect(g); g.connect(instrumentGain); osc.start(now); osc.stop(now+0.36); }
-function tomSynth(time){ const ctx=getAudioContext(); const now=time||ctx.currentTime; const osc=ctx.createOscillator(); const g=ctx.createGain(); osc.type='sine'; osc.frequency.setValueAtTime(130,now); osc.frequency.exponentialRampToValueAtTime(70,now+0.28); g.gain.setValueAtTime(0.9,now); g.gain.exponentialRampToValueAtTime(0.001,now+0.5); osc.connect(g); g.connect(instrumentGain); osc.start(now); osc.stop(now+0.6); }
-
-// play mapped
-function hit(drum, time){ if(drum==='kick') kickSynth(time); if(drum==='snare') snareSynth(time); if(drum==='hihat') hihatSynth(time); if(drum==='bongo') bongoSynth(time); if(drum==='tom') tomSynth(time); if(drum==='clap') { snareSynth(time); setTimeout(()=>snareSynth(),40); } }
-
-// sequencer play
-function playSequencer(){ if(isPlayingPattern) return; isPlayingPattern=true; const bpm = Number(bpmInput.value)||110; const stepMs = (60 / bpm / 4) * 1000; currentStep=0; patternTimer = setInterval(()=>{ // each step
-  // read active steps
-  const steps = document.querySelectorAll('.step'); steps.forEach((s,idx)=>{ s.classList.toggle('highlight', idx===currentStep); });
-  // simple mapping: if step element has data-drum attribute trigger that drum
-  const stepsElems = document.querySelectorAll('.step'); stepsElems.forEach((s,idx)=>{ if(idx===currentStep && s.classList.contains('active')){ const d = s.dataset.drum || 'kick'; hit(d); } });
-  currentStep = (currentStep+1)%seqSteps;
-}, stepMs); }
-function stopSequencer(){ if(patternTimer) clearInterval(patternTimer); patternTimer=null; isPlayingPattern=false; document.querySelectorAll('.step').forEach(s=>s.classList.remove('highlight')); }
-
-// keyboard UI
-const KEY_SET = ['C3','C#3','D3','D#3','E3','F3','F#3','G3','G#3','A3','A#3','B3','C4','C#4','D4','D#4','E4','F4'];
-function buildKeyboard(){ keyboardEl.innerHTML=''; KEY_SET.forEach(k=>{ const isBlack = k.includes('#'); const el=document.createElement('button'); el.className='key '+(isBlack?'black':'white'); el.textContent=k.replace(/\d/g,''); el.addEventListener('mousedown', async ()=>{ await resumeAudio(); const freq = noteToFreq(k); playSynth(freq,presetSelect.value,1.2); if(recordInstr.checked){ startInstrumentRecordingOnce(); } }); keyboardEl.appendChild(el); }); }
-function noteToFreq(note){ const map={'C':0,'C#':1,'D':2,'D#':3,'E':4,'F':5,'F#':6,'G':7,'G#':8,'A':9,'A#':10,'B':11}; const m = note.match(/([A-G]#?)(\d)/); if(!m) return 440; const key=m[1],oct=Number(m[2]); const midi=(oct+1)*12+map[key]; return 440*Math.pow(2,(midi-69)/12); }
-
-// recording mic + instruments
-async function startRecorder(){ await resumeAudio(); if(!navigator.mediaDevices) return alert('Microphone not available'); micChunks=[]; instrumentChunks=[]; micStream = await navigator.mediaDevices.getUserMedia({audio:true}); mediaRecorder = new MediaRecorder(micStream); mediaRecorder.ondataavailable = e=>{ if(e.data && e.data.size>0) micChunks.push(e.data); }; mediaRecorder.onstop = ()=>{ if(micChunks.length){ const b=new Blob(micChunks,{type:micChunks[0].type}); addTrackFromBlob(b,'mic-'+new Date().toISOString().replace(/[:.]/g,'-')+'.webm'); } micChunks=[]; }; mediaRecorder.start(); if(recordInstr.checked){ instrumentRecorder = new MediaRecorder(instrumentDest.stream); instrumentRecorder.ondataavailable=e=>{ if(e.data && e.data.size>0) instrumentChunks.push(e.data); }; instrumentRecorder.onstop=()=>{ if(instrumentChunks.length){ const b=new Blob(instrumentChunks,{type:instrumentChunks[0].type}); addTrackFromBlob(b,'instr-'+new Date().toISOString().replace(/[:.]/g,'-')+'.webm'); } instrumentChunks=[]; }; instrumentRecorder.start(); } recordBtn.textContent='Stop'; }
-function stopRecorder(){ if(mediaRecorder && mediaRecorder.state!=='inactive') mediaRecorder.stop(); if(instrumentRecorder && instrumentRecorder.state!=='inactive') instrumentRecorder.stop(); if(micStream){ micStream.getTracks().forEach(t=>t.stop()); micStream=null; } recordBtn.textContent='Record'; }
-function toggleRecord(){ if(mediaRecorder && mediaRecorder.state==='recording') stopRecorder(); else startRecorder(); }
-function startInstrumentRecordingOnce(){ // start recorder if not started and checkbox set
-  if(!recordInstr.checked) return; if(!instrumentRecorder){ instrumentChunks=[]; instrumentRecorder = new MediaRecorder(instrumentDest.stream); instrumentRecorder.ondataavailable=e=>{ if(e.data && e.data.size>0) instrumentChunks.push(e.data); }; instrumentRecorder.onstop=()=>{ if(instrumentChunks.length){ const b=new Blob(instrumentChunks,{type:instrumentChunks[0].type}); addTrackFromBlob(b,'instr-'+new Date().toISOString().replace(/[:.]/g,'-')+'.webm'); } instrumentChunks=[]; instrumentRecorder=null; }; instrumentRecorder.start(); setTimeout(()=>{ if(instrumentRecorder && instrumentRecorder.state==='recording') instrumentRecorder.stop(); },1200); }
-
-// export mix + stems
-function mergeAndExport(buffers, sampleRate, filename){ // buffers: AudioBuffer mix
-  const wav = audioBufferToWav(buffers,24); const url=URL.createObjectURL(wav); const a=document.createElement('a'); a.href=url; a.download = filename; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),30000);
-}
-function audioBufferToWav(audioBuffer, bitDepth=24){ const numChannels=audioBuffer.numberOfChannels; const sampleRate=audioBuffer.sampleRate; const length=audioBuffer.length; const bytesPerSample=bitDepth/8; const blockAlign=numChannels*bytesPerSample; const dataLength=length*blockAlign; const buffer = new ArrayBuffer(44 + dataLength); const view = new DataView(buffer); function writeString(offset,str){ for(let i=0;i<str.length;i++) view.setUint8(offset+i,str.charCodeAt(i)); }
-  writeString(0,'RIFF'); view.setUint32(4,36+dataLength,true); writeString(8,'WAVE'); writeString(12,'fmt '); view.setUint32(16,16,true); view.setUint16(20,1,true); view.setUint16(22,numChannels,true); view.setUint32(24,sampleRate,true); view.setUint32(28,sampleRate*blockAlign,true); view.setUint16(32,blockAlign,true); view.setUint16(34,bitDepth,true); writeString(36,'data'); view.setUint32(40,dataLength,true);
-  let offset=44; const channelData = Array.from({length:numChannels},(_,ch)=>audioBuffer.getChannelData(ch)); for(let i=0;i<length;i++){ for(let ch=0; ch<numChannels; ch++){ let sample = channelData[ch][i]; sample = Math.max(-1,Math.min(1,sample)); let intVal; if(bitDepth===16){ intVal = Math.round(sample < 0 ? sample * 0x8000 : sample * 0x7fff); view.setInt16(offset,intVal,true); offset+=2; } else { intVal = Math.round(sample < 0 ? sample * 0x800000 : sample * 0x7fffff); view.setUint8(offset,intVal & 0xff); view.setUint8(offset+1,(intVal>>8)&0xff); view.setUint8(offset+2,(intVal>>16)&0xff); offset+=3; } } }
-  return new Blob([buffer],{type:'audio/wav'});
-}
-
-async function exportMix(){ if(!tracks.length) return alert('Add tracks first'); const sr = Number(qualitySelect?.value || 48000); // create offline mix
-  const offline = new (window.OfflineAudioContext || window.webkitOfflineAudioContext)(2, sr * 60 * 5, sr); // max 5 min
-  tracks.forEach((t)=>{ if(!t.buffer) return; const src = offline.createBufferSource(); src.buffer = t.buffer; const g = offline.createGain(); g.gain.value = t.muted?0:t.volume; src.connect(g); g.connect(offline.destination); src.start(0); }); const rendered = await offline.startRendering(); mergeAndExport(rendered,sr,'studio-pro-mix.wav'); }
-
-async function exportStems(){ if(!tracks.length) return alert('Add tracks first'); for(const t of tracks){ if(!t.buffer) continue; const sr = t.buffer.sampleRate; const offline = new (window.OfflineAudioContext || window.webkitOfflineAudioContext)(2, t.buffer.length, sr); const src = offline.createBufferSource(); src.buffer = t.buffer; const g = offline.createGain(); g.gain.value = t.muted?0:t.volume; src.connect(g); g.connect(offline.destination); src.start(0); const rendered = await offline.startRendering(); mergeAndExport(rendered, sr, `${t.name.replace(/\s+/g,'_')}.wav`); } }
-
-// sound bank loader (lightweight pack hosted elsewhere or procedurally generated)
-async function loadProSamples(){ if(proSamplesLoaded) return; // for demo we use procedural synths but mark samples loaded
-  proSamplesLoaded = true; alert('Pro soundbank loaded (procedural demo). For full sample packs, connect CDN or repo assets.'); }
-
-// events
-addAudioBtn.addEventListener('click', ()=>importInput.click()); importInput.addEventListener('change', (e)=>{ const files=Array.from(e.target.files||[]); files.forEach(f=>addTrackFromFile(f)); e.target.value=''; });
-recordBtn.addEventListener('click', toggleRecord);
-exportAllBtn.addEventListener('click', exportMix);
-exportStemsBtn.addEventListener('click', exportStems);
-playPattern.addEventListener('click', playSequencer);
-stopPattern.addEventListener('click', stopSequencer);
-loadSamplesBtn.addEventListener('click', loadProSamples);
-
-buildSeq(); buildKeyboard(); renderTracks();
-
-// Commit button: create a client-side downloadable file of current Studio Pro.html content (so user can commit locally)
-commitBtn.addEventListener('click', ()=>{
-  const content = '<!-- Studio Pro snapshot exported from UI -->\n' + document.documentElement.outerHTML;
-  const blob = new Blob([content], {type:'text/html'}); const url = URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='Studio Pro - snapshot.html'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),30000);
-  alert('A snapshot HTML file was downloaded — you can commit this to your repo.');
-});
-
-// small helpers
-function buildSeq(){ seqGrid.innerHTML=''; for(let i=0;i<seqSteps;i++){ const s = document.createElement('div'); s.className='step'; s.dataset.index=i; s.textContent='—'; s.addEventListener('click',()=>{ s.classList.toggle('active'); // toggle assign
-      if(!s.dataset.drum){ // set default drum to kick
-        const padActive = document.querySelector('.pad.active'); const drum = padActive ? padActive.dataset.drum : 'kick'; s.dataset.drum = drum; }
-    }); seqGrid.appendChild(s); } }
-
-// allow selecting pad to set which drum a step will trigger
-document.querySelectorAll('.pad').forEach(p=>{ p.addEventListener('click', ()=>{ document.querySelectorAll('.pad').forEach(x=>x.classList.remove('active')); p.classList.add('active'); // set selected drum on future toggles
-}); p.addEventListener('dblclick', async ()=>{ await resumeAudio(); hit(p.dataset.drum); }); });
-
-// preset select used by keyboard
-presetSelect.addEventListener('change', ()=>{});
-
-// ensure audio context created when user interacts
-window.addEventListener('pointerdown', ()=>{ if(audioCtx && audioCtx.state==='suspended') audioCtx.resume(); });
-
-// sandbox: expose some state for debugging
-window.__studio = {tracks, playSequencer, stopSequencer, playSynth, addTrackFromFile};
-</script>
-</body>
+    <script src="scripts/studio-pro.js"></script>
+  </body>
 </html>
