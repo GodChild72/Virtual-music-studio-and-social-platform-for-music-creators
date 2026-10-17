@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Studio Pro — Virtual Music Studio</title>
+    <title>Studio Pro by GodChild Creation Studios</title>
     <meta
       name="description"
-      content="Studio Pro is a virtual music studio for creators to record, collaborate, mix, and share music in one powerful workspace."
+      content="Studio Pro by GodChild Creation Studios is a virtual music studio for creators to record, collaborate, mix, and share music in one powerful workspace."
     />
     <style>
       :root {
@@ -95,6 +95,25 @@
         font-size: 1.05rem;
         background: linear-gradient(135deg, var(--accent), var(--accent-2));
         box-shadow: inset 0 1px 1px rgba(255,255,255,0.3), 0 12px 36px rgba(139, 92, 246, 0.4);
+      }
+
+      .brand-text {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        line-height: 1.1;
+      }
+
+      .brand-name {
+        font-size: 0.8rem;
+        letter-spacing: 0.12em;
+      }
+
+      .brand-sub {
+        font-size: 0.58rem;
+        letter-spacing: 0.09em;
+        color: var(--muted);
+        text-transform: uppercase;
       }
 
       .nav {
@@ -722,9 +741,12 @@
   <body>
     <div class="topbar">
       <div class="container topbar-inner">
-        <div class="brand" aria-label="Studio Pro home">
+        <div class="brand" aria-label="Studio Pro by GodChild Creation Studios home">
           <div class="brand-mark">S</div>
-          <span>STUDIO PRO</span>
+          <div class="brand-text">
+            <span class="brand-name">STUDIO PRO</span>
+            <span class="brand-sub">GodChild Creation Studios</span>
+          </div>
         </div>
 
         <nav class="nav" aria-label="Main navigation">
@@ -745,7 +767,7 @@
       <section class="hero">
         <div class="container hero-layout">
           <div>
-            <div class="eyebrow">Virtual music studio</div>
+            <div class="eyebrow">Studio Pro by GodChild Creation Studios</div>
             <h1>Make music with your team, everywhere.</h1>
             <p class="subhead">
               Record ideas, build tracks, layer vocals, remix sessions, and share finished work in one collaborative studio built for modern music creators.
@@ -968,9 +990,12 @@
       <div class="container footer-row">
         <div class="brand" aria-label="Studio Pro footer brand">
           <div class="brand-mark">S</div>
-          <span>STUDIO PRO</span>
+          <div class="brand-text">
+            <span class="brand-name">STUDIO PRO</span>
+            <span class="brand-sub">GodChild Creation Studios</span>
+          </div>
         </div>
-        <span>© 2026 Studio Pro. Built for creators, by creators.</span>
+        <span>© 2026 Studio Pro by GodChild Creation Studios.</span>
       </div>
     </footer>
   </body>
