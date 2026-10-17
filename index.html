@@ -1,337 +1,977 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Studio Pro — Pricing</title>
-  <style>
-    :root {
-      --bg: #0b1020;
-      --panel: #121b2d;
-      --panel-alt: #18243d;
-      --card: #101827;
-      --muted: #b9c4d6;
-      --text: #edf2ff;
-      --accent: #8b5cf6;
-      --accent-2: #52d3ff;
-      --success: #39d98a;
-      --border: rgba(255,255,255,0.08);
-    }
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Studio Pro — Virtual Music Studio</title>
+    <meta
+      name="description"
+      content="Studio Pro is a virtual music studio for creators to record, collaborate, mix, and share music in one powerful workspace."
+    />
+    <style>
+      :root {
+        --bg: #070b14;
+        --bg-2: #0d1527;
+        --panel: rgba(16, 24, 39, 0.86);
+        --panel-alt: rgba(18, 29, 46, 0.96);
+        --card: rgba(12, 19, 30, 0.9);
+        --soft: rgba(255, 255, 255, 0.06);
+        --strong: rgba(255, 255, 255, 0.12);
+        --line: rgba(255, 255, 255, 0.12);
+        --text: #edf3ff;
+        --muted: #a9b5cf;
+        --accent: #8b5cf6;
+        --accent-2: #46d4ff;
+        --accent-3: #3de0b1;
+        --warning: #f8c250;
+        --shadow: 0 30px 70px rgba(7, 11, 20, 0.65);
+        --radius: 24px;
+      }
 
-    * { box-sizing: border-box; }
+      * {
+        box-sizing: border-box;
+      }
 
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(180deg, #0b1020 0%, #0d1528 100%);
-      color: var(--text);
-    }
+      html {
+        scroll-behavior: smooth;
+      }
 
-    .container {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 40px 20px 80px;
-    }
+      body {
+        margin: 0;
+        font-family: Inter, "Segoe UI", Arial, sans-serif;
+        background:
+          radial-gradient(circle at top left, rgba(139, 92, 246, 0.32), transparent 32%),
+          radial-gradient(circle at top right, rgba(70, 212, 255, 0.18), transparent 28%),
+          linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 100%);
+        color: var(--text);
+      }
 
-    .topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 18px;
-      padding: 18px 0 32px;
-    }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
 
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-    }
+      img {
+        max-width: 100%;
+        display: block;
+      }
 
-    .logo {
-      width: 38px;
-      height: 38px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      display: grid;
-      place-items: center;
-      font-weight: 800;
-      color: white;
-    }
+      .container {
+        width: min(1180px, calc(100% - 32px));
+        margin: 0 auto;
+      }
 
-    .cta-link {
-      color: var(--text);
-      text-decoration: none;
-      border: 1px solid var(--border);
-      padding: 10px 16px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.02);
-    }
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 12;
+        backdrop-filter: blur(14px);
+        background: rgba(7, 11, 20, 0.66);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      }
 
-    .hero {
-      text-align: center;
-      padding: 32px 0 12px;
-    }
+      .topbar-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        min-height: 78px;
+      }
 
-    .eyebrow {
-      color: var(--accent-2);
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      font-weight: 700;
-    }
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+      }
 
-    h1 {
-      font-size: clamp(2.5rem, 6vw, 4.5rem);
-      margin: 14px 0 10px;
-      line-height: 1.1;
-    }
+      .brand-mark {
+        width: 38px;
+        height: 38px;
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        font-size: 1.05rem;
+        background: linear-gradient(135deg, var(--accent), var(--accent-2));
+        box-shadow: inset 0 1px 1px rgba(255,255,255,0.3), 0 12px 36px rgba(139, 92, 246, 0.4);
+      }
 
-    .subhead {
-      max-width: 760px;
-      margin: 0 auto;
-      color: var(--muted);
-      font-size: 1.1rem;
-      line-height: 1.6;
-    }
+      .nav {
+        display: flex;
+        align-items: center;
+        gap: 26px;
+        font-size: 0.96rem;
+        color: var(--muted);
+      }
 
-    .pricing-grid {
-      margin-top: 46px;
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 24px;
-    }
+      .nav a:hover {
+        color: var(--text);
+      }
 
-    .plan {
-      background: rgba(16,24,39,0.9);
-      border: 1px solid var(--border);
-      border-radius: 22px;
-      padding: 28px 24px;
-      display: flex;
-      flex-direction: column;
-      min-height: 100%;
-    }
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
 
-    .plan.popular {
-      border-color: rgba(139, 92, 246, 0.6);
-      background: linear-gradient(180deg, rgba(139, 92, 246, 0.12), rgba(16,24,39,0.9));
-      transform: translateY(-8px);
-    }
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        border-radius: 999px;
+        padding: 0.9rem 1.4rem;
+        border: 1px solid transparent;
+        font-weight: 700;
+        transition: transform 0.2s ease, opacity 0.2s ease, border-color 0.2s ease;
+      }
 
-    .tag {
-      display: inline-block;
-      align-self: flex-start;
-      padding: 7px 10px;
-      border-radius: 999px;
-      background: rgba(82, 211, 255, 0.12);
-      color: var(--accent-2);
-      font-size: 0.72rem;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      margin-bottom: 18px;
-    }
+      .button:hover {
+        transform: translateY(-1px);
+      }
 
-    .plan h2 {
-      margin: 0;
-      font-size: 1.5rem;
-    }
+      .button.primary {
+        background: linear-gradient(135deg, var(--accent), #9d7bff 35%, var(--accent-2));
+        color: white;
+        box-shadow: 0 16px 38px rgba(120, 90, 240, 0.35);
+      }
 
-    .price {
-      margin: 18px 0 6px;
-      font-size: 2.7rem;
-      font-weight: 800;
-      line-height: 1;
-    }
+      .button.secondary {
+        border-color: var(--line);
+        background: rgba(255, 255, 255, 0.02);
+        color: var(--text);
+      }
 
-    .price small {
-      font-size: 1rem;
-      color: var(--muted);
-      font-weight: 400;
-    }
+      .hero {
+        padding: 72px 0 52px;
+      }
 
-    .description {
-      margin: 0 0 18px;
-      color: var(--muted);
-      line-height: 1.5;
-    }
+      .hero-layout {
+        display: grid;
+        grid-template-columns: 1.08fr 0.92fr;
+        align-items: center;
+        gap: 42px;
+      }
 
-    ul {
-      list-style: none;
-      margin: 0 0 22px;
-      padding: 0;
-      display: grid;
-      gap: 10px;
-      color: var(--text);
-    }
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border: 1px solid rgba(70, 212, 255, 0.28);
+        background: rgba(70, 212, 255, 0.08);
+        color: var(--accent-2);
+        border-radius: 999px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        font-size: 0.72rem;
+      }
 
-    li::before {
-      content: "✓";
-      color: var(--success);
-      margin-right: 10px;
-      font-weight: 700;
-    }
+      h1 {
+        margin: 18px 0 18px;
+        font-size: clamp(2.8rem, 6vw, 5rem);
+        line-height: 0.96;
+        letter-spacing: -0.06em;
+      }
 
-    .btn {
-      display: inline-block;
-      width: 100%;
-      text-align: center;
-      background: var(--accent);
-      color: white;
-      text-decoration: none;
-      font-weight: 700;
-      border-radius: 12px;
-      padding: 14px 18px;
-      border: none;
-      cursor: pointer;
-      margin-top: auto;
-      transition: opacity 0.2s ease;
-    }
+      .subhead {
+        max-width: 620px;
+        font-size: 1.18rem;
+        line-height: 1.7;
+        color: var(--muted);
+      }
 
-    .btn:hover { opacity: 0.94; }
+      .cta-row {
+        margin-top: 30px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+      }
 
-    .btn.secondary {
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--text);
-    }
+      .mini-proof {
+        margin-top: 30px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 18px;
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
 
-    .bottom-note {
-      margin-top: 26px;
-      text-align: center;
-      color: var(--muted);
-      font-size: 0.95rem;
-    }
+      .proof-dots {
+        display: flex;
+        align-items: center;
+      }
 
-    .checkout-wrap {
-      margin-top: 40px;
-      background: rgba(255,255,255,0.02);
-      border: 1px solid var(--border);
-      border-radius: 22px;
-      padding: 24px;
-    }
+      .proof-dots span {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid rgba(255,255,255,0.2);
+        margin-left: -7px;
+        font-size: 0.72rem;
+        background: linear-gradient(135deg, rgba(139,92,246,.8), rgba(70,212,255,.85));
+      }
 
-    .checkout-wrap h3 {
-      margin-top: 0;
-      margin-bottom: 12px;
-      font-size: 1.2rem;
-    }
+      .proof-dots span:first-child {
+        margin-left: 0;
+      }
 
-    .pay-buttons {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 14px;
-      align-items: center;
-    }
+      .dashboard {
+        position: relative;
+        background: linear-gradient(180deg, rgba(17, 27, 42, 0.95), rgba(10, 14, 23, 0.95));
+        border: 1px solid var(--line);
+        border-radius: 28px;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
 
-    .pay-buttons form {
-      display: inline-block;
-      margin: 0;
-    }
+      .dashboard-topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        padding: 18px 22px;
+        border-bottom: 1px solid var(--line);
+      }
 
-    .paypal-btn {
-      background: #003087;
-      color: white;
-      border: none;
-      border-radius: 12px;
-      padding: 14px 18px;
-      font-weight: 700;
-      cursor: pointer;
-    }
+      .window-controls {
+        display: flex;
+        gap: 8px;
+      }
 
-    @media (max-width: 840px) {
+      .window-controls span {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        display: block;
+      }
+
+      .window-controls span:nth-child(1) { background: #ff6b6b; }
+      .window-controls span:nth-child(2) { background: #f4c86d; }
+      .window-controls span:nth-child(3) { background: #66d98b; }
+
+      .project-pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 7px 10px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 0.8rem;
+      }
+
+      .dashboard-content {
+        padding: 24px 20px 20px;
+      }
+
+      .timeline {
+        display: flex;
+        align-items: flex-end;
+        height: 160px;
+        gap: 8px;
+        padding: 14px 10px 18px;
+        border-radius: 18px;
+        background: linear-gradient(180deg, rgba(139, 92, 246, 0.08), rgba(70, 212, 255, 0.04));
+        border: 1px solid rgba(255,255,255,0.05);
+      }
+
+      .timeline span {
+        flex: 1;
+        border-radius: 10px 10px 0 0;
+        background: linear-gradient(180deg, rgba(70, 212, 255, 0.95), rgba(139, 92, 246, 0.78));
+        opacity: 0.9;
+      }
+
+      .timeline span:nth-child(1) { height: 28%; }
+      .timeline span:nth-child(2) { height: 46%; }
+      .timeline span:nth-child(3) { height: 60%; }
+      .timeline span:nth-child(4) { height: 40%; }
+      .timeline span:nth-child(5) { height: 72%; }
+      .timeline span:nth-child(6) { height: 52%; }
+      .timeline span:nth-child(7) { height: 80%; }
+      .timeline span:nth-child(8) { height: 70%; }
+      .timeline span:nth-child(9) { height: 90%; }
+      .timeline span:nth-child(10) { height: 75%; }
+      .timeline span:nth-child(11) { height: 82%; }
+      .timeline span:nth-child(12) { height: 68%; }
+
+      .dashboard-grid {
+        margin-top: 16px;
+        display: grid;
+        grid-template-columns: 1.3fr 0.7fr;
+        gap: 16px;
+      }
+
+      .small-panel {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 16px;
+      }
+
+      .track-list {
+        display: grid;
+        gap: 10px;
+      }
+
+      .track-row {
+        display: grid;
+        grid-template-columns: 1fr auto auto;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 10px;
+        background: rgba(255,255,255,0.02);
+        border: 1px solid rgba(255,255,255,0.04);
+        border-radius: 12px;
+      }
+
+      .track-name {
+        font-weight: 600;
+      }
+
+      .track-meta {
+        color: var(--muted);
+        font-size: 0.78rem;
+      }
+
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 52px;
+        padding: 7px 9px;
+        border-radius: 999px;
+        font-size: 0.76rem;
+        font-weight: 700;
+      }
+
+      .chip.live {
+        background: rgba(61, 224, 177, 0.12);
+        color: var(--accent-3);
+      }
+
+      .chip.warm {
+        background: rgba(248, 194, 80, 0.12);
+        color: var(--warning);
+      }
+
+      .stat-stack {
+        display: grid;
+        gap: 12px;
+      }
+
+      .metric {
+        padding: 14px 14px 10px;
+        border-radius: 16px;
+        border: 1px solid var(--line);
+        background: rgba(255,255,255,0.02);
+      }
+
+      .metric-value {
+        font-size: 1.7rem;
+        font-weight: 800;
+        letter-spacing: -0.06em;
+      }
+
+      .metric-label {
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 0.8rem;
+      }
+
+      .section {
+        padding: 38px 0 24px;
+      }
+
+      .section-head {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 26px;
+      }
+
+      .section-head h2 {
+        margin: 0;
+        font-size: clamp(2rem, 4vw, 3.1rem);
+        letter-spacing: -0.05em;
+      }
+
+      .section-head p {
+        margin: 0;
+        max-width: 560px;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 20px;
+      }
+
+      .feature-card {
+        padding: 24px 20px 22px;
+        background: rgba(12, 19, 30, 0.82);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+      }
+
+      .feature-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 14px;
+        display: grid;
+        place-items: center;
+        font-size: 1.2rem;
+        margin-bottom: 18px;
+        background: linear-gradient(135deg, rgba(139,92,246,.2), rgba(70,212,255,.14));
+        border: 1px solid rgba(255,255,255,0.08);
+      }
+
+      .feature-card h3 {
+        margin: 0 0 10px;
+        font-size: 1.16rem;
+      }
+
+      .feature-card p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.7;
+        font-size: 0.96rem;
+      }
+
+      .showcase {
+        padding: 34px 0 14px;
+      }
+
+      .showcase-panel {
+        border-radius: 28px;
+        overflow: hidden;
+        background: rgba(15, 24, 36, 0.92);
+        border: 1px solid var(--line);
+        box-shadow: var(--shadow);
+      }
+
+      .showcase-inner {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+      }
+
+      .showcase-media {
+        position: relative;
+        min-height: 430px;
+        background:
+          radial-gradient(circle at 30% 20%, rgba(139, 92, 246, 0.32), transparent 28%),
+          linear-gradient(180deg, rgba(16, 27, 42, 1), rgba(10, 16, 26, 1));
+        padding: 26px;
+      }
+
+      .mix-board {
+        position: absolute;
+        inset: 42px 36px 42px 30px;
+        border-radius: 24px;
+        border: 1px solid var(--line);
+        background: rgba(255,255,255,0.02);
+        padding: 18px;
+      }
+
+      .mix-board-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        height: 100%;
+        align-items: end;
+      }
+
+      .eq {
+        background: rgba(255,255,255,0.02);
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 14px;
+        display: flex;
+        align-items: end;
+        justify-content: center;
+        padding: 10px 8px 0;
+        min-height: 180px;
+      }
+
+      .eq-bar {
+        width: 80%;
+        border-radius: 10px 10px 0 0;
+        background: linear-gradient(180deg, var(--accent-2), var(--accent));
+      }
+
+      .eq:nth-child(2) .eq-bar { height: 62%; }
+      .eq:nth-child(3) .eq-bar { height: 82%; }
+      .eq:nth-child(4) .eq-bar { height: 58%; }
+      .eq:nth-child(5) .eq-bar { height: 72%; }
+
+      .showcase-copy {
+        padding: 32px 28px;
+      }
+
+      .showcase-copy h3 {
+        margin: 0 0 18px;
+        font-size: clamp(1.8rem, 3.4vw, 2.5rem);
+        letter-spacing: -0.05em;
+      }
+
+      .showcase-copy p {
+        margin: 0 0 20px;
+        color: var(--muted);
+        line-height: 1.8;
+      }
+
+      .checklist {
+        list-style: none;
+        padding: 0;
+        margin: 24px 0 0;
+        display: grid;
+        gap: 14px;
+      }
+
+      .checklist li {
+        position: relative;
+        padding-left: 28px;
+        color: var(--text);
+      }
+
+      .checklist li::before {
+        content: "✓";
+        position: absolute;
+        left: 0;
+        top: 0;
+        color: var(--accent-3);
+        font-weight: 800;
+      }
+
+      .pricing {
+        padding-top: 52px;
+      }
+
       .pricing-grid {
-        grid-template-columns: 1fr;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 22px;
+      }
+
+      .plan {
+        position: relative;
+        background: rgba(15, 22, 35, 0.9);
+        border: 1px solid var(--line);
+        border-radius: 24px;
+        padding: 24px 22px 20px;
       }
 
       .plan.popular {
-        transform: none;
+        border-color: rgba(139, 92, 246, 0.6);
+        background: linear-gradient(180deg, rgba(139, 92, 246, 0.12), rgba(15, 22, 35, 0.94));
+        transform: translateY(-6px);
       }
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
+
+      .plan-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 7px 10px;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        font-weight: 800;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+        background: rgba(70, 212, 255, 0.08);
+        color: var(--accent-2);
+        border: 1px solid rgba(70,212,255,0.18);
+      }
+
+      .plan h3 {
+        margin: 18px 0 0;
+        font-size: 1.7rem;
+        letter-spacing: -0.04em;
+      }
+
+      .plan-price {
+        margin: 18px 0 0;
+        font-size: 2.7rem;
+        font-weight: 800;
+        letter-spacing: -0.06em;
+      }
+
+      .plan-price span {
+        font-size: 1rem;
+        color: var(--muted);
+        font-weight: 500;
+      }
+
+      .plan p {
+        margin: 12px 0 18px;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .plan ul {
+        list-style: none;
+        margin: 0 0 20px;
+        padding: 0;
+        display: grid;
+        gap: 12px;
+      }
+
+      .plan li {
+        position: relative;
+        padding-left: 24px;
+        color: var(--text);
+      }
+
+      .plan li::before {
+        content: "✓";
+        position: absolute;
+        left: 0;
+        color: var(--accent-3);
+        font-weight: 800;
+      }
+
+      .plan .button {
+        width: 100%;
+      }
+
+      .cta-banner {
+        margin: 54px 0 72px;
+        padding: 30px 28px;
+        border-radius: 28px;
+        background: linear-gradient(135deg, rgba(139, 92, 246, 0.16), rgba(70, 212, 255, 0.16));
+        border: 1px solid rgba(255,255,255,0.08);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+      }
+
+      .cta-banner h3 {
+        margin: 0 0 4px;
+        font-size: clamp(1.8rem, 2.8vw, 2.7rem);
+        letter-spacing: -0.05em;
+      }
+
+      .cta-banner p {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      footer {
+        padding: 0 0 42px;
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+
+      .footer-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        align-items: center;
+        border-top: 1px solid rgba(255,255,255,0.08);
+        padding-top: 18px;
+      }
+
+      @media (max-width: 980px) {
+        .hero-layout,
+        .showcase-inner,
+        .feature-grid,
+        .pricing-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .nav {
+          display: none;
+        }
+
+        .section-head,
+        .cta-banner,
+        .footer-row {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .hero {
+          padding-top: 56px;
+        }
+
+        .dashboard-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .button {
+          width: 100%;
+        }
+
+        .cta-row {
+          flex-direction: column;
+          align-items: stretch;
+        }
+      }
+    </style>
+  </head>
+  <body>
     <div class="topbar">
-      <div class="brand">
-        <div class="logo">S</div>
-        <span>STUDIO PRO</span>
+      <div class="container topbar-inner">
+        <div class="brand" aria-label="Studio Pro home">
+          <div class="brand-mark">S</div>
+          <span>STUDIO PRO</span>
+        </div>
+
+        <nav class="nav" aria-label="Main navigation">
+          <a href="#features">Features</a>
+          <a href="#workflow">Workflow</a>
+          <a href="#pricing">Pricing</a>
+          <a href="#community">Community</a>
+        </nav>
+
+        <div class="header-actions">
+          <a class="button secondary" href="#pricing">Log in</a>
+          <a class="button primary" href="#pricing">Start free</a>
+        </div>
       </div>
-      <a class="cta-link" href="https://github.com/GodChild72/Virtual-music-studio-and-social-platform-for-music-creators" target="_blank" rel="noreferrer">View project</a>
     </div>
 
-    <header class="hero">
-      <div class="eyebrow">Music creation platform</div>
-      <h1>Simple pricing for creators.</h1>
-      <p class="subhead">
-        Record, collaborate, mix, and share music from one virtual studio built for independent creators and growing teams.
-      </p>
-    </header>
+    <main>
+      <section class="hero">
+        <div class="container hero-layout">
+          <div>
+            <div class="eyebrow">Virtual music studio</div>
+            <h1>Make music with your team, everywhere.</h1>
+            <p class="subhead">
+              Record ideas, build tracks, layer vocals, remix sessions, and share finished work in one collaborative studio built for modern music creators.
+            </p>
 
-    <main class="pricing-grid">
-      <section class="plan">
-        <div class="tag">Starter</div>
-        <h2>Free</h2>
-        <div class="price">$0 <small>/month</small></div>
-        <p class="description">Great for trying Studio Pro and creating early demos.</p>
-        <ul>
-          <li>1 active project</li>
-          <li>Basic recording tools</li>
-          <li>Community access</li>
-          <li>Limited collaboration</li>
-        </ul>
-        <a class="btn secondary" href="#checkout">Get started</a>
+            <div class="cta-row">
+              <a class="button primary" href="#pricing">Start creating</a>
+              <a class="button secondary" href="#features">Watch demo</a>
+            </div>
+
+            <div class="mini-proof">
+              <div class="proof-dots" aria-label="Creator community">
+                <span>J</span>
+                <span>A</span>
+                <span>M</span>
+                <span>+12k</span>
+              </div>
+              <span>Trusted by 12,000+ creators and teams</span>
+            </div>
+          </div>
+
+          <div class="dashboard" aria-label="Studio Pro dashboard preview">
+            <div class="dashboard-topbar">
+              <div class="window-controls" aria-hidden="true">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+              <div class="project-pill">Project: Midnight Echo</div>
+            </div>
+
+            <div class="dashboard-content">
+              <div class="timeline" aria-label="Audio level timeline">
+                <span></span><span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span><span></span>
+                <span></span><span></span>
+              </div>
+
+              <div class="dashboard-grid">
+                <div class="small-panel">
+                  <div class="track-list">
+                    <div class="track-row">
+                      <div>
+                        <div class="track-name">Drum Bed</div>
+                        <div class="track-meta">Layered percussion</div>
+                      </div>
+                      <span class="chip live">Live</span>
+                      <span class="track-meta">02:14</span>
+                    </div>
+                    <div class="track-row">
+                      <div>
+                        <div class="track-name">Lead Vocal</div>
+                        <div class="track-meta">Take 08</div>
+                      </div>
+                      <span class="chip warm">Mix</span>
+                      <span class="track-meta">01:56</span>
+                    </div>
+                    <div class="track-row">
+                      <div>
+                        <div class="track-name">Synth Layers</div>
+                        <div class="track-meta">Atmospheres</div>
+                      </div>
+                      <span class="chip live">Edit</span>
+                      <span class="track-meta">03:20</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="stat-stack">
+                  <div class="metric">
+                    <div class="metric-value">2.4x</div>
+                    <div class="metric-label">Faster production</div>
+                  </div>
+                  <div class="metric">
+                    <div class="metric-value">48h</div>
+                    <div class="metric-label">Remote review cycle</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
 
-      <section class="plan popular">
-        <div class="tag">Most popular</div>
-        <h2>Pro</h2>
-        <div class="price">$29 <small>/month</small></div>
-        <p class="description">For creators who want full access to production tools and collaboration.</p>
-        <ul>
-          <li>Unlimited projects</li>
-          <li>Full recording & mixing suite</li>
-          <li>Priority support</li>
-          <li>Unlimited collaboration</li>
-        </ul>
-        <a class="btn" href="#checkout">Choose Pro</a>
+      <section class="section" id="features">
+        <div class="container">
+          <div class="section-head">
+            <h2>Everything you need to create.</h2>
+            <p>
+              From idea capture to final master, Studio Pro brings recording, collaboration, and sharing together in one elegant workflow.
+            </p>
+          </div>
+
+          <div class="feature-grid">
+            <article class="feature-card">
+              <div class="feature-icon">🎙️</div>
+              <h3>Record in real time</h3>
+              <p>Capture voice, instruments, and layered takes with low-latency recording and clean session organization.</p>
+            </article>
+
+            <article class="feature-card">
+              <div class="feature-icon">🎛️</div>
+              <h3>Mix with precision</h3>
+              <p>Dial in sound with intuitive EQ, dynamics, stems, and a streamlined mastering workflow.</p>
+            </article>
+
+            <article class="feature-card">
+              <div class="feature-icon">🤝</div>
+              <h3>Collaborate faster</h3>
+              <p>Share drafts, collect notes, and iterate as a team — all without leaving the session.</p>
+            </article>
+
+            <article class="feature-card">
+              <div class="feature-icon">🚀</div>
+              <h3>Ship your next release</h3>
+              <p>Publish mixes, build a portfolio, and amplify your work across playlists, socials, and community channels.</p>
+            </article>
+          </div>
+        </div>
       </section>
 
-      <section class="plan">
-        <div class="tag">Studio+</div>
-        <h2>Team</h2>
-        <div class="price">$79 <small>/month</small></div>
-        <p class="description">For teams and production groups that need shared workflows and scaling.</p>
-        <ul>
-          <li>Team workspace</li>
-          <li>Shared project folders</li>
-          <li>Advanced analytics</li>
-          <li>Custom onboarding</li>
-        </ul>
-        <a class="btn secondary" href="#checkout">Talk to sales</a>
+      <section class="showcase" id="workflow">
+        <div class="container">
+          <div class="showcase-panel">
+            <div class="showcase-inner">
+              <div class="showcase-media" aria-label="Studio Pro mix board preview">
+                <div class="mix-board">
+                  <div class="mix-board-grid">
+                    <div class="eq"><div class="eq-bar" style="height: 44%"></div></div>
+                    <div class="eq"><div class="eq-bar" style="height: 68%"></div></div>
+                    <div class="eq"><div class="eq-bar" style="height: 83%"></div></div>
+                    <div class="eq"><div class="eq-bar" style="height: 54%"></div></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="showcase-copy">
+                <div class="eyebrow" style="margin-bottom: 18px;">Creative workflow</div>
+                <h3>From raw idea to polished release.</h3>
+                <p>
+                  Studio Pro helps artists, producers, and creative teams move from brainstorming to final master without friction. Organize clips, layer instruments, gather feedback, and publish your latest work in a single, streamlined platform.
+                </p>
+                <ul class="checklist">
+                  <li>Session templates for demos, singles, and full albums</li>
+                  <li>Instant collaboration with comments and time-stamped feedback</li>
+                  <li>Built-in audio tools for recording, editing, and playback</li>
+                  <li>Dynamic sharing for creators, labels, and collaborators</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section pricing" id="pricing">
+        <div class="container">
+          <div class="section-head">
+            <h2>Plans for every creator.</h2>
+            <p>Start free, upgrade as your workflow grows, and keep the tools you need close at hand.</p>
+          </div>
+
+          <div class="pricing-grid">
+            <article class="plan">
+              <div class="plan-badge">Starter</div>
+              <h3>Free</h3>
+              <div class="plan-price">$0 <span>/ month</span></div>
+              <p>Perfect for trying Studio Pro and building early demos.</p>
+              <ul>
+                <li>1 active project</li>
+                <li>Basic recording tools</li>
+                <li>Community access</li>
+                <li>Limited collaboration</li>
+              </ul>
+              <a class="button secondary" href="#cta">Get started</a>
+            </article>
+
+            <article class="plan popular">
+              <div class="plan-badge">Most popular</div>
+              <h3>Pro</h3>
+              <div class="plan-price">$29 <span>/ month</span></div>
+              <p>Built for creators who want full production power and faster collaboration.</p>
+              <ul>
+                <li>Unlimited projects</li>
+                <li>Full mix and recording suite</li>
+                <li>Unlimited collaborators</li>
+                <li>Priority support</li>
+              </ul>
+              <a class="button primary" href="#cta">Choose Pro</a>
+            </article>
+
+            <article class="plan">
+              <div class="plan-badge">Studio+</div>
+              <h3>Team</h3>
+              <div class="plan-price">$79 <span>/ month</span></div>
+              <p>For production teams and growing creative groups with shared workflows.</p>
+              <ul>
+                <li>Shared team workspaces</li>
+                <li>Advanced analytics</li>
+                <li>Shared project folders</li>
+                <li>Custom onboarding</li>
+              </ul>
+              <a class="button secondary" href="#cta">Talk to sales</a>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="container" id="cta">
+        <div class="cta-banner">
+          <div>
+            <h3>Build your next sound with Studio Pro.</h3>
+            <p>Launch faster, collaborate smarter, and turn ideas into tracks your audience will love.</p>
+          </div>
+          <a class="button primary" href="#pricing">Start free today</a>
+        </div>
       </section>
     </main>
 
-    <div id="checkout" class="checkout-wrap">
-      <h3>Checkout</h3>
-      <div class="pay-buttons">
-        <a class="btn" href="YOUR_STRIPE_PAYMENT_LINK" target="_blank" rel="noopener">Buy with Stripe</a>
-
-        <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
-          <input type="hidden" name="cmd" value="_xclick" />
-          <input type="hidden" name="business" value="YOUR_PAYPAL_EMAIL@example.com" />
-          <input type="hidden" name="item_name" value="Studio Pro — Pro Plan" />
-          <input type="hidden" name="amount" value="29.00" />
-          <input type="hidden" name="currency_code" value="USD" />
-          <input type="hidden" name="return" value="https://your-site.example.com/success" />
-          <input type="hidden" name="cancel_return" value="https://your-site.example.com/cancel" />
-          <button class="paypal-btn" type="submit">Buy with PayPal</button>
-        </form>
+    <footer id="community">
+      <div class="container footer-row">
+        <div class="brand" aria-label="Studio Pro footer brand">
+          <div class="brand-mark">S</div>
+          <span>STUDIO PRO</span>
+        </div>
+        <span>© 2026 Studio Pro. Built for creators, by creators.</span>
       </div>
-    </div>
-
-    <p class="bottom-note">Replace the placeholder Stripe and PayPal links before publishing this page.</p>
-  </div>
-</body>
+    </footer>
+  </body>
 </html>
-
