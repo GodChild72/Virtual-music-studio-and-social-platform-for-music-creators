@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Studio Pro — Pricing</title>
+  <meta name="description" content="Simple pricing for Studio Pro, a virtual studio for recording, mixing, and collaborating." />
   <style>
     :root {
       --bg: #0b1020;
@@ -16,16 +17,23 @@
       --accent-2: #52d3ff;
       --success: #39d98a;
       --border: rgba(255,255,255,0.08);
+      --focus: 3px solid rgba(139,92,246,0.3);
     }
 
     * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
 
     body {
       margin: 0;
       font-family: Arial, sans-serif;
       background: linear-gradient(180deg, #0b1020 0%, #0d1528 100%);
       color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
+
+    a, button, input, select { font: inherit; }
 
     .container {
       max-width: 1100px;
@@ -58,6 +66,7 @@
       place-items: center;
       font-weight: 800;
       color: white;
+      flex: 0 0 38px;
     }
 
     .cta-link {
@@ -67,6 +76,14 @@
       padding: 10px 16px;
       border-radius: 999px;
       background: rgba(255,255,255,0.02);
+    }
+
+    .cta-link:focus,
+    .btn:focus,
+    .paypal-btn:focus,
+    .toggle input:focus-visible {
+      outline: none;
+      box-shadow: var(--focus);
     }
 
     .hero {
@@ -94,6 +111,60 @@
       color: var(--muted);
       font-size: 1.1rem;
       line-height: 1.6;
+    }
+
+    .billing-toggle {
+      margin-top: 28px;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      align-items: center;
+      color: var(--muted);
+    }
+
+    .toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.02);
+    }
+
+    .toggle span {
+      font-size: 0.92rem;
+    }
+
+    .toggle input[type="checkbox"] {
+      appearance: none;
+      width: 44px;
+      height: 24px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.12);
+      position: relative;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .toggle input[type="checkbox"]::after {
+      content: "";
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      top: 3px;
+      left: 3px;
+      border-radius: 50%;
+      background: white;
+      transition: transform 0.2s ease;
+    }
+
+    .toggle input[type="checkbox"]:checked {
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    }
+
+    .toggle input[type="checkbox"]:checked::after {
+      transform: translateX(20px);
     }
 
     .pricing-grid {
@@ -165,11 +236,18 @@
       color: var(--text);
     }
 
+    li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
     li::before {
       content: "✓";
       color: var(--success);
-      margin-right: 10px;
+      margin-top: 2px;
       font-weight: 700;
+      flex: 0 0 auto;
     }
 
     .btn {
@@ -185,10 +263,13 @@
       border: none;
       cursor: pointer;
       margin-top: auto;
-      transition: opacity 0.2s ease;
+      transition: opacity 0.2s ease, transform 0.08s ease;
     }
 
-    .btn:hover { opacity: 0.94; }
+    .btn:hover {
+      opacity: 0.94;
+      transform: translateY(-1px);
+    }
 
     .btn.secondary {
       background: transparent;
@@ -240,13 +321,8 @@
     }
 
     @media (max-width: 840px) {
-      .pricing-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .plan.popular {
-        transform: none;
-      }
+      .pricing-grid { grid-template-columns: 1fr; }
+      .plan.popular { transform: none; }
     }
   </style>
 </head>
@@ -257,7 +333,7 @@
         <div class="logo">S</div>
         <span>STUDIO PRO</span>
       </div>
-      <a class="cta-link" href="https://github.com/GodChild72/Virtual-music-studio-and-social-platform-for-music-creators" target="_blank" rel="noreferrer">View project</a>
+      <a class="cta-link" href="https://github.com/GodChild72/Virtual-music-studio-and-social-platform-for-music-creators" target="_blank" rel="noopener noreferrer">View project</a>
     </div>
 
     <header class="hero">
@@ -266,13 +342,21 @@
       <p class="subhead">
         Record, collaborate, mix, and share music from one virtual studio built for independent creators and growing teams.
       </p>
+
+      <div class="billing-toggle">
+        <div class="toggle">
+          <span>Monthly</span>
+          <input id="billing-toggle" type="checkbox" aria-label="Toggle yearly billing" />
+          <span>Yearly</span>
+        </div>
+      </div>
     </header>
 
     <main class="pricing-grid">
       <section class="plan">
         <div class="tag">Starter</div>
         <h2>Free</h2>
-        <div class="price">$0 <small>/month</small></div>
+        <div class="price" data-monthly="0" data-yearly="0">$0 <small>/month</small></div>
         <p class="description">Great for trying Studio Pro and creating early demos.</p>
         <ul>
           <li>1 active project</li>
@@ -286,11 +370,11 @@
       <section class="plan popular">
         <div class="tag">Most popular</div>
         <h2>Pro</h2>
-        <div class="price">$29 <small>/month</small></div>
+        <div class="price" data-monthly="29" data-yearly="313">$29 <small>/month</small></div>
         <p class="description">For creators who want full access to production tools and collaboration.</p>
         <ul>
           <li>Unlimited projects</li>
-          <li>Full recording & mixing suite</li>
+          <li>Full recording &amp; mixing suite</li>
           <li>Priority support</li>
           <li>Unlimited collaboration</li>
         </ul>
@@ -300,7 +384,7 @@
       <section class="plan">
         <div class="tag">Studio+</div>
         <h2>Team</h2>
-        <div class="price">$79 <small>/month</small></div>
+        <div class="price" data-monthly="79" data-yearly="853">$79 <small>/month</small></div>
         <p class="description">For teams and production groups that need shared workflows and scaling.</p>
         <ul>
           <li>Team workspace</li>
@@ -315,9 +399,9 @@
     <div id="checkout" class="checkout-wrap">
       <h3>Checkout</h3>
       <div class="pay-buttons">
-        <a class="btn" href="YOUR_STRIPE_PAYMENT_LINK" target="_blank" rel="noopener">Buy with Stripe</a>
+        <a class="btn" href="#" target="_blank" rel="noopener noreferrer">Buy with Stripe</a>
 
-        <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
+        <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank" aria-label="PayPal checkout">
           <input type="hidden" name="cmd" value="_xclick" />
           <input type="hidden" name="business" value="YOUR_PAYPAL_EMAIL@example.com" />
           <input type="hidden" name="item_name" value="Studio Pro — Pro Plan" />
@@ -332,6 +416,34 @@
 
     <p class="bottom-note">Replace the placeholder Stripe and PayPal links before publishing this page.</p>
   </div>
+
+  <script>
+    const toggle = document.getElementById('billing-toggle');
+    const priceEls = document.querySelectorAll('.price');
+
+    function formatMoney(value) {
+      return Number(value).toFixed(0);
+    }
+
+    function updatePrices(yearly) {
+      priceEls.forEach((el) => {
+        const monthly = Number(el.dataset.monthly);
+        const yearlyValue = Number(el.dataset.yearly);
+        const value = yearly ? yearlyValue : monthly;
+
+        if (yearly) {
+          el.innerHTML = `$${formatMoney(value)} <small>/year</small>`;
+        } else {
+          el.innerHTML = `$${formatMoney(monthly)} <small>/month</small>`;
+        }
+      });
+    }
+
+    toggle.addEventListener('change', function () {
+      updatePrices(toggle.checked);
+    });
+
+    updatePrices(false);
+  </script>
 </body>
 </html>
-
