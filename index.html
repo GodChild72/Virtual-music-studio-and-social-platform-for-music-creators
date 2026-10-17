@@ -683,6 +683,31 @@
         color: var(--muted);
       }
 
+      .community-strip {
+        margin-top: 8px;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .community-card {
+        padding: 18px 18px 16px;
+        border-radius: 18px;
+        border: 1px solid var(--line);
+        background: rgba(255,255,255,0.02);
+      }
+
+      .community-card strong {
+        display: block;
+        font-size: 1.5rem;
+        letter-spacing: -0.05em;
+        margin-bottom: 6px;
+      }
+
+      .community-card span {
+        color: var(--muted);
+      }
+
       footer {
         padding: 0 0 42px;
         color: var(--muted);
@@ -702,7 +727,8 @@
         .hero-layout,
         .showcase-inner,
         .feature-grid,
-        .pricing-grid {
+        .pricing-grid,
+        .community-strip {
           grid-template-columns: 1fr;
         }
 
@@ -770,7 +796,7 @@
             <div class="eyebrow">Studio Pro by GodChild Creation Studios</div>
             <h1>Make music with your team, everywhere.</h1>
             <p class="subhead">
-              Record ideas, build tracks, layer vocals, remix sessions, and share finished work in one collaborative studio built for modern music creators.
+              An all-in-one virtual music studio for artists, producers, songwriters, and creative teams to record, mix, refine, and share their sound from anywhere.
             </p>
 
             <div class="cta-row">
@@ -857,7 +883,7 @@
           <div class="section-head">
             <h2>Everything you need to create.</h2>
             <p>
-              From idea capture to final master, Studio Pro brings recording, collaboration, and sharing together in one elegant workflow.
+              From idea capture to final master, Studio Pro gives creators the tools to build, refine, collaborate, and release music with confidence.
             </p>
           </div>
 
@@ -885,6 +911,21 @@
               <h3>Ship your next release</h3>
               <p>Publish mixes, build a portfolio, and amplify your work across playlists, socials, and community channels.</p>
             </article>
+          </div>
+
+          <div class="community-strip" style="margin-top: 24px;">
+            <div class="community-card">
+              <strong>12k+</strong>
+              <span>Creators building and sharing</span>
+            </div>
+            <div class="community-card">
+              <strong>84%</strong>
+              <span>Faster iteration with collaborators</span>
+            </div>
+            <div class="community-card">
+              <strong>48h</strong>
+              <span>Average review-to-release cycle</span>
+            </div>
           </div>
         </div>
       </section>
