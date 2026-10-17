@@ -1,27 +1,39 @@
-# Virtual-music-studio-and-social-platform-for-music-creators
+# Studio Pro Platform
 
-Studio Pro — a small static front-end prototype for a virtual music studio and social platform where musicians can record, collaborate, and share.
+This repository is being evolved from a static landing page into a full music platform foundation.
 
-## Preview locally
+## Current phase
 
-1. Clone and switch to the branch:
-   git clone https://github.com/GodChild72/Virtual-music-studio-and-social-platform-for-music-creators.git
-   cd Virtual-music-studio-and-social-platform-for-music-creators
-   git checkout site-improvements
+This is Step 1: app architecture baseline.
 
-2. Start a simple static server (Python):
-   python3 -m http.server 8000
-   Then open: http://localhost:8000/index.html
+### Included
+- React + Vite frontend shell
+- Express API server
+- environment configuration
+- project folder structure for future auth, billing, recording, and collaboration work
 
-## What’s included
-- index.html — landing page
-- studio.html — scaffolded studio page (placeholder)
-- assets/ — suggested place for images and audio
+### Run locally
 
-## Contributing
-See CONTRIBUTING.md for how to propose changes, file assets, and run the site locally.
+```bash
+npm install
+npm run dev
+```
 
-## License
-This project is available under the MIT License — see LICENSE.
+This starts:
+- Frontend: http://localhost:5173
+- API: http://localhost:4000
 
-(When deployed via GitHub Pages this will be served from the repository root; I can enable Pages for you or provide steps.)
+### API endpoints
+
+- GET /api/health
+- GET /api/roadmap
+
+## Next steps
+
+1. Add authentication and user accounts
+2. Add billing and Stripe checkout
+3. Add Pro feature gating
+4. Add recording persistence and storage
+5. Add multi-track project data model
+6. Add collaboration and sharing
+7. Add audio export pipeline and deployment
