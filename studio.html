@@ -1,1 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Studio — Interactive Demo</title>
+  <style>
+    :root {
+      --bg: #0c0d14;
+      --bg-2: #121623;
+      --panel: rgba(18, 20, 32, 0.9);
+      --panel-strong: #181d2d;
+      --panel-soft: #1d2336;
+      --line: rgba(255,255,255,0.06);
+      --text: #edf3ff;
+      --muted: #a9b3c8;
+      --accent: #8b5cf6;
+      --accent-2: #4f8cff;
+      --accent-3: #27d7a3;
+      --radius: 12px;
+    }
 
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; font-family: Inter, "Segoe UI", Arial, sans-serif; background: linear-gradient(180deg,var(--bg),var(--bg-2)); color:var(--text); }
+    .app-shell { max-width: 1280px; margin: 24px auto; padding: 20px; }
+
+    .topbar { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:14px; background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border-radius:var(--radius); border:1px solid var(--line); }
+    .brand { display:flex; gap:12px; align-items:center; }
+    .brand-mark { width:44px; height:44px; border-radius:10px; display:grid; place-items:center; font-weight:800; color:white; background:linear-gradient(135deg,var(--accent),var(--accent-2)); }
+    h1 { margin:0; font-size:1.15rem; }
+
+    .studio { display:grid; grid-template-columns: 320px 1fr; gap:18px; margin-top:18px; }
+
+    .sidebar { background:var(--panel); padding:16px; border-radius:12px; border:1px solid var(--line); }
+    .controls { display:flex; gap:8px; margin-top:12px; }
+    .btn { background:var(--accent); color:white; padding:10px 12px; border-radius:10px; border:none; cursor:pointer; }
+    .btn-ghost { background:transparent; border:1px solid var(--line); color:var(--text); }
+
+    .tracks { margin-top:14px; display:flex; flex-direction:column; gap:8px; }
+    .track { background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent); padding:12px; border-radius:10px; display:flex; gap:8px; align-items:center; border:1px solid var(--line); }
+    .track .name { flex:1; text-align:left; }
+    .icon { width:36px; height:36px; border-radius:8px; display:grid; place-items:center; background:var(--panel-strong); }
+    .fader { width:80px; }
+
+    .main { background:var(--panel); padding:16px; border-radius:12px; border:1px solid var(--line); min-height:520px; }
+
+    .sequencer { display:flex; gap:12px; }
+    .drum-pad { display:flex; flex-direction:column; gap:8px; width:260px; }
+    .pad-row { display:flex; gap:6px; }
+    .pad { flex:1; padding:10px; border-radius:8px; background:var(--panel-soft); border:1px solid var(--line); text-align:center; cursor:pointer; }
+    .pad.active { background: linear-gradient(90deg,var(--accent),var(--accent-2)); color: #071022; }
+
+    .grid { display:grid; grid-template-columns: repeat(8, 1fr); gap:6px; margin-top:8px; }
+    .step { padding:10px 6px; border-radius:6px; background:rgba(255,255,255,0.02); cursor:pointer; text-align:center; }
+    .step.on { background: linear-gradient(90deg,var(--accent),var(--accent-2)); color:#071022; }
+
+    .synth { margin-top:18px; padding:12px; border-radius:10px; background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent); }
+    .keys { display:flex; gap:4px; margin-top:8px; }
+    .key { width:36px; height:120px; border-radius:6px; background:white; opacity:0.08; display:flex; align-items:flex-end; justify-content:center; cursor:pointer; user-select:none; }
+    .key.black { width:26px; height:76px; margin-left:-14px; margin-right:-14px; background:#111; opacity:0.85; z-index:2; transform:translateY(-12px); color:#fff; }
+
+    .metronome { margin-top:12px; display:flex; gap:8px; align-items:center; }
+
+    footer { margin-top:18px; font-size:13px; color:var(--muted); }
+
+    /* responsive */
+    @media (max-width: 880px) { .studio { grid-template-columns: 1fr; } .sidebar { order:2; } .main { order:1; } .keys { overflow:auto; } }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <div class="topbar">
+      <div class="brand">
+        <div class="brand-mark">SV</div>
+        <div>
+          <h1>Studio <span style="font-size:12px;color:var(--muted);">— Interactive Demo</span></h1>
+          <div style="font-size:12px;color:var(--muted);">Create, record, mix, and export — browser-only</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button id="playBtn" class="btn">Play</button>
+        <button id="stopBtn" class="btn btn-ghost">Stop</button>
+        <button id="exportBtn" class="btn">Record & Export</button>
+      </div>
+    </div>
+
+    <div class="studio">
+      <aside class="sidebar">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <strong>Tracks</strong>
+          <div style="font-size:12px;color:var(--muted);">Live mix</div>
+        </div>
+
+        <div class="tracks" id="tracksList">
+          <!-- Tracks populated by JS -->
+        </div>
+
+        <div style="margin-top:12px;">
+          <label style="font-size:13px;color:var(--muted);">Upload audio</label>
+          <input id="fileInput" type="file" accept="audio/*" style="width:100%;margin-top:8px;" />
+        </div>
+
+        <div style="margin-top:12px;">
+          <label style="font-size:13px;color:var(--muted);">Record (mic)</label>
+          <div class="controls" style="margin-top:8px;">
+            <button id="recBtn" class="btn btn-ghost">Start</button>
+            <button id="stopRecBtn" class="btn btn-ghost">Stop</button>
+          </div>
+          <div id="recordings" style="margin-top:8px;font-size:13px;color:var(--muted);"></div>
+        </div>
+      </aside>
+
+      <main class="main">
+        <section class="sequencer">
+          <div class="drum-pad">
+            <div style="display:flex;justify-content:space-between;align-items:center;"><strong>Drum Sequencer</strong><div style="font-size:12px;color:var(--muted);">8 steps</div></div>
+
+            <div id="drumRows"></div>
+
+            <div class="metronome">
+              <label style="font-size:13px;color:var(--muted);">BPM</label>
+              <input id="bpm" type="range" min="60" max="160" value="100" style="width:160px;" />
+              <div id="bpmVal" style="width:42px;text-align:right;color:var(--muted);">100</div>
+            </div>
+          </div>
+
+          <div style="flex:1;">
+            <div style="display:flex;justify-content:space-between;align-items:center;"><strong>Synth & Piano</strong><div style="font-size:12px;color:var(--muted);">Click keys to play</div></div>
+            <div class="synth">
+              <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+                <div>
+                  <label style="font-size:13px;color:var(--muted);">Wave</label>
+                  <select id="waveSelect" style="margin-left:8px;">
+                    <option value="sine">Sine</option>
+                    <option value="square">Square</option>
+                    <option value="sawtooth">Saw</option>
+                    <option value="triangle">Triangle</option>
+                  </select>
+                </div>
+                <div>
+                  <label style="font-size:13px;color:var(--muted);">Attack</label>
+                  <input id="attack" type="range" min="0" max="1" step="0.01" value="0.02" />
+                </div>
+                <div>
+                  <label style="font-size:13px;color:var(--muted);">Release</label>
+                  <input id="release" type="range" min="0" max="1" step="0.01" value="0.15" />
+                </div>
+                <div>
+                  <label style="font-size:13px;color:var(--muted);">Master</label>
+                  <input id="master" type="range" min="0" max="1" step="0.01" value="0.9" />
+                </div>
+              </div>
+
+              <div class="keys" id="keys" style="margin-top:10px;">
+                <!-- piano keys generated by JS -->
+              </div>
+
+              <div style="margin-top:12px;color:var(--muted);font-size:13px;">Tip: click pads and keys, upload audio, then press Play to hear the mix.</div>
+            </div>
+          </div>
+        </section>
+
+        <footer>Studio demo — browser-based interactive mockup. Sounds are synthesized on the fly.</footer>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    // Basic WebAudio setup
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    let ctx = null;
+    let masterGain;
+
+    function ensureCtx() {
+      if (!ctx) {
+        ctx = new AudioCtx();
+        masterGain = ctx.createGain();
+        masterGain.gain.value = 0.9;
+        masterGain.connect(ctx.destination);
+      }
+    }
+
+    // Track management
+    const tracks = [];
+    const tracksList = document.getElementById('tracksList');
+
+    function createTrack(name, type='sample') {
+      const track = { id: Date.now()+Math.random(), name, type, gain: 0.9, muted:false, solo:false, buffer:null, source:null };
+      tracks.push(track);
+      renderTracks();
+      return track;
+    }
+
+    function renderTracks() {
+      tracksList.innerHTML = '';
+      tracks.forEach(t => {
+        const el = document.createElement('div'); el.className='track';
+        el.innerHTML = `
+          <div class="icon">${(t.name||'T').charAt(0).toUpperCase()}</div>
+          <div class="name"><strong>${t.name}</strong><div style="font-size:12px;color:var(--muted);">${t.type}</div></div>
+          <input type="range" min="0" max="1" step="0.01" value="${t.gain}" data-id="${t.id}" class="fader" />
+          <button data-id="${t.id}" class="btn btn-ghost mute">${t.muted? 'Unmute':'Mute'}</button>
+        `;
+        tracksList.appendChild(el);
+      });
+    }
+
+    // Add default tracks
+    createTrack('Drums','drum');
+    createTrack('Bass','synth');
+    createTrack('Lead','synth');
+
+    // Drum sequencer state
+    const drumNames = ['Kick','Snare','HiHat','Clap'];
+    const steps = 8;
+    const drumState = {};
+    const drumRows = document.getElementById('drumRows');
+
+    drumNames.forEach((d,i)=>{ drumState[d]=new Array(steps).fill(false); });
+
+    function renderDrumRows() {
+      drumRows.innerHTML = '';
+      drumNames.forEach((d,ri)=>{
+        const row = document.createElement('div');
+        row.style.marginBottom = '10px';
+        const header = document.createElement('div');
+        header.style.display = 'flex'; header.style.justifyContent = 'space-between'; header.style.alignItems='center'; header.style.marginBottom='6px';
+        header.innerHTML = `<strong>${d}</strong><div style="font-size:12px;color:var(--muted);">vol</div>`;
+        row.appendChild(header);
+
+        const grid = document.createElement('div'); grid.className='grid';
+        for (let s=0;s<steps;s++){
+          const step = document.createElement('div'); step.className='step'; step.textContent = s+1; step.dataset.row=d; step.dataset.step=s;
+          if (drumState[d][s]) step.classList.add('on');
+          step.addEventListener('click', ()=>{ drumState[d][s]=!drumState[d][s]; step.classList.toggle('on'); });
+          grid.appendChild(step);
+        }
+        row.appendChild(grid);
+        drumRows.appendChild(row);
+      });
+    }
+
+    renderDrumRows();
+
+    // Simple synthesized drum sounds
+    function playKick(time) {
+      ensureCtx();
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.type='sine'; o.frequency.setValueAtTime(150, time);
+      o.frequency.exponentialRampToValueAtTime(40, time+0.35);
+      g.gain.setValueAtTime(1, time);
+      g.gain.exponentialRampToValueAtTime(0.001, time+0.5);
+      o.connect(g); g.connect(masterGain);
+      o.start(time); o.stop(time+0.6);
+    }
+
+    function playSnare(time) {
+      ensureCtx();
+      const bufferSize = Math.floor(ctx.sampleRate * 0.2);
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i=0;i<bufferSize;i++) data[i] = (Math.random()*2-1) * Math.exp(-i/bufferSize*6);
+      const noise = ctx.createBufferSource(); noise.buffer = buffer;
+      const g = ctx.createGain(); g.gain.setValueAtTime(1, time); g.gain.exponentialRampToValueAtTime(0.01, time+0.25);
+      noise.connect(g); g.connect(masterGain);
+      noise.start(time); noise.stop(time+0.3);
+
+      // body
+      const o = ctx.createOscillator(); o.type='triangle'; o.frequency.setValueAtTime(180, time);
+      const go = ctx.createGain(); go.gain.setValueAtTime(0.4, time); go.gain.exponentialRampToValueAtTime(0.001, time+0.25);
+      o.connect(go); go.connect(masterGain);
+      o.start(time); o.stop(time+0.25);
+    }
+
+    function playHat(time) {
+      ensureCtx();
+      const o = ctx.createOscillator(); o.type='square'; o.frequency.setValueAtTime(8000, time);
+      const g = ctx.createGain(); g.gain.setValueAtTime(0.18, time); g.gain.exponentialRampToValueAtTime(0.001, time+0.08);
+      o.connect(g); g.connect(masterGain);
+      o.start(time); o.stop(time+0.1);
+    }
+
+    function playClap(time) { playSnare(time); }
+
+    // Sequencer playback
+    let isPlaying=false; let seqInterval=null; let currentStep=0;
+    const playBtn = document.getElementById('playBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const bpmEl = document.getElementById('bpm'); const bpmVal = document.getElementById('bpmVal');
+    bpmEl.addEventListener('input', ()=>{ bpmVal.textContent = bpmEl.value; });
+
+    function scheduleStep(stepIndex) {
+      if (!ctx) return;
+      const now = ctx.currentTime + 0.05;
+      drumNames.forEach((d)=>{
+        if (drumState[d][stepIndex]){
+          if (d==='Kick') playKick(now);
+          if (d==='Snare') playSnare(now);
+          if (d==='HiHat') playHat(now);
+          if (d==='Clap') playClap(now);
+        }
+      });
+    }
+
+    function highlightStep(i){ document.querySelectorAll('.grid .step').forEach(el=>{ if (parseInt(el.dataset.step)==i) el.style.boxShadow='0 0 0 2px rgba(139,92,246,0.15)'; else el.style.boxShadow='none'; }); }
+    function unhighlightAll(){ document.querySelectorAll('.grid .step').forEach(el=>el.style.boxShadow='none'); }
+
+    function startPlayback(){ ensureCtx(); if (isPlaying) return; isPlaying=true; currentStep=0; const bpm = parseInt(bpmEl.value,10); const interval = (60/bpm)*1000/2; // eighth notes
+      seqInterval = setInterval(()=>{ scheduleStep(currentStep); highlightStep(currentStep); currentStep = (currentStep+1)%steps; }, interval);
+    }
+    function stopPlayback(){ if (!isPlaying) return; isPlaying=false; clearInterval(seqInterval); unhighlightAll(); }
+
+    playBtn.addEventListener('click', ()=>{ if (!ctx) ensureCtx(); startPlayback(); playTrackBuffers(); });
+    stopBtn.addEventListener('click', ()=>{ stopPlayback(); tracks.forEach(t=>{ if (t.source){ try{ t.source.stop(); }catch(e){} t.source=null; } }); });
+
+    // Synth keyboard
+    const keysEl = document.getElementById('keys');
+    const waveSelect = document.getElementById('waveSelect');
+    const attackEl = document.getElementById('attack');
+    const releaseEl = document.getElementById('release');
+    const masterEl = document.getElementById('master');
+    masterEl.addEventListener('input', ()=>{ ensureCtx(); masterGain.gain.value = parseFloat(masterEl.value); });
+
+    // create keys (C4 to C5)
+    const notes = [ 'C4','C#4','D4','D#4','E4','F4','F#4','G4','G#4','A4','A#4','B4','C5' ];
+    const freqs = { C4:261.63, 'C#4':277.18, D4:293.66, 'D#4':311.13, E4:329.63, F4:349.23, 'F#4':369.99, G4:392.00, 'G#4':415.30, A4:440.00, 'A#4':466.16, B4:493.88, C5:523.25 };
+
+    function createKeys(){
+      notes.forEach(n=>{
+        const k = document.createElement('div'); k.className='key'; k.textContent=n.includes('#')? '': n.replace(/[0-9]/,'');
+        if (n.includes('#')) { k.classList.add('black'); k.textContent=''; }
+        k.title = n;
+        k.addEventListener('mousedown', ()=>{ noteOn(n); k.classList.add('active'); });
+        k.addEventListener('mouseup', ()=>{ noteOff(n); k.classList.remove('active'); });
+        k.addEventListener('mouseleave', ()=>{ noteOff(n); k.classList.remove('active'); });
+        keysEl.appendChild(k);
+      });
+    }
+    createKeys();
+
+    const activeNotes = {};
+    function noteOn(n){ ensureCtx(); const now = ctx.currentTime; const osc = ctx.createOscillator(); const g = ctx.createGain(); osc.type = waveSelect.value; osc.frequency.value = freqs[n];
+      const atk = parseFloat(attackEl.value); const rel = parseFloat(releaseEl.value);
+      g.gain.setValueAtTime(0.0001, now);
+      g.gain.linearRampToValueAtTime(1, now + Math.max(0.001, atk));
+      osc.connect(g); g.connect(masterGain);
+      osc.start(now);
+      activeNotes[n] = {osc,g,rel};
+    }
+    function noteOff(n){ if (!activeNotes[n]) return; const now = ctx.currentTime; const obj = activeNotes[n]; const rel = obj.rel || parseFloat(releaseEl.value);
+      obj.g.gain.cancelScheduledValues(now);
+      obj.g.gain.setValueAtTime(obj.g.gain.value, now);
+      obj.g.gain.exponentialRampToValueAtTime(0.0001, now + Math.max(0.01, rel));
+      try{ obj.osc.stop(now + Math.max(0.02, rel + 0.02)); }catch(e){}
+      delete activeNotes[n];
+    }
+
+    // File upload to track
+    const fileInput = document.getElementById('fileInput');
+    fileInput.addEventListener('change', async (e)=>{
+      const f = e.target.files[0]; if (!f) return; ensureCtx(); const arr = await f.arrayBuffer(); const buf = await ctx.decodeAudioData(arr);
+      const t = createTrack(f.name, 'sample'); t.buffer = buf; t.gain = 1; renderTracks();
+    });
+
+    // Recording (microphone) using MediaRecorder
+    let mediaRecorder = null; let recordedChunks = [];
+    const recBtn = document.getElementById('recBtn'); const stopRecBtn = document.getElementById('stopRecBtn'); const recordingsEl = document.getElementById('recordings');
+
+    recBtn.addEventListener('click', async ()=>{
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        recordedChunks = [];
+        mediaRecorder.ondataavailable = e=>{ if (e.data.size>0) recordedChunks.push(e.data); };
+        mediaRecorder.onstop = async ()=>{
+          const blob = new Blob(recordedChunks, { type: 'audio/webm' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a'); a.href = url; a.download = 'recording.webm'; a.textContent = 'Download recording'; a.style.display='block'; recordingsEl.appendChild(a);
+          // also decode to audio buffer and create a track
+          const arr = await blob.arrayBuffer(); ensureCtx(); const b = await ctx.decodeAudioData(arr);
+          const t = createTrack('Mic Recording','rec'); t.buffer = b; t.gain = 1; renderTracks();
+        };
+        mediaRecorder.start(); recordingsEl.innerHTML = '<span style="color:var(--muted);">Recording…</span>';
+      } catch (err){ recordingsEl.innerHTML = '<span style="color:var(--muted);">Mic access denied or unsupported.</span>'; }
+    });
+    stopRecBtn.addEventListener('click', ()=>{ if (mediaRecorder && mediaRecorder.state!=='inactive'){ mediaRecorder.stop(); recordingsEl.innerHTML=''; } });
+
+    // Export: mix currently loaded tracks into an offline buffer and provide WAV download
+    const exportBtn = document.getElementById('exportBtn');
+    exportBtn.addEventListener('click', async ()=>{
+      if (!ctx) ensureCtx();
+      // create a recording by routing masterGain to a MediaStreamDestination
+      const dest = ctx.createMediaStreamDestination();
+      // temporarily connect masterGain to dest
+      masterGain.connect(dest);
+      const recorder = new MediaRecorder(dest.stream);
+      const chunks = [];
+      recorder.ondataavailable = e=>{ if (e.data.size>0) chunks.push(e.data); };
+      recorder.onstop = ()=>{
+        const blob = new Blob(chunks, { type: 'audio/webm' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href=url; a.download = 'studio-export.webm'; a.textContent='Download export'; a.style.display='block'; recordingsEl.appendChild(a);
+      };
+      recorder.start();
+      // play a short mix preview for 6 seconds
+      startPlayback();
+      setTimeout(()=>{ stopPlayback(); try{ recorder.stop(); }catch(e){} masterGain.disconnect(dest); masterGain.connect(ctx.destination); }, 6000);
+    });
+
+    // Play tracks buffer when Play pressed — simple implementation: start sources at once
+    function playTrackBuffers(){ if (!ctx) return; const now = ctx.currentTime + 0.05; tracks.forEach(t=>{ if (t.buffer){ try{ const s = ctx.createBufferSource(); s.buffer = t.buffer; const g = ctx.createGain(); g.gain.value = t.muted ? 0 : (t.gain||1); s.connect(g); g.connect(masterGain); s.start(now); t.source = s; }catch(e){ console.warn('play error',e); } } }); }
+
+    // Hook up faders and mute
+    tracksList.addEventListener('input', (e)=>{ if (e.target.classList.contains('fader')){ const id = parseFloat(e.target.dataset.id); const t = tracks.find(x=>x.id===id); if (t) { t.gain = parseFloat(e.target.value); } } });
+    tracksList.addEventListener('click', (e)=>{ if (e.target.classList.contains('mute')){ const id = parseFloat(e.target.dataset.id); const t = tracks.find(x=>x.id===id); if (t){ t.muted = !t.muted; renderTracks(); } } });
+
+    // small keyboard support
+    window.addEventListener('keydown', (e)=>{ const map = {a:'C4', w:'C#4', s:'D4', e:'D#4', d:'E4', f:'F4', t:'F#4', g:'G4', y:'G#4', h:'A4', u:'A#4', j:'B4', k:'C5'}; const n = map[e.key]; if (n) { e.preventDefault(); if (!activeNotes[n]) noteOn(n); } });
+    window.addEventListener('keyup', (e)=>{ const map = {a:'C4', w:'C#4', s:'D4', e:'D#4', d:'E4', f:'F4', t:'F#4', g:'G4', y:'G#4', h:'A4', u:'A#4', j:'B4', k:'C5'}; const n = map[e.key]; if (n) { noteOff(n); } });
+
+    // init
+    document.addEventListener('visibilitychange', ()=>{ if (document.visibilityState==='hidden') stopPlayback(); });
+    document.getElementById('bpmVal').textContent = document.getElementById('bpm').value;
+    renderTracks();
+
+  </script>
+</body>
+</html>
