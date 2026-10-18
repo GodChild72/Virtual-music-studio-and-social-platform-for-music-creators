@@ -3,143 +3,355 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Studio Pro — Pricing</title>
+  <title>Studio Pro | Virtual Music Studio</title>
+  <meta name="description" content="Studio Pro is a virtual music studio and social platform for music creators. Create, collaborate, record, and grow your music brand online." />
   <style>
     :root {
-      --bg: #0b1020;
-      --panel: #121b2d;
-      --panel-alt: #18243d;
-      --card: #101827;
-      --muted: #b9c4d6;
-      --text: #edf2ff;
+      --bg: #0c0f19;
+      --bg-soft: #121a2f;
+      --panel: rgba(17, 23, 38, 0.92);
+      --panel-strong: #131d33;
+      --line: rgba(255,255,255,0.09);
+      --text: #edf3ff;
+      --muted: #a9b4ca;
       --accent: #8b5cf6;
-      --accent-2: #52d3ff;
+      --accent-2: #48c8ff;
+      --accent-3: #32d5a5;
+      --warning: #fbbf24;
       --success: #39d98a;
-      --border: rgba(255,255,255,0.08);
+      --shadow: 0 25px 60px rgba(0,0,0,0.28);
+      --radius: 20px;
     }
 
     * { box-sizing: border-box; }
-
+    html { scroll-behavior: smooth; }
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(180deg, #0b1020 0%, #0d1528 100%);
+      font-family: Arial, Helvetica, sans-serif;
+      background: radial-gradient(circle at top, #1a2340 0%, var(--bg) 32%, #090d16 100%);
       color: var(--text);
+      line-height: 1.6;
     }
 
+    a { color: inherit; }
+
     .container {
-      max-width: 1100px;
+      width: min(1180px, calc(100% - 32px));
       margin: 0 auto;
-      padding: 40px 20px 80px;
     }
 
     .topbar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 18px;
-      padding: 18px 0 32px;
+      padding: 20px 0 14px;
+      border-bottom: 1px solid var(--line);
     }
 
     .brand {
-      display: flex;
+      display: inline-flex;
       align-items: center;
       gap: 12px;
-      font-weight: 700;
-      letter-spacing: 0.04em;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
     }
 
-    .logo {
-      width: 38px;
-      height: 38px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    .brand-mark {
+      width: 40px;
+      height: 40px;
       display: grid;
       place-items: center;
-      font-weight: 800;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
       color: white;
+      font-size: 0.86rem;
     }
 
-    .cta-link {
-      color: var(--text);
+    nav {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    nav a {
+      color: var(--muted);
       text-decoration: none;
-      border: 1px solid var(--border);
-      padding: 10px 16px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.02);
+      font-size: 0.95rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      border-radius: 12px;
+      padding: 14px 20px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+      border: 1px solid transparent;
+    }
+
+    .btn:hover { transform: translateY(-1px); opacity: 0.96; }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #08111a;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border-color: var(--line);
+      color: var(--text);
+    }
+
+    .btn-light {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--line);
+      color: var(--text);
     }
 
     .hero {
-      text-align: center;
-      padding: 32px 0 12px;
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 32px;
+      padding: 64px 0 32px;
+      align-items: center;
     }
 
     .eyebrow {
-      color: var(--accent-2);
-      font-size: 0.8rem;
+      display: inline-block;
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--accent-3);
+      background: rgba(50, 213, 165, 0.08);
       text-transform: uppercase;
-      letter-spacing: 0.16em;
+      letter-spacing: 0.12em;
+      font-size: 0.72rem;
       font-weight: 700;
     }
 
     h1 {
-      font-size: clamp(2.5rem, 6vw, 4.5rem);
-      margin: 14px 0 10px;
-      line-height: 1.1;
+      margin: 18px 0 16px;
+      font-size: clamp(2.7rem, 5vw, 5rem);
+      line-height: 1.04;
+      letter-spacing: -0.05em;
     }
 
-    .subhead {
-      max-width: 760px;
-      margin: 0 auto;
+    .lead {
+      font-size: 1.12rem;
       color: var(--muted);
-      font-size: 1.1rem;
-      line-height: 1.6;
+      max-width: 620px;
+      margin-bottom: 28px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 26px;
+    }
+
+    .mini-stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      max-width: 700px;
+    }
+
+    .mini-card {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px 16px;
+    }
+
+    .mini-card strong {
+      display: block;
+      font-size: 1.7rem;
+      margin-bottom: 6px;
+    }
+
+    .hero-card {
+      background: linear-gradient(180deg, rgba(19,29,51,0.95), rgba(13,18,29,0.95));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 26px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .live-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(57, 217, 138, 0.09);
+      border: 1px solid rgba(57, 217, 138, 0.2);
+      color: var(--success);
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
+    .live-badge::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      background: var(--success);
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .demo-box {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 18px;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      margin: 12px 0;
+      color: var(--muted);
+    }
+
+    .bar {
+      width: 100%;
+      height: 10px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .bar > span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    }
+
+    .list {
+      padding-left: 18px;
+      color: var(--muted);
+      margin: 18px 0 0;
+    }
+
+    .section {
+      padding: 40px 0 10px;
+    }
+
+    .section h2 {
+      font-size: clamp(2rem, 4vw, 3rem);
+      margin: 0 0 14px;
+      letter-spacing: -0.04em;
+    }
+
+    .section-header {
+      margin-bottom: 24px;
+    }
+
+    .section-header p {
+      color: var(--muted);
+      margin: 0;
+      font-size: 1.05rem;
+      max-width: 760px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .feature {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 22px;
+    }
+
+    .feature .icon {
+      width: 46px;
+      height: 46px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(139,92,246,0.2), rgba(72,200,255,0.2));
+      border: 1px solid rgba(255,255,255,0.08);
+      margin-bottom: 14px;
+      font-size: 1.2rem;
+    }
+
+    .feature h3 {
+      margin: 0 0 8px;
+      font-size: 1.25rem;
+    }
+
+    .feature p {
+      margin: 0;
+      color: var(--muted);
     }
 
     .pricing-grid {
-      margin-top: 46px;
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 24px;
+      margin-top: 28px;
     }
 
     .plan {
-      background: rgba(16,24,39,0.9);
-      border: 1px solid var(--border);
+      background: rgba(14,20,32,0.9);
+      border: 1px solid var(--line);
       border-radius: 22px;
       padding: 28px 24px;
       display: flex;
       flex-direction: column;
-      min-height: 100%;
     }
 
     .plan.popular {
-      border-color: rgba(139, 92, 246, 0.6);
-      background: linear-gradient(180deg, rgba(139, 92, 246, 0.12), rgba(16,24,39,0.9));
+      background: linear-gradient(180deg, rgba(139,92,246,0.13), rgba(14,20,32,0.9));
+      border-color: rgba(139,92,246,0.7);
       transform: translateY(-8px);
     }
 
-    .tag {
-      display: inline-block;
+    .plan-badge {
       align-self: flex-start;
       padding: 7px 10px;
       border-radius: 999px;
-      background: rgba(82, 211, 255, 0.12);
+      background: rgba(72,200,255,0.12);
       color: var(--accent-2);
       font-size: 0.72rem;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      margin-bottom: 18px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
     }
 
-    .plan h2 {
+    .plan h3 {
       margin: 0;
-      font-size: 1.5rem;
+      font-size: 1.55rem;
     }
 
     .price {
-      margin: 18px 0 6px;
-      font-size: 2.7rem;
+      margin: 18px 0 8px;
+      font-size: 2.8rem;
       font-weight: 800;
       line-height: 1;
     }
@@ -150,188 +362,285 @@
       font-weight: 400;
     }
 
-    .description {
-      margin: 0 0 18px;
+    .plan p {
       color: var(--muted);
-      line-height: 1.5;
+      margin-top: 0;
     }
 
-    ul {
+    .plan ul {
       list-style: none;
-      margin: 0 0 22px;
+      margin: 0 0 24px;
       padding: 0;
       display: grid;
       gap: 10px;
       color: var(--text);
     }
 
-    li::before {
+    .plan li::before {
       content: "✓";
       color: var(--success);
       margin-right: 10px;
       font-weight: 700;
     }
 
-    .btn {
-      display: inline-block;
-      width: 100%;
-      text-align: center;
-      background: var(--accent);
-      color: white;
-      text-decoration: none;
-      font-weight: 700;
-      border-radius: 12px;
-      padding: 14px 18px;
-      border: none;
-      cursor: pointer;
-      margin-top: auto;
-      transition: opacity 0.2s ease;
-    }
-
-    .btn:hover { opacity: 0.94; }
-
-    .btn.secondary {
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--text);
-    }
-
-    .bottom-note {
+    .checkout {
       margin-top: 26px;
-      text-align: center;
-      color: var(--muted);
-      font-size: 0.95rem;
-    }
-
-    .checkout-wrap {
-      margin-top: 40px;
       background: rgba(255,255,255,0.02);
-      border: 1px solid var(--border);
+      border: 1px solid var(--line);
       border-radius: 22px;
-      padding: 24px;
+      padding: 26px;
     }
 
-    .checkout-wrap h3 {
-      margin-top: 0;
-      margin-bottom: 12px;
-      font-size: 1.2rem;
+    .checkout h3 {
+      margin: 0 0 10px;
+      font-size: 1.5rem;
     }
 
-    .pay-buttons {
+    .checkout-grid {
       display: flex;
-      flex-wrap: wrap;
       gap: 14px;
-      align-items: center;
+      flex-wrap: wrap;
+      margin-top: 18px;
     }
 
-    .pay-buttons form {
-      display: inline-block;
+    .checkout-grid form {
       margin: 0;
     }
 
     .paypal-btn {
       background: #003087;
-      color: white;
-      border: none;
+      color: #fff;
       border-radius: 12px;
-      padding: 14px 18px;
+      border: none;
+      padding: 14px 20px;
       font-weight: 700;
       cursor: pointer;
     }
 
-    @media (max-width: 840px) {
-      .pricing-grid {
-        grid-template-columns: 1fr;
-      }
+    .cta-section {
+      margin: 52px 0 48px;
+      background: linear-gradient(135deg, rgba(139,92,246,0.15), rgba(72,200,255,0.10));
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
 
-      .plan.popular {
-        transform: none;
-      }
+    .cta-section h3 {
+      margin: 0;
+      font-size: clamp(1.7rem, 3vw, 2.2rem);
+    }
+
+    footer {
+      border-top: 1px solid var(--line);
+      padding: 24px 0 40px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; }
+      .features-grid, .pricing-grid { grid-template-columns: 1fr; }
+      .plan.popular { transform: none; }
+      .cta-section { flex-direction: column; align-items: flex-start; }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="topbar">
+    <header class="topbar">
       <div class="brand">
-        <div class="logo">S</div>
-        <span>STUDIO PRO</span>
+        <div class="brand-mark">SP</div>
+        <span>Studio Pro</span>
       </div>
-      <a class="cta-link" href="https://github.com/GodChild72/Virtual-music-studio-and-social-platform-for-music-creators" target="_blank" rel="noreferrer">View project</a>
-    </div>
-
-    <header class="hero">
-      <div class="eyebrow">Music creation platform</div>
-      <h1>Simple pricing for creators.</h1>
-      <p class="subhead">
-        Record, collaborate, mix, and share music from one virtual studio built for independent creators and growing teams.
-      </p>
+      <nav>
+        <a href="#features">Features</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#checkout">Checkout</a>
+        <a class="btn btn-light" href="#checkout">Get Started</a>
+      </nav>
     </header>
 
-    <main class="pricing-grid">
-      <section class="plan">
-        <div class="tag">Starter</div>
-        <h2>Free</h2>
-        <div class="price">$0 <small>/month</small></div>
-        <p class="description">Great for trying Studio Pro and creating early demos.</p>
-        <ul>
-          <li>1 active project</li>
-          <li>Basic recording tools</li>
-          <li>Community access</li>
-          <li>Limited collaboration</li>
-        </ul>
-        <a class="btn secondary" href="#checkout">Get started</a>
+    <main>
+      <section class="hero">
+        <div>
+          <div class="eyebrow">Virtual music studio</div>
+          <h1>Record, create, and grow your sound.</h1>
+          <p class="lead">
+            Studio Pro is a browser-based music studio for creators who want to write, produce, collaborate,
+            and publish from one modern platform built for artists, producers, and creative teams.
+          </p>
+
+          <div class="actions">
+            <a class="btn btn-primary" href="#pricing">See Pricing</a>
+            <a class="btn btn-secondary" href="#features">Explore Features</a>
+          </div>
+
+          <div class="mini-stats">
+            <div class="mini-card">
+              <strong>1.2M+</strong>
+              Beats created
+            </div>
+            <div class="mini-card">
+              <strong>4.9/5</strong>
+              Creator rating
+            </div>
+            <div class="mini-card">
+              <strong>24/7</strong>
+              Studio access
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-card">
+          <div class="hero-card-header">
+            <span>Live project status</span>
+            <span class="live-badge">Live</span>
+          </div>
+
+          <div class="demo-box">
+            <div class="row">
+              <span>Sound engine</span>
+              <strong>96%</strong>
+            </div>
+            <div class="bar"><span style="width:96%"></span></div>
+
+            <div class="row">
+              <span>Collaboration sync</span>
+              <strong>89%</strong>
+            </div>
+            <div class="bar"><span style="width:89%"></span></div>
+
+            <div class="row">
+              <span>Publishing tools</span>
+              <strong>92%</strong>
+            </div>
+            <div class="bar"><span style="width:92%"></span></div>
+          </div>
+
+          <ul class="list">
+            <li>Track mixing and synth tools</li>
+            <li>Recording with mic support</li>
+            <li>Creator profile and social publishing</li>
+          </ul>
+        </div>
       </section>
 
-      <section class="plan popular">
-        <div class="tag">Most popular</div>
-        <h2>Pro</h2>
-        <div class="price">$29 <small>/month</small></div>
-        <p class="description">For creators who want full access to production tools and collaboration.</p>
-        <ul>
-          <li>Unlimited projects</li>
-          <li>Full recording & mixing suite</li>
-          <li>Priority support</li>
-          <li>Unlimited collaboration</li>
-        </ul>
-        <a class="btn" href="#checkout">Choose Pro</a>
+      <section id="features" class="section">
+        <div class="section-header">
+          <h2>Everything a creator needs.</h2>
+          <p>
+            Studio Pro combines creativity, workflow, and social network features into one place.
+          </p>
+        </div>
+
+        <div class="features-grid">
+          <article class="feature">
+            <div class="icon">🎛️</div>
+            <h3>Production tools</h3>
+            <p>Use drum sequencers, synth controls, keyboard instruments, and sample uploads to build songs quickly.</p>
+          </article>
+
+          <article class="feature">
+            <div class="icon">🤝</div>
+            <h3>Collaboration</h3>
+            <p>Invite collaborators, share project states, and work together in a single creative workspace.</p>
+          </article>
+
+          <article class="feature">
+            <div class="icon">📣</div>
+            <h3>Creator community</h3>
+            <p>Create a profile, showcase projects, and grow your audience with a social-first music platform.</p>
+          </article>
+        </div>
       </section>
 
-      <section class="plan">
-        <div class="tag">Studio+</div>
-        <h2>Team</h2>
-        <div class="price">$79 <small>/month</small></div>
-        <p class="description">For teams and production groups that need shared workflows and scaling.</p>
-        <ul>
-          <li>Team workspace</li>
-          <li>Shared project folders</li>
-          <li>Advanced analytics</li>
-          <li>Custom onboarding</li>
-        </ul>
-        <a class="btn secondary" href="#checkout">Talk to sales</a>
+      <section id="pricing" class="section">
+        <div class="section-header">
+          <h2>Simple pricing for creators.</h2>
+          <p>Choose the plan that fits your workflow — from solo creators to full creative teams.</p>
+        </div>
+
+        <div class="pricing-grid">
+          <div class="plan">
+            <div class="plan-badge">Starter</div>
+            <h3>Free</h3>
+            <div class="price">$0 <small>/month</small></div>
+            <p>Perfect for testing ideas and creating early demos.</p>
+            <ul>
+              <li>1 active project</li>
+              <li>Basic recording tools</li>
+              <li>Community access</li>
+              <li>Limited collaboration</li>
+            </ul>
+            <a class="btn btn-secondary" href="#checkout">Get started</a>
+          </div>
+
+          <div class="plan popular">
+            <div class="plan-badge">Most popular</div>
+            <h3>Pro</h3>
+            <div class="price">$29 <small>/month</small></div>
+            <p>For creators who need full creative power and collaboration tools.</p>
+            <ul>
+              <li>Unlimited projects</li>
+              <li>Full studio suite</li>
+              <li>Priority support</li>
+              <li>Unlimited collaboration</li>
+            </ul>
+            <a class="btn btn-primary" href="#checkout">Choose Pro</a>
+          </div>
+
+          <div class="plan">
+            <div class="plan-badge">Studio+</div>
+            <h3>Team</h3>
+            <div class="price">$79 <small>/month</small></div>
+            <p>Built for teams, producers, and creative agencies.</p>
+            <ul>
+              <li>Shared workspace</li>
+              <li>Project folders</li>
+              <li>Advanced analytics</li>
+              <li>Custom onboarding</li>
+            </ul>
+            <a class="btn btn-secondary" href="#checkout">Talk to sales</a>
+          </div>
+        </div>
+
+        <div id="checkout" class="checkout">
+          <h3>Checkout</h3>
+          <p>Replace the placeholders below with your Stripe and PayPal links before publishing.</p>
+          <div class="checkout-grid">
+            <a class="btn btn-primary" href="YOUR_STRIPE_PAYMENT_LINK" target="_blank" rel="noreferrer">Buy with Stripe</a>
+
+            <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
+              <input type="hidden" name="cmd" value="_xclick" />
+              <input type="hidden" name="business" value="YOUR_PAYPAL_EMAIL@example.com" />
+              <input type="hidden" name="item_name" value="Studio Pro — Pro Plan" />
+              <input type="hidden" name="amount" value="29.00" />
+              <input type="hidden" name="currency_code" value="USD" />
+              <input type="hidden" name="return" value="https://your-site.example.com/success" />
+              <input type="hidden" name="cancel_return" value="https://your-site.example.com/cancel" />
+              <button class="paypal-btn" type="submit">Buy with PayPal</button>
+            </form>
+          </div>
+        </div>
       </section>
+
+      <div class="cta-section">
+        <div>
+          <h3>Launch your music platform with Studio Pro.</h3>
+        </div>
+        <a class="btn btn-primary" href="mailto:hello@godchild.pro">Contact us</a>
+      </div>
     </main>
 
-    <div id="checkout" class="checkout-wrap">
-      <h3>Checkout</h3>
-      <div class="pay-buttons">
-        <a class="btn" href="YOUR_STRIPE_PAYMENT_LINK" target="_blank" rel="noopener">Buy with Stripe</a>
-
-        <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
-          <input type="hidden" name="cmd" value="_xclick" />
-          <input type="hidden" name="business" value="YOUR_PAYPAL_EMAIL@example.com" />
-          <input type="hidden" name="item_name" value="Studio Pro — Pro Plan" />
-          <input type="hidden" name="amount" value="29.00" />
-          <input type="hidden" name="currency_code" value="USD" />
-          <input type="hidden" name="return" value="https://your-site.example.com/success" />
-          <input type="hidden" name="cancel_return" value="https://your-site.example.com/cancel" />
-          <button class="paypal-btn" type="submit">Buy with PayPal</button>
-        </form>
-      </div>
-    </div>
-
-    <p class="bottom-note">Replace the placeholder Stripe and PayPal links before publishing this page.</p>
+    <footer>
+      © 2026 Studio Pro • Build your sound. Grow your audience.
+    </footer>
   </div>
 </body>
 </html>
-
