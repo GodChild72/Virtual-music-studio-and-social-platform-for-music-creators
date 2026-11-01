@@ -27,6 +27,16 @@ const synthPresets = {
     release: 0.7,
     gain: 0.95,
     drive: 0.7,
+    stack: 3,
+    detune: 6,
+    sub: true,
+    subGain: 0.65,
+    filterEnv: true,
+    filterEnvAmount: 3.5,
+    filterEnvDecay: 0.18,
+    decay: 0.22,
+    sustain: 0.3,
+    reverb: 0.05,
   },
   clubbass: {
     wave1: 'sawtooth',
@@ -39,6 +49,16 @@ const synthPresets = {
     release: 0.82,
     gain: 0.9,
     drive: 0.9,
+    stack: 3,
+    detune: 8,
+    sub: true,
+    subGain: 0.6,
+    filterEnv: true,
+    filterEnvAmount: 3,
+    filterEnvDecay: 0.15,
+    decay: 0.2,
+    sustain: 0.35,
+    reverb: 0.05,
   },
   trapbass: {
     wave1: 'square',
@@ -51,6 +71,16 @@ const synthPresets = {
     release: 0.55,
     gain: 0.88,
     drive: 1.2,
+    stack: 2,
+    detune: 5,
+    sub: true,
+    subGain: 0.8,
+    filterEnv: true,
+    filterEnvAmount: 2.5,
+    filterEnvDecay: 0.12,
+    decay: 0.3,
+    sustain: 0.45,
+    reverb: 0.03,
   },
   lead: {
     wave1: 'sawtooth',
@@ -63,6 +93,15 @@ const synthPresets = {
     release: 0.4,
     gain: 0.68,
     drive: 0.55,
+    stack: 3,
+    detune: 10,
+    vibrato: true,
+    filterEnv: true,
+    filterEnvAmount: 2,
+    filterEnvDecay: 0.25,
+    decay: 0.3,
+    sustain: 0.55,
+    reverb: 0.22,
   },
   trancelead: {
     wave1: 'sawtooth',
@@ -75,6 +114,15 @@ const synthPresets = {
     release: 0.5,
     gain: 0.7,
     drive: 0.75,
+    stack: 5,
+    detune: 14,
+    vibrato: true,
+    filterEnv: true,
+    filterEnvAmount: 2.2,
+    filterEnvDecay: 0.3,
+    decay: 0.35,
+    sustain: 0.6,
+    reverb: 0.28,
   },
   pad: {
     wave1: 'triangle',
@@ -87,6 +135,14 @@ const synthPresets = {
     release: 1.5,
     gain: 0.45,
     drive: 0.4,
+    stack: 3,
+    detune: 8,
+    filterEnv: true,
+    filterEnvAmount: 1.5,
+    filterEnvDecay: 0.6,
+    decay: 0.8,
+    sustain: 0.8,
+    reverb: 0.4,
   },
   trancepad: {
     wave1: 'sine',
@@ -99,6 +155,14 @@ const synthPresets = {
     release: 1.8,
     gain: 0.52,
     drive: 0.5,
+    stack: 4,
+    detune: 12,
+    filterEnv: true,
+    filterEnvAmount: 1.8,
+    filterEnvDecay: 0.7,
+    decay: 0.9,
+    sustain: 0.85,
+    reverb: 0.45,
   },
   epiano: {
     wave1: 'triangle',
@@ -111,6 +175,12 @@ const synthPresets = {
     release: 0.8,
     gain: 0.6,
     drive: 0.25,
+    stack: 2,
+    detune: 4,
+    tine: true,
+    decay: 0.35,
+    sustain: 0.12,
+    reverb: 0.25,
   },
 };
 
@@ -175,6 +245,9 @@ const state = {
   masterFilter: null,
   compressor: null,
   limiter: null,
+  reverbSend: null,
+  reverbGain: null,
+  convolver: null,
   instrumentGain: null,
   instrumentDest: null,
   mediaRecorder: null,
@@ -226,20 +299,24 @@ function ensureAudio() {
   const master = ctx.createGain();
   master.gain.value = 0.98;
 
+  // Gentle highpass: clears sub-bass mud without touching the music.
   const filter = ctx.createBiquadFilter();
-  filter.type = 'lowpass';
-  filter.frequency.value = 20000;
+  filter.type = 'highpass';
+  filter.frequency.value = 28;
   filter.Q.value = 0.7;
 
+  // Glue compressor: gentle, musical bus compression instead of the
+  // old crushing settings, so the mix breathes.
   const compressor = ctx.createDynamicsCompressor();
-  compressor.threshold.value = -24;
-  compressor.knee.value = 25;
-  compressor.ratio.value = 10;
-  compressor.attack.value = 0.003;
-  compressor.release.value = 0.2;
+  compressor.threshold.value = -18;
+  compressor.knee.value = 20;
+  compressor.ratio.value = 3;
+  compressor.attack.value = 0.01;
+  compressor.release.value = 0.25;
 
+  // Safety limiter: catches peaks without squashing the mix.
   const limiter = ctx.createDynamicsCompressor();
-  limiter.threshold.value = -1;
+  limiter.threshold.value = -1.5;
   limiter.knee.value = 0;
   limiter.ratio.value = 20;
   limiter.attack.value = 0.001;
@@ -257,6 +334,19 @@ function ensureAudio() {
   const dest = ctx.createMediaStreamDestination();
   instrumentGain.connect(dest);
 
+  // Generated room reverb: no audio files needed. Voices send into
+  // reverbSend, and the wet signal returns into instrumentGain, so
+  // reverb is heard live AND captured in exported mixes.
+  const reverbSend = ctx.createGain();
+  reverbSend.gain.value = 1;
+  const convolver = ctx.createConvolver();
+  convolver.buffer = makeImpulseResponse(ctx, 2.4, 3.0);
+  const reverbGain = ctx.createGain();
+  reverbGain.gain.value = 0.22;
+  reverbSend.connect(convolver);
+  convolver.connect(reverbGain);
+  reverbGain.connect(instrumentGain);
+
   state.audioCtx = ctx;
   state.masterGain = master;
   state.masterFilter = filter;
@@ -264,15 +354,72 @@ function ensureAudio() {
   state.limiter = limiter;
   state.instrumentGain = instrumentGain;
   state.instrumentDest = dest;
+  state.reverbSend = reverbSend;
+  state.reverbGain = reverbGain;
+  state.convolver = convolver;
 
   return ctx;
 }
+
 
 async function resumeAudio() {
   const ctx = ensureAudio();
   if (ctx.state === 'suspended') {
     await ctx.resume();
   }
+}
+
+// A generated stereo room impulse: decaying noise shaped into a
+// natural-sounding space. No sample files, no downloads, no licensing.
+function makeImpulseResponse(ctx, seconds = 2.4, decay = 3.0) {
+  const rate = ctx.sampleRate;
+  const length = Math.floor(rate * seconds);
+  const impulse = ctx.createBuffer(2, length, rate);
+  for (let ch = 0; ch < 2; ch++) {
+    const data = impulse.getChannelData(ch);
+    for (let i = 0; i < length; i++) {
+      data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / length, decay);
+    }
+  }
+  return impulse;
+}
+
+function makeNoiseBuffer(ctx, seconds) {
+  const length = Math.max(1, Math.floor(ctx.sampleRate * seconds));
+  const buffer = ctx.createBuffer(1, length, ctx.sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let i = 0; i < length; i++) data[i] = Math.random() * 2 - 1;
+  return buffer;
+}
+
+// Routes a voice to the dry mix and, when amount > 0, to the reverb bus.
+function routeVoice(output, reverbAmount = 0.15) {
+  const ctx = state.audioCtx;
+  output.connect(state.instrumentGain);
+  if (reverbAmount > 0 && state.reverbSend) {
+    const send = ctx.createGain();
+    send.gain.value = reverbAmount;
+    output.connect(send);
+    send.connect(state.reverbSend);
+  }
+}
+
+// ADSR envelope on a gain param: attack to peak, decay to sustain,
+// hold until holdEnd, then release to silence.
+function applyAdsr(param, now, { peak = 0.7, attack = 0.02, decay = 0.25, sustain = 0.4, holdEnd, release = 0.4 }) {
+  const hold = Math.max(holdEnd, now + attack + decay + 0.02);
+  param.setValueAtTime(0.0001, now);
+  param.linearRampToValueAtTime(Math.max(0.0002, peak), now + Math.max(0.005, attack));
+  param.exponentialRampToValueAtTime(Math.max(0.0002, sustain), now + Math.max(0.005, attack) + decay);
+  param.setValueAtTime(Math.max(0.0002, sustain), hold);
+  param.exponentialRampToValueAtTime(0.0001, hold + release);
+}
+
+// Filter envelope: the cutoff sweeps from start down to end, which is
+// what makes a synth note feel alive instead of flat.
+function applyFilterEnvelope(filter, now, { start, end, decay = 0.2 }) {
+  filter.frequency.setValueAtTime(Math.max(20, start), now);
+  filter.frequency.exponentialRampToValueAtTime(Math.max(20, end), now + decay);
 }
 
 function setStatus(text) {
@@ -644,214 +791,427 @@ function playSynthVoice(freq, preset = 'heavybass', durationOverride = null) {
   const now = ctx.currentTime;
   const config = synthPresets[preset] || synthPresets.heavybass;
 
-  const oscA = ctx.createOscillator();
-  const oscB = ctx.createOscillator();
   const filter = ctx.createBiquadFilter();
-  const gain = ctx.createGain();
   const drive = ctx.createWaveShaper();
+  const gain = ctx.createGain();
 
   drive.curve = makeDriveCurve(config.drive || 0.5);
   drive.oversample = '4x';
-
-  oscA.type = config.wave1;
-  oscB.type = config.wave2;
-  oscA.frequency.value = freq;
-  oscB.frequency.value = freq * (config.ratio || 1);
 
   filter.type = config.filterType || 'lowpass';
   filter.frequency.value = config.filterFrequency || 1500;
   filter.Q.value = config.resonance || 1.5;
 
   const envSeconds = durationOverride || (preset === 'pad' || preset === 'trancepad' ? 1.8 : 0.7);
+  const release = config.release || 0.5;
+  const stopAt = now + envSeconds + release + 0.1;
 
-  gain.gain.setValueAtTime(0.0001, now);
-  gain.gain.linearRampToValueAtTime(config.gain || 0.7, now + Math.max(0.01, config.attack || 0.02));
-  gain.gain.exponentialRampToValueAtTime(0.0001, now + envSeconds + (config.release || 0.5));
-
-  oscA.connect(filter);
+  // Detuned oscillator stack: the thickness real synths get from
+  // several slightly out-of-tune voices playing together.
+  const stackCount = config.stack || 3;
+  const spread = config.detune || 8;
+  const voices = [];
+  for (let i = 0; i < stackCount; i++) {
+    const osc = ctx.createOscillator();
+    osc.type = config.wave1;
+    osc.frequency.value = freq;
+    osc.detune.value = (i - (stackCount - 1) / 2) * spread;
+    osc.connect(filter);
+    voices.push(osc);
+  }
+  // Second waveform, detuned the other way for width.
+  const oscB = ctx.createOscillator();
+  oscB.type = config.wave2;
+  oscB.frequency.value = freq * (config.ratio || 1);
+  oscB.detune.value = spread / 2;
   oscB.connect(filter);
+  voices.push(oscB);
+
+  // Sub oscillator: pure low weight that stays clean (bypasses drive).
+  let sub = null;
+  let subGain = null;
+  if (config.sub) {
+    sub = ctx.createOscillator();
+    sub.type = 'sine';
+    sub.frequency.value = freq * (config.subRatio || 0.5);
+    subGain = ctx.createGain();
+    subGain.gain.value = config.subGain || 0.6;
+    sub.connect(subGain);
+    subGain.connect(gain);
+  }
+
+  // Filter envelope: the cutoff sweeps as the note plays.
+  if (config.filterEnv) {
+    applyFilterEnvelope(filter, now, {
+      start: (config.filterFrequency || 1500) * (config.filterEnvAmount || 3),
+      end: config.filterFrequency || 1500,
+      decay: config.filterEnvDecay || 0.25,
+    });
+  }
+
+  // Gentle vibrato on leads: a slow pitch wobble that fades in.
+  let lfo = null;
+  let lfoGain = null;
+  if (config.vibrato) {
+    lfo = ctx.createOscillator();
+    lfo.type = 'sine';
+    lfo.frequency.value = 5.5;
+    lfoGain = ctx.createGain();
+    lfoGain.gain.setValueAtTime(0, now);
+    lfoGain.gain.linearRampToValueAtTime(freq * 0.006, now + 0.15);
+    lfo.connect(lfoGain);
+    voices.forEach(osc => lfoGain.connect(osc.frequency));
+  }
+
+  // EP tine: a short, bright harmonic ping on top of electric pianos.
+  let tine = null;
+  let tineGain = null;
+  if (config.tine) {
+    tine = ctx.createOscillator();
+    tine.type = 'sine';
+    tine.frequency.value = freq * 3.98;
+    tineGain = ctx.createGain();
+    tineGain.gain.setValueAtTime(0.16, now);
+    tineGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.25);
+    tine.connect(tineGain);
+    tineGain.connect(gain);
+  }
+
   filter.connect(drive);
   drive.connect(gain);
-  gain.connect(state.instrumentGain);
+  applyAdsr(gain.gain, now, {
+    peak: config.gain || 0.7,
+    attack: config.attack || 0.02,
+    decay: config.decay || 0.25,
+    sustain: config.sustain != null ? config.sustain : 0.4,
+    holdEnd: now + envSeconds,
+    release,
+  });
+  routeVoice(gain, config.reverb != null ? config.reverb : 0.15);
 
-  oscA.start(now);
-  oscB.start(now);
-  oscA.stop(now + envSeconds + (config.release || 0.5));
-  oscB.stop(now + envSeconds + (config.release || 0.5));
+  voices.forEach(osc => { osc.start(now); osc.stop(stopAt); });
+  if (sub) { sub.start(now); sub.stop(stopAt); }
+  if (lfo) { lfo.start(now); lfo.stop(stopAt); }
+  if (tine) { tine.start(now); tine.stop(now + 0.3); }
 }
+
 
 function playRiseFX() {
   const ctx = ensureAudio();
   const now = ctx.currentTime;
+  const bus = ctx.createGain();
+
   const osc = ctx.createOscillator();
-  const filter = ctx.createBiquadFilter();
-  const gain = ctx.createGain();
-
   osc.type = 'sawtooth';
-  osc.frequency.setValueAtTime(90, now);
+  osc.frequency.setValueAtTime(180, now);
   osc.frequency.exponentialRampToValueAtTime(1800, now + 1.3);
-
-  filter.type = 'highpass';
-  filter.frequency.value = 400;
+  const filter = ctx.createBiquadFilter();
+  filter.type = 'lowpass';
+  filter.frequency.setValueAtTime(400, now);
+  filter.frequency.exponentialRampToValueAtTime(9000, now + 1.3);
   filter.Q.value = 1.2;
-
+  const gain = ctx.createGain();
   gain.gain.setValueAtTime(0.0001, now);
-  gain.gain.linearRampToValueAtTime(0.55, now + 0.05);
-  gain.gain.exponentialRampToValueAtTime(0.0001, now + 1.4);
-
+  gain.gain.linearRampToValueAtTime(0.5, now + 1.1);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + 1.5);
   osc.connect(filter);
   filter.connect(gain);
-  gain.connect(state.instrumentGain);
+  gain.connect(bus);
+
+  const noise = ctx.createBufferSource();
+  noise.buffer = makeNoiseBuffer(ctx, 1.4);
+  const noiseFilter = ctx.createBiquadFilter();
+  noiseFilter.type = 'bandpass';
+  noiseFilter.frequency.setValueAtTime(800, now);
+  noiseFilter.frequency.exponentialRampToValueAtTime(6000, now + 1.3);
+  noiseFilter.Q.value = 0.8;
+  const noiseGain = ctx.createGain();
+  noiseGain.gain.setValueAtTime(0.0001, now);
+  noiseGain.gain.linearRampToValueAtTime(0.22, now + 1.1);
+  noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 1.45);
+  noise.connect(noiseFilter);
+  noiseFilter.connect(noiseGain);
+  noiseGain.connect(bus);
+
+  routeVoice(bus, 0.5);
   osc.start(now);
-  osc.stop(now + 1.5);
+  osc.stop(now + 1.55);
+  noise.start(now);
+  noise.stop(now + 1.5);
 }
 
 function playKick() {
   const ctx = ensureAudio();
   const now = ctx.currentTime;
+  const bus = ctx.createGain();
+  bus.gain.value = 1;
 
+  // Sub punch: a fast pitch drop gives the chest hit.
   const sub = ctx.createOscillator();
   const subGain = ctx.createGain();
   sub.type = 'sine';
-  sub.frequency.setValueAtTime(58, now);
-  sub.frequency.exponentialRampToValueAtTime(38, now + 0.35);
-  subGain.gain.setValueAtTime(1.25, now);
-  subGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.48);
+  sub.frequency.setValueAtTime(160, now);
+  sub.frequency.exponentialRampToValueAtTime(43, now + 0.11);
+  subGain.gain.setValueAtTime(1.0, now);
+  subGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.42);
   sub.connect(subGain);
-  subGain.connect(state.instrumentGain);
-  sub.start(now);
-  sub.stop(now + 0.52);
+  subGain.connect(bus);
 
-  const clickOsc = ctx.createOscillator();
+  // Body: a low-mid thump that makes it sound like a drum, not a beep.
+  const body = ctx.createOscillator();
+  const bodyGain = ctx.createGain();
+  body.type = 'sine';
+  body.frequency.setValueAtTime(110, now);
+  body.frequency.exponentialRampToValueAtTime(65, now + 0.1);
+  bodyGain.gain.setValueAtTime(0.5, now);
+  bodyGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.16);
+  body.connect(bodyGain);
+  bodyGain.connect(bus);
+
+  // Click: the beater attack that cuts through a mix.
+  const click = ctx.createBufferSource();
+  click.buffer = makeNoiseBuffer(ctx, 0.02);
+  const clickFilter = ctx.createBiquadFilter();
+  clickFilter.type = 'highpass';
+  clickFilter.frequency.value = 3000;
   const clickGain = ctx.createGain();
-  clickOsc.type = 'square';
-  clickOsc.frequency.setValueAtTime(180, now);
-  clickOsc.frequency.exponentialRampToValueAtTime(40, now + 0.03);
-  clickGain.gain.setValueAtTime(0.7, now);
-  clickGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.05);
-  clickOsc.connect(clickGain);
-  clickGain.connect(state.instrumentGain);
-  clickOsc.start(now);
-  clickOsc.stop(now + 0.07);
+  clickGain.gain.setValueAtTime(0.35, now);
+  clickGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.02);
+  click.connect(clickFilter);
+  clickFilter.connect(clickGain);
+  clickGain.connect(bus);
 
-  const noiseBuffer = ctx.createBuffer(1, ctx.sampleRate * 0.02, ctx.sampleRate);
-  const noiseData = noiseBuffer.getChannelData(0);
-  for (let i = 0; i < noiseData.length; i++) noiseData[i] = Math.random() * 2 - 1;
-  const noise = ctx.createBufferSource();
-  const noiseFilter = ctx.createBiquadFilter();
-  const noiseGain = ctx.createGain();
-  noise.buffer = noiseBuffer;
-  noiseFilter.type = 'highpass';
-  noiseFilter.frequency.value = 1100;
-  noiseGain.gain.setValueAtTime(0.18, now);
-  noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.06);
-  noise.connect(noiseFilter);
-  noiseFilter.connect(noiseGain);
-  noiseGain.connect(state.instrumentGain);
-  noise.start(now);
-  noise.stop(now + 0.08);
+  const drive = ctx.createWaveShaper();
+  drive.curve = makeDriveCurve(0.35);
+  drive.oversample = '2x';
+  bus.connect(drive);
+  routeVoice(drive, 0.04);
+
+  sub.start(now);
+  sub.stop(now + 0.5);
+  body.start(now);
+  body.stop(now + 0.2);
+  click.start(now);
+  click.stop(now + 0.03);
 }
 
 function playSnare() {
   const ctx = ensureAudio();
   const now = ctx.currentTime;
+  const bus = ctx.createGain();
 
-  const noiseBuffer = ctx.createBuffer(1, ctx.sampleRate * 0.24, ctx.sampleRate);
-  const noiseData = noiseBuffer.getChannelData(0);
-  for (let i = 0; i < noiseData.length; i++) {
-    const envelope = Math.exp(-i / (noiseData.length * 0.18));
-    noiseData[i] = (Math.random() * 2 - 1) * envelope;
-  }
-
+  // Crack: bright noise burst.
   const noise = ctx.createBufferSource();
-  const noiseFilter = ctx.createBiquadFilter();
+  noise.buffer = makeNoiseBuffer(ctx, 0.25);
+  const band = ctx.createBiquadFilter();
+  band.type = 'bandpass';
+  band.frequency.value = 1800;
+  band.Q.value = 0.8;
   const noiseGain = ctx.createGain();
-  noise.buffer = noiseBuffer;
-  noiseFilter.type = 'bandpass';
-  noiseFilter.frequency.value = 2200;
-  noiseGain.gain.setValueAtTime(0.95, now);
-  noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.22);
-  noise.connect(noiseFilter);
-  noiseFilter.connect(noiseGain);
-  noiseGain.connect(state.instrumentGain);
-  noise.start(now);
-  noise.stop(now + 0.24);
+  noiseGain.gain.setValueAtTime(0.9, now);
+  noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.2);
+  noise.connect(band);
+  band.connect(noiseGain);
+  noiseGain.connect(bus);
 
+  // Snap: a very short high-frequency snap on top.
+  const snap = ctx.createBufferSource();
+  snap.buffer = makeNoiseBuffer(ctx, 0.05);
+  const snapFilter = ctx.createBiquadFilter();
+  snapFilter.type = 'highpass';
+  snapFilter.frequency.value = 5200;
+  const snapGain = ctx.createGain();
+  snapGain.gain.setValueAtTime(0.5, now);
+  snapGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.05);
+  snap.connect(snapFilter);
+  snapFilter.connect(snapGain);
+  snapGain.connect(bus);
+
+  // Body: the drum's low tone.
   const tone = ctx.createOscillator();
   const toneGain = ctx.createGain();
   tone.type = 'triangle';
-  tone.frequency.setValueAtTime(175, now);
-  tone.frequency.exponentialRampToValueAtTime(95, now + 0.16);
-  toneGain.gain.setValueAtTime(0.7, now);
+  tone.frequency.setValueAtTime(195, now);
+  tone.frequency.exponentialRampToValueAtTime(135, now + 0.14);
+  toneGain.gain.setValueAtTime(0.6, now);
   toneGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.16);
   tone.connect(toneGain);
-  toneGain.connect(state.instrumentGain);
+  toneGain.connect(bus);
+
+  routeVoice(bus, 0.18);
   tone.start(now);
-  tone.stop(now + 0.18);
+  tone.stop(now + 0.2);
+  noise.start(now);
+  noise.stop(now + 0.25);
+  snap.start(now);
+  snap.stop(now + 0.06);
 }
 
 function playHiHat() {
   const ctx = ensureAudio();
   const now = ctx.currentTime;
+  const bus = ctx.createGain();
 
-  const layers = [6000, 9000, 12000];
-  layers.forEach((freq, index) => {
-    const noiseBuffer = ctx.createBuffer(1, ctx.sampleRate * 0.06, ctx.sampleRate);
-    const noiseData = noiseBuffer.getChannelData(0);
-    for (let i = 0; i < noiseData.length; i++) noiseData[i] = (Math.random() * 2 - 1) * Math.exp(-i / (noiseData.length * 0.25));
-
-    const source = ctx.createBufferSource();
-    const filter = ctx.createBiquadFilter();
-    const gain = ctx.createGain();
-    source.buffer = noiseBuffer;
-    filter.type = 'highpass';
-    filter.frequency.value = freq;
-    gain.gain.setValueAtTime(index === 0 ? 0.52 : 0.24, now);
-    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.08);
-    source.connect(filter);
-    filter.connect(gain);
-    gain.connect(state.instrumentGain);
-    source.start(now);
-    source.stop(now + 0.08);
+  // Metallic shimmer: inharmonic square partials, the way classic
+  // drum machines build a hat.
+  [587, 845, 1244, 1698, 2139, 2960].forEach(freq => {
+    const osc = ctx.createOscillator();
+    osc.type = 'square';
+    osc.frequency.value = freq;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.06, now);
+    g.gain.exponentialRampToValueAtTime(0.0001, now + 0.07);
+    osc.connect(g);
+    g.connect(bus);
+    osc.start(now);
+    osc.stop(now + 0.09);
   });
+
+  // Air: highpassed noise for the sizzle.
+  const noise = ctx.createBufferSource();
+  noise.buffer = makeNoiseBuffer(ctx, 0.1);
+  const hp = ctx.createBiquadFilter();
+  hp.type = 'highpass';
+  hp.frequency.value = 7800;
+  const noiseGain = ctx.createGain();
+  noiseGain.gain.setValueAtTime(0.4, now);
+  noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.09);
+  noise.connect(hp);
+  hp.connect(noiseGain);
+  noiseGain.connect(bus);
+
+  routeVoice(bus, 0.12);
+  noise.start(now);
+  noise.stop(now + 0.1);
 }
 
 function playBongo() {
   const ctx = ensureAudio();
   const now = ctx.currentTime;
-  const osc = ctx.createOscillator();
-  const gain = ctx.createGain();
-  osc.type = 'triangle';
-  osc.frequency.setValueAtTime(220, now);
-  osc.frequency.exponentialRampToValueAtTime(120, now + 0.18);
-  gain.gain.setValueAtTime(0.9, now);
-  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
-  osc.connect(gain);
-  gain.connect(state.instrumentGain);
-  osc.start(now);
-  osc.stop(now + 0.3);
+  const bus = ctx.createGain();
+
+  // Membrane: fundamental plus a shell partial.
+  const membrane = ctx.createOscillator();
+  const membraneGain = ctx.createGain();
+  membrane.type = 'sine';
+  membrane.frequency.setValueAtTime(230, now);
+  membrane.frequency.exponentialRampToValueAtTime(165, now + 0.12);
+  membraneGain.gain.setValueAtTime(0.85, now);
+  membraneGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.26);
+  membrane.connect(membraneGain);
+  membraneGain.connect(bus);
+
+  const shell = ctx.createOscillator();
+  const shellGain = ctx.createGain();
+  shell.type = 'triangle';
+  shell.frequency.setValueAtTime(345, now);
+  shell.frequency.exponentialRampToValueAtTime(250, now + 0.08);
+  shellGain.gain.setValueAtTime(0.35, now);
+  shellGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.14);
+  shell.connect(shellGain);
+  shellGain.connect(bus);
+
+  // Slap: the short hand-hit transient.
+  const slap = ctx.createBufferSource();
+  slap.buffer = makeNoiseBuffer(ctx, 0.03);
+  const slapFilter = ctx.createBiquadFilter();
+  slapFilter.type = 'bandpass';
+  slapFilter.frequency.value = 1200;
+  slapFilter.Q.value = 1.2;
+  const slapGain = ctx.createGain();
+  slapGain.gain.setValueAtTime(0.3, now);
+  slapGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.03);
+  slap.connect(slapFilter);
+  slapFilter.connect(slapGain);
+  slapGain.connect(bus);
+
+  routeVoice(bus, 0.15);
+  membrane.start(now);
+  membrane.stop(now + 0.3);
+  shell.start(now);
+  shell.stop(now + 0.18);
+  slap.start(now);
+  slap.stop(now + 0.04);
 }
 
 function playTom() {
   const ctx = ensureAudio();
   const now = ctx.currentTime;
-  const osc = ctx.createOscillator();
-  const gain = ctx.createGain();
-  osc.type = 'sine';
-  osc.frequency.setValueAtTime(140, now);
-  osc.frequency.exponentialRampToValueAtTime(70, now + 0.28);
-  gain.gain.setValueAtTime(0.9, now);
-  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
-  osc.connect(gain);
-  gain.connect(state.instrumentGain);
-  osc.start(now);
-  osc.stop(now + 0.52);
+  const bus = ctx.createGain();
+
+  const drum = ctx.createOscillator();
+  const drumGain = ctx.createGain();
+  drum.type = 'sine';
+  drum.frequency.setValueAtTime(150, now);
+  drum.frequency.exponentialRampToValueAtTime(62, now + 0.24);
+  drumGain.gain.setValueAtTime(0.9, now);
+  drumGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.42);
+  drum.connect(drumGain);
+  drumGain.connect(bus);
+
+  const partial = ctx.createOscillator();
+  const partialGain = ctx.createGain();
+  partial.type = 'triangle';
+  partial.frequency.setValueAtTime(225, now);
+  partial.frequency.exponentialRampToValueAtTime(95, now + 0.2);
+  partialGain.gain.setValueAtTime(0.3, now);
+  partialGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.28);
+  partial.connect(partialGain);
+  partialGain.connect(bus);
+
+  routeVoice(bus, 0.15);
+  drum.start(now);
+  drum.stop(now + 0.5);
+  partial.start(now);
+  partial.stop(now + 0.34);
 }
 
 function playClap() {
-  playSnare();
-  setTimeout(() => playSnare(), 40);
+  const ctx = ensureAudio();
+  const now = ctx.currentTime;
+  const bus = ctx.createGain();
+
+  // A real clap is several fast handclaps plus a roomy tail,
+  // not one drum hit.
+  const bursts = [
+    [0.0, 0.65], [0.012, 0.8], [0.024, 0.9], [0.04, 0.6],
+  ];
+  bursts.forEach(([offset, level]) => {
+    const burst = ctx.createBufferSource();
+    burst.buffer = makeNoiseBuffer(ctx, 0.03);
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.value = 1300;
+    filter.Q.value = 1.4;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(level, now + offset);
+    g.gain.exponentialRampToValueAtTime(0.0001, now + offset + 0.018);
+    burst.connect(filter);
+    filter.connect(g);
+    g.connect(bus);
+    burst.start(now + offset);
+    burst.stop(now + offset + 0.03);
+  });
+
+  // Tail: the wash of reflections after the claps.
+  const tail = ctx.createBufferSource();
+  tail.buffer = makeNoiseBuffer(ctx, 0.4);
+  const tailFilter = ctx.createBiquadFilter();
+  tailFilter.type = 'bandpass';
+  tailFilter.frequency.value = 1100;
+  tailFilter.Q.value = 0.7;
+  const tailGain = ctx.createGain();
+  tailGain.gain.setValueAtTime(0.45, now + 0.03);
+  tailGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.38);
+  tail.connect(tailFilter);
+  tailFilter.connect(tailGain);
+  tailGain.connect(bus);
+
+  routeVoice(bus, 0.3);
+  tail.start(now + 0.03);
+  tail.stop(now + 0.42);
 }
+
 
 function playHeavyBass() {
   playSynthVoice(46, 'heavybass');
