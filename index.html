@@ -23,6 +23,8 @@
         </div>
 
         <div class="top-actions">
+          <button class="chip" id="saveSessionBtn">Save Session</button>
+          <button class="chip" id="loadSessionBtn">Load Session</button>
           <button class="chip" id="loadSoundBankBtn">Load Sound Bank</button>
           <button class="primary-btn" id="enterStudioBtn">Enter Studio</button>
         </div>
@@ -54,61 +56,34 @@
                 <span>studio quality</span>
               </div>
               <div class="stat">
-                <strong>WAV</strong>
-                <span>lossless</span>
+                <strong id="sessionStatus">Draft</strong>
+                <span>session state</span>
               </div>
             </div>
           </section>
 
           <section class="pricing panel">
             <div class="section-header">
-              <span class="eyebrow small">Simple pricing</span>
-              <h3>Choose the plan that fits your creative flow.</h3>
+              <span class="eyebrow small">Creative Workflow</span>
+              <h3>Professional production tools for serious creators.</h3>
             </div>
 
-            <div class="pricing-grid">
-              <article class="price-card">
-                <div class="plan-tag">Starter</div>
-                <h4>$12<span>/mo</span></h4>
-                <p class="plan-copy">Perfect for solo creators testing ideas and recording demos.</p>
-                <ul>
-                  <li>1 active studio workspace</li>
-                  <li>Basic synth + drum tools</li>
-                  <li>Unlimited local recordings</li>
-                  <li>WAV export</li>
-                </ul>
-                <a class="price-btn" href="https://dashboard.stripe.com/test/payment-links" target="_blank" rel="noreferrer">Get Started</a>
+            <div class="tool-grid">
+              <article class="tool-card">
+                <div class="tool-icon">🎛️</div>
+                <h4>Live Bus Mix</h4>
+                <p>Control master channel depth, saturation, and bus balance in real time.</p>
               </article>
-
-              <article class="price-card featured">
-                <div class="plan-tag">Creator</div>
-                <h4>$29<span>/mo</span></h4>
-                <p class="plan-copy">Best for artists building a consistent release workflow.</p>
-                <ul>
-                  <li>Unlimited projects</li>
-                  <li>Advanced instrument presets</li>
-                  <li>Stem uploads and layering</li>
-                  <li>Priority export processing</li>
-                </ul>
-                <a class="price-btn" href="https://dashboard.stripe.com/test/payment-links" target="_blank" rel="noreferrer">Start Creating</a>
+              <article class="tool-card">
+                <div class="tool-icon">🧠</div>
+                <h4>Genre Engine</h4>
+                <p>Switch instantly between trap, club, electronic, trance, and hip-hop production styles.</p>
               </article>
-
-              <article class="price-card">
-                <div class="plan-tag">Studio Pro</div>
-                <h4>$79<span>/mo</span></h4>
-                <p class="plan-copy">For serious producers and teams ready to launch at scale.</p>
-                <ul>
-                  <li>Full studio suite access</li>
-                  <li>Team collaboration tools</li>
-                  <li>Premium mix and export tools</li>
-                  <li>Priority support</li>
-                </ul>
-                <a class="price-btn" href="https://dashboard.stripe.com/test/payment-links" target="_blank" rel="noreferrer">Go Pro</a>
+              <article class="tool-card">
+                <div class="tool-icon">💾</div>
+                <h4>Session Memory</h4>
+                <p>Save your draft, reload your session, and keep momentum while you create.</p>
               </article>
-            </div>
-
-            <div class="pricing-note">
-              Global checkout powered by Stripe. Accepts major credit cards and local payment methods available in supported regions.
             </div>
           </section>
 
@@ -135,7 +110,7 @@
                 <span><strong id="runtimeLabel">00:00</strong> runtime</span>
                 <span><strong>24-bit WAV</strong> export</span>
               </div>
-              <div class="chip" id="masterMeter">Master: 0.00 dB</div>
+              <div class="chip" id="masterMeter">Master: 1.00 dB</div>
             </div>
 
             <div id="trackList" class="track-list"></div>
@@ -173,8 +148,12 @@
               <label for="presetSelect">Preset</label>
               <select id="presetSelect">
                 <option value="heavybass">Heavy Sub Bass</option>
+                <option value="clubbass">Club Bass</option>
+                <option value="trapbass">Trap Bass</option>
                 <option value="lead">Lead</option>
+                <option value="trancelead">Trance Lead</option>
                 <option value="pad">Pad</option>
+                <option value="trancepad">Trance Pad</option>
                 <option value="epiano">Electric Piano</option>
               </select>
             </div>
@@ -194,6 +173,22 @@
                 <option value="48000">48 kHz / 24-bit</option>
                 <option value="96000">96 kHz / 24-bit</option>
               </select>
+            </div>
+
+            <div class="setting-group">
+              <label for="genreSelect">Genre</label>
+              <select id="genreSelect">
+                <option value="hiphop">Hip Hop</option>
+                <option value="trap">Trap</option>
+                <option value="club">Club</option>
+                <option value="trance">Trance</option>
+                <option value="electronic">Electronic</option>
+              </select>
+            </div>
+
+            <div class="setting-group mixer-setting">
+              <label for="masterLevel">Master Level</label>
+              <input id="masterLevel" type="range" min="0.4" max="1.6" step="0.01" value="1" />
             </div>
           </section>
         </aside>
