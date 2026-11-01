@@ -1,13 +1,118 @@
 const soundBank = [
   { id: 'heavybass', name: 'Heavy Sub Bass', type: 'Bass' },
+  { id: 'clubbass', name: 'Club Bass', type: 'Bass' },
+  { id: 'trapbass', name: 'Trap Bass', type: 'Bass' },
   { id: 'lead', name: 'Analog Lead', type: 'Lead' },
+  { id: 'trancelead', name: 'Trance Lead', type: 'Lead' },
   { id: 'pad', name: 'Ambient Pad', type: 'Pad' },
+  { id: 'trancepad', name: 'Trance Pad', type: 'Pad' },
   { id: 'epiano', name: 'Classic EP', type: 'Keys' },
   { id: 'kick', name: 'Punch Kick', type: 'Drum' },
   { id: 'snare', name: 'Crack Snare', type: 'Drum' },
+  { id: 'hihat', name: 'Open Hat', type: 'Drum' },
   { id: 'bongo', name: 'Bongo Rush', type: 'Percussion' },
-  { id: 'tom', name: 'Tom Depth', type: 'Percussion' }
+  { id: 'tom', name: 'Tom Depth', type: 'Percussion' },
+  { id: 'fxrise', name: 'Rise FX', type: 'FX' },
 ];
+
+const synthPresets = {
+  heavybass: {
+    wave1: 'sawtooth',
+    wave2: 'triangle',
+    ratio: 0.5,
+    filterType: 'lowpass',
+    filterFrequency: 850,
+    resonance: 2.4,
+    attack: 0.01,
+    release: 0.7,
+    gain: 0.95,
+    drive: 0.7,
+  },
+  clubbass: {
+    wave1: 'sawtooth',
+    wave2: 'square',
+    ratio: 0.5,
+    filterType: 'lowpass',
+    filterFrequency: 1200,
+    resonance: 3.1,
+    attack: 0.012,
+    release: 0.82,
+    gain: 0.9,
+    drive: 0.9,
+  },
+  trapbass: {
+    wave1: 'square',
+    wave2: 'triangle',
+    ratio: 0.25,
+    filterType: 'lowpass',
+    filterFrequency: 950,
+    resonance: 4.2,
+    attack: 0.006,
+    release: 0.55,
+    gain: 0.88,
+    drive: 1.2,
+  },
+  lead: {
+    wave1: 'sawtooth',
+    wave2: 'square',
+    ratio: 1,
+    filterType: 'bandpass',
+    filterFrequency: 4200,
+    resonance: 1.7,
+    attack: 0.02,
+    release: 0.4,
+    gain: 0.68,
+    drive: 0.55,
+  },
+  trancelead: {
+    wave1: 'sawtooth',
+    wave2: 'triangle',
+    ratio: 1,
+    filterType: 'lowpass',
+    filterFrequency: 6000,
+    resonance: 2.6,
+    attack: 0.015,
+    release: 0.5,
+    gain: 0.7,
+    drive: 0.75,
+  },
+  pad: {
+    wave1: 'triangle',
+    wave2: 'sine',
+    ratio: 1,
+    filterType: 'lowpass',
+    filterFrequency: 1700,
+    resonance: 1.4,
+    attack: 0.09,
+    release: 1.5,
+    gain: 0.45,
+    drive: 0.4,
+  },
+  trancepad: {
+    wave1: 'sine',
+    wave2: 'triangle',
+    ratio: 1,
+    filterType: 'lowpass',
+    filterFrequency: 2200,
+    resonance: 1.8,
+    attack: 0.11,
+    release: 1.8,
+    gain: 0.52,
+    drive: 0.5,
+  },
+  epiano: {
+    wave1: 'triangle',
+    wave2: 'sine',
+    ratio: 1,
+    filterType: 'bandpass',
+    filterFrequency: 2400,
+    resonance: 1.5,
+    attack: 0.02,
+    release: 0.8,
+    gain: 0.6,
+    drive: 0.25,
+  },
+};
 
 const state = {
   tracks: [],
@@ -161,13 +266,19 @@ function buildSoundBank() {
       await resumeAudio();
       const id = button.dataset.sound;
       if (id === 'heavybass') playHeavyBass();
+      else if (id === 'clubbass') playClubBass();
+      else if (id === 'trapbass') playTrapBass();
       else if (id === 'lead') playLead();
+      else if (id === 'trancelead') playTranceLead();
       else if (id === 'pad') playPad();
+      else if (id === 'trancepad') playTrancePad();
       else if (id === 'epiano') playEPiano();
       else if (id === 'kick') playKick();
       else if (id === 'snare') playSnare();
+      else if (id === 'hihat') playHiHat();
       else if (id === 'bongo') playBongo();
       else if (id === 'tom') playTom();
+      else if (id === 'fxrise') playRiseFX();
     });
   });
 }
@@ -409,93 +520,192 @@ function noteToFrequency(note) {
   return 440 * Math.pow(2, (midi - 69) / 12);
 }
 
-function playSynth(freq, preset = 'heavybass') {
+function makeDriveCurve(amount = 0.8) {
+  const samples = 2048;
+  const curve = new Float32Array(samples);
+  const deg = Math.PI / 180;
+  for (let i = 0; i < samples; i++) {
+    const x = (i * 2) / samples - 1;
+    curve[i] = ((Math.sin(x * Math.PI * 0.6)) / (1 + amount * 3)) + (x * amount * 0.18);
+  }
+  return curve;
+}
+
+function playSynthVoice(freq, preset = 'heavybass', durationOverride = null) {
   const ctx = ensureAudio();
   const now = ctx.currentTime;
+  const config = synthPresets[preset] || synthPresets.heavybass;
+
   const oscA = ctx.createOscillator();
   const oscB = ctx.createOscillator();
   const filter = ctx.createBiquadFilter();
   const gain = ctx.createGain();
 
-  oscA.type = preset === 'lead' ? 'sawtooth' : preset === 'epiano' ? 'triangle' : 'sawtooth';
-  oscB.type = preset === 'pad' ? 'triangle' : 'sine';
+  const drive = ctx.createWaveShaper();
+  drive.curve = makeDriveCurve(config.drive || 0.5);
+  drive.oversample = '4x';
+
+  oscA.type = config.wave1;
+  oscB.type = config.wave2;
   oscA.frequency.value = freq;
-  oscB.frequency.value = freq * (preset === 'heavybass' ? 0.5 : 1.0);
-  filter.type = 'lowpass';
-  filter.frequency.value = preset === 'heavybass' ? 900 : preset === 'lead' ? 5200 : preset === 'pad' ? 1700 : 2300;
+  oscB.frequency.value = freq * (config.ratio || 1);
+
+  filter.type = config.filterType || 'lowpass';
+  filter.frequency.value = config.filterFrequency || 1500;
+  filter.Q.value = config.resonance || 1.5;
+
+  const envSeconds = durationOverride || (preset === 'pad' || preset === 'trancepad' ? 1.8 : 0.7);
 
   gain.gain.setValueAtTime(0.0001, now);
-  gain.gain.linearRampToValueAtTime(preset === 'heavybass' ? 0.9 : preset === 'lead' ? 0.65 : preset === 'pad' ? 0.4 : 0.5, now + 0.03);
-  gain.gain.exponentialRampToValueAtTime(0.0001, now + (preset === 'pad' ? 1.8 : 0.6));
+  gain.gain.linearRampToValueAtTime(config.gain || 0.7, now + Math.max(0.01, config.attack || 0.02));
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + envSeconds + (config.release || 0.5));
 
-  oscA.connect(filter); oscB.connect(filter); filter.connect(gain); gain.connect(state.instrumentGain);
-  oscA.start(now); oscB.start(now);
-  oscA.stop(now + (preset === 'pad' ? 1.8 : 0.7));
-  oscB.stop(now + (preset === 'pad' ? 1.8 : 0.7));
+  oscA.connect(filter);
+  oscB.connect(filter);
+  filter.connect(drive);
+  drive.connect(gain);
+  gain.connect(state.instrumentGain);
+
+  oscA.start(now);
+  oscB.start(now);
+  oscA.stop(now + envSeconds + (config.release || 0.5));
+  oscB.stop(now + envSeconds + (config.release || 0.5));
+}
+
+function playRiseFX() {
+  const ctx = ensureAudio();
+  const now = ctx.currentTime;
+  const osc = ctx.createOscillator();
+  const filter = ctx.createBiquadFilter();
+  const gain = ctx.createGain();
+
+  osc.type = 'sawtooth';
+  osc.frequency.setValueAtTime(90, now);
+  osc.frequency.exponentialRampToValueAtTime(1800, now + 1.3);
+
+  filter.type = 'highpass';
+  filter.frequency.value = 400;
+  filter.Q.value = 1.2;
+
+  gain.gain.setValueAtTime(0.0001, now);
+  gain.gain.linearRampToValueAtTime(0.55, now + 0.05);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + 1.4);
+
+  osc.connect(filter);
+  filter.connect(gain);
+  gain.connect(state.instrumentGain);
+  osc.start(now);
+  osc.stop(now + 1.5);
 }
 
 function playKick() {
   const ctx = ensureAudio();
   const now = ctx.currentTime;
-  const osc = ctx.createOscillator();
-  const gain = ctx.createGain();
 
-  osc.type = 'sine';
-  osc.frequency.setValueAtTime(150, now);
-  osc.frequency.exponentialRampToValueAtTime(42, now + 0.35);
-  gain.gain.setValueAtTime(1, now);
-  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+  const sub = ctx.createOscillator();
+  const subGain = ctx.createGain();
+  sub.type = 'sine';
+  sub.frequency.setValueAtTime(58, now);
+  sub.frequency.exponentialRampToValueAtTime(38, now + 0.35);
+  subGain.gain.setValueAtTime(1.25, now);
+  subGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.48);
+  sub.connect(subGain);
+  subGain.connect(state.instrumentGain);
+  sub.start(now);
+  sub.stop(now + 0.52);
 
-  osc.connect(gain);
-  gain.connect(state.instrumentGain);
-  osc.start(now);
-  osc.stop(now + 0.48);
+  const clickOsc = ctx.createOscillator();
+  const clickGain = ctx.createGain();
+  clickOsc.type = 'square';
+  clickOsc.frequency.setValueAtTime(180, now);
+  clickOsc.frequency.exponentialRampToValueAtTime(40, now + 0.03);
+  clickGain.gain.setValueAtTime(0.7, now);
+  clickGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.05);
+  clickOsc.connect(clickGain);
+  clickGain.connect(state.instrumentGain);
+  clickOsc.start(now);
+  clickOsc.stop(now + 0.07);
+
+  const noiseBuffer = ctx.createBuffer(1, ctx.sampleRate * 0.02, ctx.sampleRate);
+  const noiseData = noiseBuffer.getChannelData(0);
+  for (let i = 0; i < noiseData.length; i++) noiseData[i] = Math.random() * 2 - 1;
+  const noise = ctx.createBufferSource();
+  const noiseFilter = ctx.createBiquadFilter();
+  const noiseGain = ctx.createGain();
+  noise.buffer = noiseBuffer;
+  noiseFilter.type = 'highpass';
+  noiseFilter.frequency.value = 1100;
+  noiseGain.gain.setValueAtTime(0.18, now);
+  noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.06);
+  noise.connect(noiseFilter);
+  noiseFilter.connect(noiseGain);
+  noiseGain.connect(state.instrumentGain);
+  noise.start(now);
+  noise.stop(now + 0.08);
 }
 
 function playSnare() {
   const ctx = ensureAudio();
   const now = ctx.currentTime;
-  const buffer = ctx.createBuffer(1, ctx.sampleRate * 0.22, ctx.sampleRate);
-  const channel = buffer.getChannelData(0);
-  for (let i = 0; i < channel.length; i++) channel[i] = Math.random() * 2 - 1;
 
-  const source = ctx.createBufferSource();
-  source.buffer = buffer;
-  const filter = ctx.createBiquadFilter();
-  filter.type = 'bandpass';
-  filter.frequency.value = 1800;
-  const gain = ctx.createGain();
-  gain.gain.setValueAtTime(0.8, now);
-  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+  const noiseBuffer = ctx.createBuffer(1, ctx.sampleRate * 0.24, ctx.sampleRate);
+  const noiseData = noiseBuffer.getChannelData(0);
+  for (let i = 0; i < noiseData.length; i++) {
+    const envelope = Math.exp(-i / (noiseData.length * 0.18));
+    noiseData[i] = (Math.random() * 2 - 1) * envelope;
+  }
 
-  source.connect(filter);
-  filter.connect(gain);
-  gain.connect(state.instrumentGain);
-  source.start(now);
-  source.stop(now + 0.2);
+  const noise = ctx.createBufferSource();
+  const noiseFilter = ctx.createBiquadFilter();
+  const noiseGain = ctx.createGain();
+  noise.buffer = noiseBuffer;
+  noiseFilter.type = 'bandpass';
+  noiseFilter.frequency.value = 2200;
+  noiseGain.gain.setValueAtTime(0.95, now);
+  noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.22);
+  noise.connect(noiseFilter);
+  noiseFilter.connect(noiseGain);
+  noiseGain.connect(state.instrumentGain);
+  noise.start(now);
+  noise.stop(now + 0.24);
+
+  const tone = ctx.createOscillator();
+  const toneGain = ctx.createGain();
+  tone.type = 'triangle';
+  tone.frequency.setValueAtTime(175, now);
+  tone.frequency.exponentialRampToValueAtTime(95, now + 0.16);
+  toneGain.gain.setValueAtTime(0.7, now);
+  toneGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.16);
+  tone.connect(toneGain);
+  toneGain.connect(state.instrumentGain);
+  tone.start(now);
+  tone.stop(now + 0.18);
 }
 
 function playHiHat() {
   const ctx = ensureAudio();
   const now = ctx.currentTime;
-  const buffer = ctx.createBuffer(1, ctx.sampleRate * 0.04, ctx.sampleRate);
-  const channel = buffer.getChannelData(0);
-  for (let i = 0; i < channel.length; i++) channel[i] = Math.random() * 2 - 1;
 
-  const source = ctx.createBufferSource();
-  source.buffer = buffer;
-  const filter = ctx.createBiquadFilter();
-  filter.type = 'highpass';
-  filter.frequency.value = 7000;
-  const gain = ctx.createGain();
-  gain.gain.setValueAtTime(0.6, now);
-  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.07);
+  const layers = [6000, 9000, 12000];
+  layers.forEach((freq, index) => {
+    const noiseBuffer = ctx.createBuffer(1, ctx.sampleRate * 0.06, ctx.sampleRate);
+    const noiseData = noiseBuffer.getChannelData(0);
+    for (let i = 0; i < noiseData.length; i++) noiseData[i] = (Math.random() * 2 - 1) * Math.exp(-i / (noiseData.length * 0.25));
 
-  source.connect(filter);
-  filter.connect(gain);
-  gain.connect(state.instrumentGain);
-  source.start(now);
-  source.stop(now + 0.08);
+    const source = ctx.createBufferSource();
+    const filter = ctx.createBiquadFilter();
+    const gain = ctx.createGain();
+    source.buffer = noiseBuffer;
+    filter.type = 'highpass';
+    filter.frequency.value = freq;
+    gain.gain.setValueAtTime(index === 0 ? 0.52 : 0.24, now);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.08);
+    source.connect(filter);
+    filter.connect(gain);
+    gain.connect(state.instrumentGain);
+    source.start(now);
+    source.stop(now + 0.08);
+  });
 }
 
 function playBongo() {
@@ -506,8 +716,8 @@ function playBongo() {
   osc.type = 'triangle';
   osc.frequency.setValueAtTime(220, now);
   osc.frequency.exponentialRampToValueAtTime(120, now + 0.18);
-  gain.gain.setValueAtTime(0.8, now);
-  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.26);
+  gain.gain.setValueAtTime(0.9, now);
+  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
   osc.connect(gain);
   gain.connect(state.instrumentGain);
   osc.start(now);
@@ -536,19 +746,35 @@ function playClap() {
 }
 
 function playHeavyBass() {
-  playSynth(46, 'heavybass', 0.8);
+  playSynthVoice(46, 'heavybass');
+}
+
+function playClubBass() {
+  playSynthVoice(43.65, 'clubbass');
+}
+
+function playTrapBass() {
+  playSynthVoice(41.2, 'trapbass');
 }
 
 function playLead() {
-  playSynth(220, 'lead', 0.5);
+  playSynthVoice(220, 'lead');
+}
+
+function playTranceLead() {
+  playSynthVoice(220, 'trancelead');
 }
 
 function playPad() {
-  playSynth(164.81, 'pad', 1.4);
+  playSynthVoice(164.81, 'pad');
+}
+
+function playTrancePad() {
+  playSynthVoice(164.81, 'trancepad');
 }
 
 function playEPiano() {
-  playSynth(220, 'epiano', 0.55);
+  playSynthVoice(220, 'epiano');
 }
 
 function triggerDrum(drum) {
@@ -629,7 +855,7 @@ function buildKeyboard() {
     key.addEventListener('pointerdown', async () => {
       await resumeAudio();
       const preset = elements.presetSelect.value;
-      playSynth(noteToFrequency(note), preset);
+      playSynthVoice(noteToFrequency(note), preset);
     });
     elements.keyboard.appendChild(key);
   });
