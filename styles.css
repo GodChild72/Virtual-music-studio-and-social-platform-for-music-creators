@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Studio Pro</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-mark">SP</div>
+          <div>
+            <h1>Studio Pro</h1>
+            <p>Record. Build. Mix. Release.</p>
+          </div>
+        </div>
+
+        <div class="top-actions">
+          <button class="chip" id="loadSoundBankBtn">Load Sound Bank</button>
+          <button class="primary-btn" id="enterStudioBtn">Enter Studio</button>
+        </div>
+      </header>
+
+      <main class="main-grid">
+        <section class="main-column">
+          <section class="hero panel">
+            <div class="eyebrow">Premium studio suite</div>
+            <h2>Build your <span class="gradient">next hit</span> in one creative space.</h2>
+            <p>
+              Create with synths, a drum machine, layered percussion, recorded vocals,
+              imported tracks, and lossless WAV exports.
+            </p>
+
+            <div class="hero-actions">
+              <button class="big-btn primary" id="recordBtn">Start Recording</button>
+              <label class="big-btn secondary" for="audioUpload">Upload Audio</label>
+              <input id="audioUpload" type="file" accept="audio/*" multiple hidden />
+            </div>
+
+            <div class="stats-row">
+              <div class="stat">
+                <strong id="trackCount">0</strong>
+                <span>tracks</span>
+              </div>
+              <div class="stat">
+                <strong id="qualityLabel">48kHz</strong>
+                <span>studio quality</span>
+              </div>
+              <div class="stat">
+                <strong>WAV</strong>
+                <span>lossless</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="studio panel">
+            <div class="panel-header">
+              <h3>Session Console</h3>
+              <span class="status-pill" id="statusPill">Ready</span>
+            </div>
+
+            <div class="transport-row">
+              <div class="left">
+                <button class="mini-btn primary" id="recordMicBtn">Record</button>
+                <button class="mini-btn" id="pauseBtn">Pause</button>
+                <button class="mini-btn good" id="exportBtn">Export Mix</button>
+              </div>
+              <div class="right">
+                <button class="mini-btn" id="stopPlaybackBtn">Stop All</button>
+                <button class="mini-btn danger" id="clearSessionBtn">Clear Session</button>
+              </div>
+            </div>
+
+            <div class="session-toolbar">
+              <div class="session-metrics">
+                <span><strong id="runtimeLabel">00:00</strong> runtime</span>
+                <span><strong>24-bit WAV</strong> export</span>
+              </div>
+              <div class="chip" id="masterMeter">Master: 0.00 dB</div>
+            </div>
+
+            <div id="trackList" class="track-list"></div>
+          </section>
+        </section>
+
+        <aside class="side-column">
+          <section class="side-panel panel">
+            <h3>Sound Bank</h3>
+            <div class="sound-bank-list" id="soundBankList"></div>
+          </section>
+
+          <section class="side-panel panel">
+            <h3>Drum Machine</h3>
+            <div class="sequencer" id="sequencer"></div>
+            <div class="drum-pad-grid" id="drumPads">
+              <button class="drum-pad" data-drum="kick">Kick</button>
+              <button class="drum-pad" data-drum="snare">Snare</button>
+              <button class="drum-pad" data-drum="hihat">Hi-Hat</button>
+              <button class="drum-pad" data-drum="bongo">Bongo</button>
+              <button class="drum-pad" data-drum="tom">Tom</button>
+              <button class="drum-pad" data-drum="clap">Clap</button>
+            </div>
+            <div class="pattern-controls">
+              <button class="mini-btn good" id="playPatternBtn">Play Pattern</button>
+              <button class="mini-btn" id="stopPatternBtn">Stop</button>
+              <input id="bpmInput" type="number" min="60" max="180" value="110" />
+            </div>
+          </section>
+
+          <section class="side-panel panel">
+            <h3>Synth Keyboard</h3>
+            <div class="keyboard" id="keyboard"></div>
+            <div class="preset-row">
+              <label for="presetSelect">Preset</label>
+              <select id="presetSelect">
+                <option value="heavybass">Heavy Sub Bass</option>
+                <option value="lead">Lead</option>
+                <option value="pad">Pad</option>
+                <option value="epiano">Electric Piano</option>
+              </select>
+            </div>
+            <div class="record-toggle-row">
+              <label for="recordInstruments">Record instruments</label>
+              <input id="recordInstruments" type="checkbox" />
+            </div>
+          </section>
+
+          <section class="side-panel panel">
+            <h3>Session Settings</h3>
+            <div class="setting-group">
+              <label for="qualitySelect">Quality</label>
+              <select id="qualitySelect">
+                <option value="22050">22.05 kHz / 16-bit</option>
+                <option value="44100" selected>44.1 kHz / 24-bit</option>
+                <option value="48000">48 kHz / 24-bit</option>
+                <option value="96000">96 kHz / 24-bit</option>
+              </select>
+            </div>
+          </section>
+        </aside>
+      </main>
+    </div>
+
+    <script src="js/app.js"></script>
+  </body>
+</html>
