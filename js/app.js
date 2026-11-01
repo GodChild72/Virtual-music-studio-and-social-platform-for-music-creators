@@ -114,6 +114,49 @@ const synthPresets = {
   },
 };
 
+const genreProfiles = {
+  hiphop: {
+    label: 'Hip Hop',
+    bpm: 92,
+    kick: [1,0,0,0,1,0,0,1,0,0,0,1,1,0,0,0],
+    snare: [0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0],
+    hihat: [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],
+    preset: 'heavybass'
+  },
+  trap: {
+    label: 'Trap',
+    bpm: 140,
+    kick: [1,0,0,1,0,0,1,0,1,0,0,1,0,0,1,0],
+    snare: [0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0],
+    hihat: [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+    preset: 'trapbass'
+  },
+  club: {
+    label: 'Club',
+    bpm: 124,
+    kick: [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],
+    snare: [0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0],
+    hihat: [1,1,0,1,1,1,0,1,1,1,0,1,1,0,1,1],
+    preset: 'clubbass'
+  },
+  trance: {
+    label: 'Trance',
+    bpm: 128,
+    kick: [1,0,0,0,1,0,0,1,1,0,0,0,1,0,0,1],
+    snare: [0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0],
+    hihat: [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],
+    preset: 'trancelead'
+  },
+  electronic: {
+    label: 'Electronic',
+    bpm: 118,
+    kick: [1,0,0,0,1,0,1,0,1,0,0,1,1,0,1,0],
+    snare: [0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0],
+    hihat: [1,1,1,0,1,1,1,0,1,1,1,0,1,1,1,0],
+    preset: 'trancepad'
+  }
+};
+
 const state = {
   tracks: [],
   bpm: 110,
@@ -129,6 +172,9 @@ const state = {
   },
   audioCtx: null,
   masterGain: null,
+  masterFilter: null,
+  compressor: null,
+  limiter: null,
   instrumentGain: null,
   instrumentDest: null,
   mediaRecorder: null,
@@ -139,6 +185,8 @@ const state = {
   isRecording: false,
   isPlayingPattern: false,
   recordInstruments: false,
+  currentGenre: 'hiphop',
+  masterLevel: 1,
 };
 
 const elements = {
@@ -155,6 +203,8 @@ const elements = {
   presetSelect: document.getElementById('presetSelect'),
   recordInstruments: document.getElementById('recordInstruments'),
   qualitySelect: document.getElementById('qualitySelect'),
+  genreSelect: document.getElementById('genreSelect'),
+  masterLevel: document.getElementById('masterLevel'),
   audioUpload: document.getElementById('audioUpload'),
   keyboard: document.getElementById('keyboard'),
   recordBtn: document.getElementById('recordBtn'),
@@ -175,7 +225,30 @@ function ensureAudio() {
   const ctx = new (window.AudioContext || window.webkitAudioContext)();
   const master = ctx.createGain();
   master.gain.value = 0.98;
-  master.connect(ctx.destination);
+
+  const filter = ctx.createBiquadFilter();
+  filter.type = 'lowpass';
+  filter.frequency.value = 20000;
+  filter.Q.value = 0.7;
+
+  const compressor = ctx.createDynamicsCompressor();
+  compressor.threshold.value = -24;
+  compressor.knee.value = 25;
+  compressor.ratio.value = 10;
+  compressor.attack.value = 0.003;
+  compressor.release.value = 0.2;
+
+  const limiter = ctx.createDynamicsCompressor();
+  limiter.threshold.value = -1;
+  limiter.knee.value = 0;
+  limiter.ratio.value = 20;
+  limiter.attack.value = 0.001;
+  limiter.release.value = 0.05;
+
+  master.connect(filter);
+  filter.connect(compressor);
+  compressor.connect(limiter);
+  limiter.connect(ctx.destination);
 
   const instrumentGain = ctx.createGain();
   instrumentGain.gain.value = 1;
@@ -186,6 +259,9 @@ function ensureAudio() {
 
   state.audioCtx = ctx;
   state.masterGain = master;
+  state.masterFilter = filter;
+  state.compressor = compressor;
+  state.limiter = limiter;
   state.instrumentGain = instrumentGain;
   state.instrumentDest = dest;
 
@@ -230,6 +306,11 @@ function updateRuntime() {
   elements.runtimeLabel.textContent = formatTime(elapsed);
 }
 
+function updateMasterMeter() {
+  const value = Number(state.masterLevel || 1);
+  elements.masterMeter.textContent = `Master: ${value.toFixed(2)} dB`;
+}
+
 function startSessionTimer() {
   if (sessionTimer) return;
   sessionStart = Date.now();
@@ -248,6 +329,34 @@ function stopSessionTimer() {
 
 function renderTrackCount() {
   elements.trackCount.textContent = String(state.tracks.length);
+}
+
+function applyGenreProfile() {
+  const genre = state.currentGenre || 'hiphop';
+  const profile = genreProfiles[genre];
+  if (!profile) return;
+
+  state.pattern.kick = [...profile.kick];
+  state.pattern.snare = [...profile.snare];
+  state.pattern.hihat = [...profile.hihat];
+  if (elements.genreSelect) elements.genreSelect.value = genre;
+  if (elements.bpmInput) elements.bpmInput.value = String(profile.bpm);
+  state.bpm = profile.bpm;
+  if (elements.presetSelect) {
+    const preset = profile.preset || 'heavybass';
+    elements.presetSelect.value = preset;
+  }
+  setStatus(`${profile.label} profile loaded`);
+  renderPatternSelection();
+}
+
+function renderPatternSelection() {
+  document.querySelectorAll('.step-button').forEach((button) => {
+    const stepIndex = Number(button.dataset.index || 0);
+    const currentDrum = document.querySelector('.drum-pad.active')?.dataset.drum || 'kick';
+    const active = !!state.pattern[currentDrum]?.[stepIndex];
+    button.classList.toggle('active', active);
+  });
 }
 
 function buildSoundBank() {
@@ -523,10 +632,9 @@ function noteToFrequency(note) {
 function makeDriveCurve(amount = 0.8) {
   const samples = 2048;
   const curve = new Float32Array(samples);
-  const deg = Math.PI / 180;
   for (let i = 0; i < samples; i++) {
     const x = (i * 2) / samples - 1;
-    curve[i] = ((Math.sin(x * Math.PI * 0.6)) / (1 + amount * 3)) + (x * amount * 0.18);
+    curve[i] = 0.75 * Math.tanh(x * (1.6 + amount)) + 0.15 * x;
   }
   return curve;
 }
@@ -540,8 +648,8 @@ function playSynthVoice(freq, preset = 'heavybass', durationOverride = null) {
   const oscB = ctx.createOscillator();
   const filter = ctx.createBiquadFilter();
   const gain = ctx.createGain();
-
   const drive = ctx.createWaveShaper();
+
   drive.curve = makeDriveCurve(config.drive || 0.5);
   drive.oversample = '4x';
 
@@ -1077,6 +1185,15 @@ function setQualityLabel() {
   elements.qualityLabel.textContent = map[value] || '48kHz';
 }
 
+function applyMasterLevel() {
+  const level = Number(elements.masterLevel.value || 1);
+  state.masterLevel = level;
+  if (state.masterGain) {
+    state.masterGain.gain.value = level;
+  }
+  updateMasterMeter();
+}
+
 function bindControls() {
   elements.recordBtn.addEventListener('click', toggleRecord);
   elements.recordMicBtn.addEventListener('click', toggleRecord);
@@ -1101,6 +1218,11 @@ function bindControls() {
   });
 
   elements.qualitySelect.addEventListener('change', setQualityLabel);
+  elements.genreSelect.addEventListener('change', (event) => {
+    state.currentGenre = event.target.value;
+    applyGenreProfile();
+  });
+  elements.masterLevel.addEventListener('input', applyMasterLevel);
   elements.audioUpload.addEventListener('change', event => {
     const files = Array.from(event.target.files || []);
     files.forEach(file => addTrackFromFile(file));
@@ -1111,6 +1233,7 @@ function bindControls() {
     button.addEventListener('click', () => {
       document.querySelectorAll('.drum-pad').forEach(item => item.classList.remove('active'));
       button.classList.add('active');
+      renderPatternSelection();
       triggerDrum(button.dataset.drum);
     });
   });
@@ -1132,6 +1255,9 @@ function init() {
   buildSequencer();
   buildKeyboard();
   buildSoundBank();
+  applyMasterLevel();
+  state.currentGenre = 'hiphop';
+  applyGenreProfile();
   renderTracks();
   renderTrackCount();
   updateRuntime();
