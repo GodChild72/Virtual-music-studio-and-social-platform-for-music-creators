@@ -769,3 +769,27 @@ select {
   outline: 2px dashed #f59e0b;
   outline-offset: 2px;
 }
+
+.crossfader-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.crossfader-row input[type="range"] {
+  flex: 1;
+}
+
+.deck-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.crossfader-end {
+  font-weight: 700;
+  color: #edf3ff;
+}
