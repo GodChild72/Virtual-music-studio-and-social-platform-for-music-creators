@@ -22,6 +22,7 @@ const soundBank = [
   { id: 'epiano', name: 'Classic EP', type: 'Keys' },
   { id: 'guitarchord', name: 'Power Chord', type: 'Guitar' },
   { id: 'guitarharmonic', name: 'Guitar Harmonic', type: 'Guitar' },
+  { id: 'pianochord', name: 'Piano Chord', type: 'Keys' },
   { id: 'kick', name: 'Punch Kick', type: 'Drum' },
   { id: 'snare', name: 'Crack Snare', type: 'Drum' },
   { id: 'hihat', name: 'Open Hat', type: 'Drum' },
@@ -798,6 +799,9 @@ const state = {
   deckPlayRequest: { A: 0, B: 0 },
   guitarVoices: [],
   guitarWhammy: 0,
+  keyboardOctave: 4,
+  keyboardKeys: {},
+  qwertyBound: false,
 
   audioCtx: null,
   masterGain: null,
@@ -849,6 +853,10 @@ const elements = {
   deckBTrackButton: document.getElementById('deckBTrackButton'),
   whammy: document.getElementById('whammy'),
   whammyLabel: document.getElementById('whammyLabel'),
+  octaveDown: document.getElementById('octaveDown'),
+  octaveUp: document.getElementById('octaveUp'),
+  octaveLabel: document.getElementById('octaveLabel'),
+  noteReadout: document.getElementById('noteReadout'),
   presetSelect: document.getElementById('presetSelect'),
   recordInstruments: document.getElementById('recordInstruments'),
   qualitySelect: document.getElementById('qualitySelect'),
@@ -1233,6 +1241,7 @@ function buildSoundBank() {
       else if (id === 'stab') playStab();
       else if (id === 'guitarchord') playGuitarChord();
       else if (id === 'guitarharmonic') playGuitarHarmonic();
+      else if (id === 'pianochord') playPianoChord();
     });
   });
 }
@@ -1500,6 +1509,8 @@ const GUITAR_TONES = {
   guitardistort: { drive: 1.4, cab: 3800, feedback: 0.97, brightness: 4200, level: 0.55, hall: 0.15, delayMix: 0 },
   guitarlead: { drive: 1.1, cab: 4200, feedback: 0.982, brightness: 5000, level: 0.5, hall: 0.2, delayMix: 0.22, delayTime: 0.28, delayFeedback: 0.35 },
   guitarharmonic: { drive: 0, cab: 9000, feedback: 0.9, brightness: 9000, level: 0.35, hall: 0.3, delayMix: 0 },
+  // A piano is struck strings too, so it shares the same engine.
+  piano: { drive: 0, cab: 9000, feedback: 0.975, brightness: 7500, level: 0.5, hall: 0.3, delayMix: 0 },
 };
 
 function playGuitarVoice(freq, tone = 'guitarclean', when = null) {
@@ -1640,9 +1651,17 @@ function playGuitarHarmonic() {
   playGuitarVoice(1318.51, 'guitarharmonic', ensureAudio().currentTime);
 }
 
+function playPianoChord() {
+  const t = ensureAudio().currentTime;
+  // C major, rolled low to high: C4, E4, G4.
+  playGuitarVoice(261.63, 'piano', t);
+  playGuitarVoice(329.63, 'piano', t + 0.02);
+  playGuitarVoice(392.0, 'piano', t + 0.04);
+}
+
 function playSynthVoice(freq, preset = 'heavybass', durationOverride = null) {
   const ctx = ensureAudio();
-  if (preset.startsWith('guitar')) return playGuitarVoice(freq, preset);
+  if (preset.startsWith('guitar') || preset === 'piano') return playGuitarVoice(freq, preset);
   const now = ctx.currentTime;
   const config = synthPresets[preset] || synthPresets.heavybass;
   const isPad = preset === 'pad' || preset === 'trancepad';
@@ -3557,22 +3576,98 @@ function stopPattern() {
   setPatternButtonState(false);
 }
 
-function buildKeyboard() {
-  const notes = ['C4', 'C#4', 'D4', 'D#4', 'E4', 'F4', 'F#4', 'G4', 'G#4', 'A4', 'A#4', 'B4', 'C5'];
 
-  notes.forEach(note => {
+// The full 88-key piano, A0 to C8: every note, no shortcuts.
+function fullKeyboardNotes() {
+  const names = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+  const notes = [];
+  for (let midi = 21; midi <= 108; midi++) {
+    notes.push(names[midi % 12] + (Math.floor(midi / 12) - 1));
+  }
+  return notes;
+}
+
+function updateOctaveLabel() {
+  if (elements.octaveLabel) {
+    elements.octaveLabel.textContent = `Octave ${state.keyboardOctave}`;
+  }
+}
+
+function scrollToOctave(n) {
+  state.keyboardOctave = Math.max(0, Math.min(8, n));
+  updateOctaveLabel();
+  const container = elements.keyboard;
+  const key = state.keyboardKeys[`C${state.keyboardOctave}`];
+  if (container && key) {
+    container.scrollLeft = key.offsetLeft || 0;
+  } else if (container && state.keyboardOctave === 0) {
+    container.scrollLeft = 0;
+  }
+}
+
+function playKeyboardNote(note) {
+  const freq = noteToFrequency(note);
+  if (elements.noteReadout) {
+    elements.noteReadout.textContent = `${note} · ${freq.toFixed(1)} Hz`;
+  }
+  playSynthVoice(freq, elements.presetSelect ? elements.presetSelect.value : 'heavybass');
+}
+
+// One octave of laptop keys, anchored at the current octave.
+const QWERTY_MAP = {
+  KeyA: ['C', 0], KeyW: ['C#', 0], KeyS: ['D', 0], KeyE: ['D#', 0],
+  KeyD: ['E', 0], KeyF: ['F', 0], KeyT: ['F#', 0], KeyG: ['G', 0],
+  KeyY: ['G#', 0], KeyH: ['A', 0], KeyU: ['A#', 0], KeyJ: ['B', 0],
+  KeyK: ['C', 1], KeyO: ['C#', 1], KeyL: ['D', 1], KeyP: ['D#', 1],
+  Semicolon: ['E', 1],
+};
+
+function buildKeyboard() {
+  if (!elements.keyboard) return;
+  elements.keyboard.innerHTML = '';
+  state.keyboardKeys = {};
+  fullKeyboardNotes().forEach(note => {
     const key = document.createElement('button');
     key.type = 'button';
     key.className = `keyboard-key ${note.includes('#') ? 'black' : 'white'}`;
-    key.textContent = note.replace(/\d/g, '');
+    key.textContent = note.startsWith('C') && !note.includes('#') ? note : note.replace(/\d/g, '');
     key.addEventListener('pointerdown', async () => {
       await resumeAudio();
-      const preset = elements.presetSelect.value;
-      playSynthVoice(noteToFrequency(note), preset);
+      key.classList.add('pressed');
+      playKeyboardNote(note);
     });
+    ['pointerup', 'pointerleave', 'pointercancel'].forEach(evt => {
+      key.addEventListener(evt, () => key.classList.remove('pressed'));
+    });
+    state.keyboardKeys[note] = key;
     elements.keyboard.appendChild(key);
   });
+  scrollToOctave(state.keyboardOctave);
+
+  if (!state.qwertyBound && typeof document !== 'undefined' && document.addEventListener) {
+    state.qwertyBound = true;
+    document.addEventListener('keydown', async event => {
+      if (event.repeat) return;
+      const target = event.target;
+      if (target && (target.tagName === 'INPUT' || target.tagName === 'SELECT' || target.tagName === 'TEXTAREA')) return;
+      const map = QWERTY_MAP[event.code];
+      if (!map) return;
+      const note = map[0] + (state.keyboardOctave + map[1]);
+      const key = state.keyboardKeys[note];
+      if (key) key.classList.add('pressed');
+      await resumeAudio();
+      playKeyboardNote(note);
+    });
+    document.addEventListener('keyup', event => {
+      const map = QWERTY_MAP[event.code];
+      if (!map) return;
+      const note = map[0] + (state.keyboardOctave + map[1]);
+      const key = state.keyboardKeys[note];
+      if (key) key.classList.remove('pressed');
+    });
+  }
 }
+
 
 async function startMicRecording() {
   await resumeAudio();
@@ -3848,6 +3943,8 @@ function bindControls() {
   if (elements.deckATrackButton) elements.deckATrackButton.addEventListener('click', () => toggleDeckTrack('A'));
   if (elements.deckBTrackButton) elements.deckBTrackButton.addEventListener('click', () => toggleDeckTrack('B'));
   if (elements.whammy) elements.whammy.addEventListener('input', e => applyWhammy(Number(e.target.value || 0)));
+  if (elements.octaveDown) elements.octaveDown.addEventListener('click', () => scrollToOctave(state.keyboardOctave - 1));
+  if (elements.octaveUp) elements.octaveUp.addEventListener('click', () => scrollToOctave(state.keyboardOctave + 1));
 
   document.querySelectorAll('.drum-pad').forEach(button => {
     button.addEventListener('click', () => {

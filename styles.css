@@ -885,3 +885,16 @@ select {
 .whammy-row input[type="range"] {
   flex: 1;
 }
+
+.keyboard-key.pressed {
+  filter: brightness(1.35);
+  transform: translateY(1px);
+}
+
+.octave-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}

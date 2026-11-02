@@ -198,6 +198,12 @@
 
           <section class="side-panel panel">
             <h3>Synth Keyboard</h3>
+            <div class="octave-row">
+              <button type="button" class="song-button" id="octaveDown">− Octave</button>
+              <span class="chip" id="octaveLabel">Octave 4</span>
+              <button type="button" class="song-button" id="octaveUp">Octave +</button>
+              <span class="chip" id="noteReadout">Play a key</span>
+            </div>
             <div class="keyboard" id="keyboard"></div>
             <div class="preset-row">
               <label for="presetSelect">Preset</label>
@@ -227,6 +233,7 @@
                 <option value="guitarcrunch">Crunch Guitar</option>
                 <option value="guitardistort">Distorted Guitar</option>
                 <option value="guitarlead">Lead Guitar</option>
+                <option value="piano">Grand Piano</option>
               </select>
             </div>
             <div class="whammy-row">
