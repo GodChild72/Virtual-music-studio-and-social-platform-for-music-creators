@@ -790,6 +790,10 @@ const state = {
   songBarsPlayed: 0,
   songRepeat: true,
   songQueued: false,
+  deckTracks: { A: null, B: null },
+  deckPlaying: { A: false, B: false },
+  deckSources: { A: null, B: null },
+  deckPlayRequest: { A: 0, B: 0 },
 
   audioCtx: null,
   masterGain: null,
@@ -835,6 +839,10 @@ const elements = {
   songRepeatButton: document.getElementById('songRepeatButton'),
   songAddButton: document.getElementById('songAddButton'),
   songSections: document.getElementById('songSections'),
+  deckATrack: document.getElementById('deckATrack'),
+  deckBTrack: document.getElementById('deckBTrack'),
+  deckATrackButton: document.getElementById('deckATrackButton'),
+  deckBTrackButton: document.getElementById('deckBTrackButton'),
   presetSelect: document.getElementById('presetSelect'),
   recordInstruments: document.getElementById('recordInstruments'),
   qualitySelect: document.getElementById('qualitySelect'),
@@ -1306,6 +1314,7 @@ function addTrackFromBlob(blob, filename) {
   startSessionTimer();
 
   decodeTrackWaveform(track).then(() => renderTracks());
+  refreshDeckTrackSelects();
 }
 
 function addTrackFromFile(file) {
@@ -1316,10 +1325,13 @@ function addTrackFromFile(file) {
 function clearTracks() {
   state.tracks.forEach(track => URL.revokeObjectURL(track.url));
   state.tracks = [];
+  stopDeckTrack('A');
+  stopDeckTrack('B');
   renderTracks();
   renderTrackCount();
   stopSessionTimer();
   setStatus('Session cleared');
+  refreshDeckTrackSelects();
 }
 
 function renderTracks() {
@@ -3214,6 +3226,113 @@ function buildSequencer() {
 }
 
 
+
+// ---- DJ deck tracks: uploaded session tracks playable on the decks,
+// routed through the deck buses so the crossfader blends them with
+// everything else on that deck.
+
+function deckBus(deck) {
+  return deck === 'A' ? state.deckGainA : state.deckGainB;
+}
+
+function updateDeckTrackButtons() {
+  const buttons = { A: elements.deckATrackButton, B: elements.deckBTrackButton };
+  ['A', 'B'].forEach(deck => {
+    const button = buttons[deck];
+    if (!button) return;
+    button.textContent = state.deckPlaying[deck] ? 'Stop Track' : 'Play Track';
+    button.disabled = !state.deckTracks[deck];
+  });
+}
+
+function refreshDeckTrackSelects() {
+  const selects = { A: elements.deckATrack, B: elements.deckBTrack };
+  ['A', 'B'].forEach(deck => {
+    const select = selects[deck];
+    if (!select) return;
+    const assigned = state.tracks.some(track => track.id === state.deckTracks[deck]);
+    if (state.deckTracks[deck] && !assigned) {
+      state.deckTracks[deck] = null;
+      if (state.deckPlaying[deck]) stopDeckTrack(deck);
+    }
+    select.innerHTML = '';
+    const none = document.createElement('option');
+    none.value = '';
+    none.textContent = state.tracks.length ? 'No track' : 'No tracks yet — upload one';
+    select.appendChild(none);
+    state.tracks.forEach(track => {
+      const option = document.createElement('option');
+      option.value = track.id;
+      option.textContent = track.name;
+      select.appendChild(option);
+    });
+    select.value = state.deckTracks[deck] || '';
+  });
+  updateDeckTrackButtons();
+}
+
+function setDeckTrack(deck, trackId) {
+  state.deckTracks[deck] = trackId || null;
+  if (state.deckPlaying[deck]) {
+    if (state.deckTracks[deck]) return playDeckTrack(deck);
+    stopDeckTrack(deck);
+  }
+  updateDeckTrackButtons();
+}
+
+async function playDeckTrack(deck) {
+  const track = state.tracks.find(item => item.id === state.deckTracks[deck]);
+  if (!track) return;
+  const ctx = ensureAudio();
+  const bus = deckBus(deck);
+  if (!bus) return;
+  // A request token so a slow decode never lets an older pick win
+  // over a newer one on the same deck.
+  const request = (state.deckPlayRequest[deck] || 0) + 1;
+  state.deckPlayRequest[deck] = request;
+  if (!track.buffer) {
+    if (!track.blob) return;
+    try {
+      track.buffer = await ctx.decodeAudioData((await track.blob.arrayBuffer()).slice(0));
+    } catch (err) {
+      console.warn('Deck track decode failed', track.name, err);
+      return;
+    }
+  }
+  if (state.deckPlayRequest[deck] !== request) return;
+  stopDeckTrack(deck);
+  const source = ctx.createBufferSource();
+  source.buffer = track.buffer;
+  source.connect(bus);
+  source.start(0);
+  state.deckSources[deck] = source;
+  state.deckPlaying[deck] = true;
+  source.onended = () => {
+    if (state.deckSources[deck] === source) {
+      state.deckSources[deck] = null;
+      state.deckPlaying[deck] = false;
+      updateDeckTrackButtons();
+    }
+  };
+  updateDeckTrackButtons();
+}
+
+function stopDeckTrack(deck) {
+  const source = state.deckSources[deck];
+  state.deckSources[deck] = null;
+  state.deckPlaying[deck] = false;
+  if (source) {
+    try { source.stop(); } catch (err) {}
+    try { source.disconnect(); } catch (err) {}
+  }
+  updateDeckTrackButtons();
+}
+
+function toggleDeckTrack(deck) {
+  if (state.deckPlaying[deck]) stopDeckTrack(deck);
+  else playDeckTrack(deck);
+}
+
 // One shared clock tick: plays the current step of both decks, so the
 // two loops stay locked together while the crossfader blends them.
 function playStep() {
@@ -3563,6 +3682,10 @@ function bindControls() {
   if (elements.songModeButton) elements.songModeButton.addEventListener('click', toggleSongMode);
   if (elements.songRepeatButton) elements.songRepeatButton.addEventListener('click', toggleSongRepeat);
   if (elements.songAddButton) elements.songAddButton.addEventListener('click', addSongSection);
+  if (elements.deckATrack) elements.deckATrack.addEventListener('change', e => setDeckTrack('A', e.target.value));
+  if (elements.deckBTrack) elements.deckBTrack.addEventListener('change', e => setDeckTrack('B', e.target.value));
+  if (elements.deckATrackButton) elements.deckATrackButton.addEventListener('click', () => toggleDeckTrack('A'));
+  if (elements.deckBTrackButton) elements.deckBTrackButton.addEventListener('click', () => toggleDeckTrack('B'));
 
   document.querySelectorAll('.drum-pad').forEach(button => {
     button.addEventListener('click', () => {
@@ -3594,6 +3717,7 @@ function init() {
   updateLoopButtons();
   applyCrossfader(state.crossfader || 0);
   renderSongSections();
+  refreshDeckTrackSelects();
   state.currentGenre = 'hiphop';
   applyGenreProfile();
   renderTracks();
