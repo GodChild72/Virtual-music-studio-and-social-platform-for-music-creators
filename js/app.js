@@ -15,6 +15,10 @@ const soundBank = [
   { id: 'housebass', name: 'House Bass', type: 'Bass' },
   { id: 'technobass', name: 'Techno Bass', type: 'Bass' },
   { id: 'dnbbass', name: 'DnB Bass', type: 'Bass' },
+  { id: 'trunkbass', name: 'Trunk Rattler', type: 'Bass' },
+  { id: 'windowbass', name: 'Window Shaker', type: 'Bass' },
+  { id: 'bodybass', name: 'Body Bass', type: 'Bass' },
+  { id: 'quakebass', name: '808 Earthquake', type: 'Bass' },
   { id: 'lead', name: 'Analog Lead', type: 'Lead' },
   { id: 'trancelead', name: 'Trance Lead', type: 'Lead' },
   { id: 'pad', name: 'Ambient Pad', type: 'Pad' },
@@ -490,6 +494,122 @@ const synthPresets = {
     wobble: true,
     wobbleRate: 12,
     wobbleDepth: 0.5,
+  },
+  trunkbass: {
+    wave1: 'sine',
+    wave2: 'triangle',
+    ratio: 1,
+    filterType: 'lowpass',
+    filterFrequency: 300,
+    resonance: 1.0,
+    attack: 0.01,
+    release: 2.4,
+    gain: 0.95,
+    drive: 0,
+    stack: 2,
+    detune: 3,
+    sub: true,
+    subGain: 1.0,
+    trunkGain: 0.9,
+    filterEnv: false,
+    decay: 0.6,
+    sustain: 0.97,
+    reverb: 0.03,
+    charGain: 0.1,
+    airGain: 0.04,
+    room: 0.03,
+    punchGain: 0.5,
+    punchStart: 2.5,
+    punchTime: 0.09,
+    sparkleGain: 0.06,
+  },
+  windowbass: {
+    wave1: 'triangle',
+    wave2: 'sine',
+    ratio: 1,
+    filterType: 'lowpass',
+    filterFrequency: 250,
+    resonance: 1.0,
+    attack: 0.02,
+    release: 3.2,
+    gain: 0.95,
+    drive: 0,
+    stack: 2,
+    detune: 4,
+    sub: true,
+    subGain: 1.0,
+    trunkGain: 1.0,
+    filterEnv: false,
+    decay: 0.8,
+    sustain: 1.0,
+    reverb: 0.03,
+    charGain: 0.08,
+    airGain: 0.04,
+    room: 0.03,
+    punchGain: 0.35,
+    punchStart: 2,
+    punchTime: 0.07,
+    sparkleGain: 0.05,
+  },
+  bodybass: {
+    wave1: 'sine',
+    wave2: 'triangle',
+    ratio: 1,
+    filterType: 'lowpass',
+    filterFrequency: 500,
+    resonance: 1.2,
+    attack: 0.005,
+    release: 1.6,
+    gain: 0.95,
+    drive: 0.05,
+    stack: 2,
+    detune: 5,
+    sub: true,
+    subGain: 0.9,
+    trunkGain: 0.7,
+    filterEnv: false,
+    decay: 0.5,
+    sustain: 0.92,
+    reverb: 0.03,
+    charGain: 0.15,
+    airGain: 0.05,
+    room: 0.03,
+    pitchDrop: 1.5,
+    pitchDropTime: 0.08,
+    punchGain: 0.65,
+    punchStart: 3,
+    punchTime: 0.12,
+    sparkleGain: 0.07,
+  },
+  quakebass: {
+    wave1: 'sine',
+    wave2: 'triangle',
+    ratio: 1,
+    filterType: 'lowpass',
+    filterFrequency: 400,
+    resonance: 1.0,
+    attack: 0.005,
+    release: 2.0,
+    gain: 0.95,
+    drive: 0.1,
+    stack: 1,
+    detune: 0,
+    sub: true,
+    subGain: 1.0,
+    trunkGain: 0.9,
+    filterEnv: false,
+    decay: 0.6,
+    sustain: 0.95,
+    reverb: 0.03,
+    charGain: 0.15,
+    airGain: 0.05,
+    room: 0.03,
+    pitchDrop: 2.2,
+    pitchDropTime: 0.1,
+    punchGain: 0.6,
+    punchStart: 2.5,
+    punchTime: 0.1,
+    sparkleGain: 0.08,
   },
   lead: {
     wave1: 'sawtooth',
@@ -1211,6 +1331,10 @@ function buildSoundBank() {
       else if (id === 'housebass') playHouseBass();
       else if (id === 'technobass') playTechnoBass();
       else if (id === 'dnbbass') playDnBBass();
+      else if (id === 'trunkbass') playTrunkBass();
+      else if (id === 'windowbass') playWindowBass();
+      else if (id === 'bodybass') playBodyBass();
+      else if (id === 'quakebass') playQuakeBass();
       else if (id === 'lead') playLead();
       else if (id === 'trancelead') playTranceLead();
       else if (id === 'pad') playPad();
@@ -1715,6 +1839,23 @@ function playSynthVoice(freq, preset = 'heavybass', durationOverride = null) {
     startStop(found);
   }
 
+  // LAYER 1b — TRUNK: a second clean sine one octave below the sub,
+  // tuned to the car trunk zone (30-60 Hz). It only sounds when the
+  // note is high enough for that octave to land in the zone; deep
+  // notes already live there through the sub, so nothing doubles up.
+  if ((config.trunkGain || 0) > 0 && freq * 0.25 >= 30) {
+    const trunk = ctx.createOscillator();
+    trunk.type = 'sine';
+    const trunkBaseFreq = freq * 0.25;
+    trunk.frequency.value = trunkBaseFreq;
+    const trunkGainNode = ctx.createGain();
+    trunkGainNode.gain.value = config.trunkGain;
+    trunk.connect(trunkGainNode);
+    trunkGainNode.connect(cleanBus);
+    applyDrop(trunk, trunkBaseFreq);
+    startStop(trunk);
+  }
+
   // LAYER 2 — BODY: the main detuned stack through the filter envelope.
   const bodyFilter = ctx.createBiquadFilter();
   bodyFilter.type = config.filterType || 'lowpass';
@@ -1798,15 +1939,15 @@ function playSynthVoice(freq, preset = 'heavybass', durationOverride = null) {
   if ((config.punchGain || 0) > 0) {
     const punch = ctx.createOscillator();
     punch.type = 'sine';
-    punch.frequency.setValueAtTime(freq * 2, now);
+    punch.frequency.setValueAtTime(freq * (config.punchStart || 2), now);
     punch.frequency.exponentialRampToValueAtTime(freq, now + 0.03);
     const punchGain = ctx.createGain();
     punchGain.gain.setValueAtTime(config.punchGain, now);
-    punchGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.05);
+    punchGain.gain.exponentialRampToValueAtTime(0.0001, now + (config.punchTime || 0.05));
     punch.connect(punchGain);
     punchGain.connect(voiceBus);
     punch.start(now);
-    punch.stop(now + 0.06);
+    punch.stop(now + (config.punchTime || 0.05) + 0.01);
   }
 
   // LAYER 7 — SPARKLE: a quiet detuned high pair that keeps bass
@@ -3086,6 +3227,22 @@ function playTechnoBass() {
 
 function playDnBBass() {
   playSynthVoice(55, 'dnbbass');
+}
+
+function playTrunkBass() {
+  playSynthVoice(130.81, 'trunkbass');
+}
+
+function playWindowBass() {
+  playSynthVoice(130.81, 'windowbass');
+}
+
+function playBodyBass() {
+  playSynthVoice(98, 'bodybass');
+}
+
+function playQuakeBass() {
+  playSynthVoice(65.41, 'quakebass');
 }
 
 function playLead() {
