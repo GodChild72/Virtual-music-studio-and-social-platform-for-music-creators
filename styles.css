@@ -751,3 +751,21 @@ select {
     width: 100%;
   }
 }
+
+.loop-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.loop-btn.active {
+  background: #8b5cf6;
+  color: #fff;
+  border-color: #8b5cf6;
+}
+
+.loop-btn.pending {
+  outline: 2px dashed #f59e0b;
+  outline-offset: 2px;
+}
