@@ -20,6 +20,8 @@ const soundBank = [
   { id: 'pad', name: 'Ambient Pad', type: 'Pad' },
   { id: 'trancepad', name: 'Trance Pad', type: 'Pad' },
   { id: 'epiano', name: 'Classic EP', type: 'Keys' },
+  { id: 'guitarchord', name: 'Power Chord', type: 'Guitar' },
+  { id: 'guitarharmonic', name: 'Guitar Harmonic', type: 'Guitar' },
   { id: 'kick', name: 'Punch Kick', type: 'Drum' },
   { id: 'snare', name: 'Crack Snare', type: 'Drum' },
   { id: 'hihat', name: 'Open Hat', type: 'Drum' },
@@ -794,6 +796,8 @@ const state = {
   deckPlaying: { A: false, B: false },
   deckSources: { A: null, B: null },
   deckPlayRequest: { A: 0, B: 0 },
+  guitarVoices: [],
+  guitarWhammy: 0,
 
   audioCtx: null,
   masterGain: null,
@@ -843,6 +847,8 @@ const elements = {
   deckBTrack: document.getElementById('deckBTrack'),
   deckATrackButton: document.getElementById('deckATrackButton'),
   deckBTrackButton: document.getElementById('deckBTrackButton'),
+  whammy: document.getElementById('whammy'),
+  whammyLabel: document.getElementById('whammyLabel'),
   presetSelect: document.getElementById('presetSelect'),
   recordInstruments: document.getElementById('recordInstruments'),
   qualitySelect: document.getElementById('qualitySelect'),
@@ -1225,6 +1231,8 @@ function buildSoundBank() {
       else if (id === 'dropimpact') playDropImpact();
       else if (id === 'sweepdown') playSweepDown();
       else if (id === 'stab') playStab();
+      else if (id === 'guitarchord') playGuitarChord();
+      else if (id === 'guitarharmonic') playGuitarHarmonic();
     });
   });
 }
@@ -1480,8 +1488,161 @@ function makeDriveCurve(amount = 0.8) {
   return curve;
 }
 
+
+// ---- Electric guitar: Karplus-Strong plucked strings (a noise burst
+// circulating a tuned feedback delay, the way a real string rings)
+// through stompbox-style drive, a speaker-cabinet filter, and, for
+// lead, a feedback echo. The whammy registry lets the whammy bar bend
+// every ringing string in real time.
+const GUITAR_TONES = {
+  guitarclean: { drive: 0, cab: 8000, feedback: 0.96, brightness: 5500, level: 0.5, hall: 0.25, delayMix: 0 },
+  guitarcrunch: { drive: 0.5, cab: 5200, feedback: 0.965, brightness: 4800, level: 0.5, hall: 0.18, delayMix: 0 },
+  guitardistort: { drive: 1.4, cab: 3800, feedback: 0.97, brightness: 4200, level: 0.55, hall: 0.15, delayMix: 0 },
+  guitarlead: { drive: 1.1, cab: 4200, feedback: 0.982, brightness: 5000, level: 0.5, hall: 0.2, delayMix: 0.22, delayTime: 0.28, delayFeedback: 0.35 },
+  guitarharmonic: { drive: 0, cab: 9000, feedback: 0.9, brightness: 9000, level: 0.35, hall: 0.3, delayMix: 0 },
+};
+
+function playGuitarVoice(freq, tone = 'guitarclean', when = null) {
+  const ctx = ensureAudio();
+  const t = when === null ? ctx.currentTime : when;
+  const cfg = GUITAR_TONES[tone] || GUITAR_TONES.guitarclean;
+  const input = ctx.createGain();
+  input.gain.value = 1;
+  let chain = input;
+  if (cfg.drive > 0) {
+    const shaper = ctx.createWaveShaper();
+    shaper.curve = makeDriveCurve(cfg.drive);
+    shaper.oversample = '2x';
+    chain.connect(shaper);
+    chain = shaper;
+  }
+  const cab = ctx.createBiquadFilter();
+  cab.type = 'lowpass';
+  cab.frequency.value = cfg.cab;
+  chain.connect(cab);
+  chain = cab;
+  const voiceGain = ctx.createGain();
+  voiceGain.gain.value = cfg.level;
+  chain.connect(voiceGain);
+
+  // Two strings per note: the main string and a second string a few
+  // cents sharp, which is what makes a real guitar sound wide.
+  const burst = makeNoiseBuffer(ctx, 0.03);
+  const strings = [];
+  [
+    { detuneCents: 0, level: 1 },
+    { detuneCents: 5, level: 0.6 },
+  ].forEach(def => {
+    const period = (1 / freq) * Math.pow(2, -def.detuneCents / 1200);
+    const delay = ctx.createDelay(1);
+    delay.delayTime.value = period;
+    const fb = ctx.createGain();
+    fb.gain.value = cfg.feedback;
+    const damp = ctx.createBiquadFilter();
+    damp.type = 'lowpass';
+    damp.frequency.value = cfg.brightness;
+    delay.connect(fb);
+    fb.connect(damp);
+    damp.connect(delay);
+    const excite = ctx.createBufferSource();
+    excite.buffer = burst;
+    const exciteGain = ctx.createGain();
+    exciteGain.gain.value = def.level;
+    excite.connect(exciteGain);
+    exciteGain.connect(delay);
+    excite.start(t);
+    excite.stop(t + 0.03);
+    const tap = ctx.createGain();
+    tap.gain.value = def.level;
+    delay.connect(tap);
+    tap.connect(input);
+    // Kill the loop energy after the ring so voices don't pile up.
+    fb.gain.setTargetAtTime(0, t + 4, 0.4);
+    strings.push({ delay, basePeriod: period });
+  });
+
+  // Body: a soft triangle fundamental that gives the note weight.
+  const body = ctx.createOscillator();
+  body.type = 'triangle';
+  body.frequency.value = freq;
+  const bodyGain = ctx.createGain();
+  bodyGain.gain.setValueAtTime(0.18, t);
+  bodyGain.gain.setTargetAtTime(0, t + 0.05, 0.35);
+  body.connect(bodyGain);
+  bodyGain.connect(input);
+  body.start(t);
+  body.stop(t + 2);
+
+  // Pick attack: a short bright noise snap.
+  const pick = ctx.createBufferSource();
+  pick.buffer = burst;
+  const pickFilter = ctx.createBiquadFilter();
+  pickFilter.type = 'highpass';
+  pickFilter.frequency.value = 2500;
+  const pickGain = ctx.createGain();
+  pickGain.gain.setValueAtTime(0.12, t);
+  pickGain.gain.setTargetAtTime(0, t, 0.01);
+  pick.connect(pickFilter);
+  pickFilter.connect(pickGain);
+  pickGain.connect(input);
+  pick.start(t);
+  pick.stop(t + 0.05);
+
+  // Lead echo: a feedback delay whose wet signal joins the mix.
+  if (cfg.delayMix > 0) {
+    const echo = ctx.createDelay(1);
+    echo.delayTime.value = cfg.delayTime;
+    const echoFb = ctx.createGain();
+    echoFb.gain.value = cfg.delayFeedback;
+    echo.connect(echoFb);
+    echoFb.connect(echo);
+    const wet = ctx.createGain();
+    wet.gain.value = cfg.delayMix;
+    voiceGain.connect(echo);
+    echo.connect(wet);
+    wet.connect(state.instrumentGain);
+  }
+
+  voiceGain.gain.setTargetAtTime(0, t + 4.5, 0.5);
+  routeVoice(voiceGain, cfg.hall, 0.05);
+  state.guitarVoices.push({ strings, body, end: t + 5 });
+}
+
+function applyWhammy(semitones) {
+  state.guitarWhammy = semitones;
+  const ctx = state.audioCtx;
+  if (ctx) {
+    const now = ctx.currentTime;
+    const ratio = Math.pow(2, -semitones / 12);
+    state.guitarVoices = state.guitarVoices.filter(entry => entry.end >= now);
+    state.guitarVoices.forEach(entry => {
+      entry.strings.forEach(s => {
+        s.delay.delayTime.setTargetAtTime(s.basePeriod * ratio, now, 0.03);
+      });
+      if (entry.body) entry.body.detune.setTargetAtTime(semitones * 100, now, 0.03);
+    });
+  }
+  if (elements.whammyLabel) {
+    elements.whammyLabel.textContent = `${semitones > 0 ? '+' : ''}${semitones} semitone${Math.abs(semitones) === 1 ? '' : 's'}`;
+  }
+}
+
+function playGuitarChord() {
+  const t = ensureAudio().currentTime;
+  // E power chord, strummed low to high: E2, B2, E3.
+  playGuitarVoice(82.41, 'guitardistort', t);
+  playGuitarVoice(123.47, 'guitardistort', t + 0.015);
+  playGuitarVoice(164.81, 'guitardistort', t + 0.03);
+}
+
+function playGuitarHarmonic() {
+  // High natural-harmonic ping above E.
+  playGuitarVoice(1318.51, 'guitarharmonic', ensureAudio().currentTime);
+}
+
 function playSynthVoice(freq, preset = 'heavybass', durationOverride = null) {
   const ctx = ensureAudio();
+  if (preset.startsWith('guitar')) return playGuitarVoice(freq, preset);
   const now = ctx.currentTime;
   const config = synthPresets[preset] || synthPresets.heavybass;
   const isPad = preset === 'pad' || preset === 'trancepad';
@@ -3686,6 +3847,7 @@ function bindControls() {
   if (elements.deckBTrack) elements.deckBTrack.addEventListener('change', e => setDeckTrack('B', e.target.value));
   if (elements.deckATrackButton) elements.deckATrackButton.addEventListener('click', () => toggleDeckTrack('A'));
   if (elements.deckBTrackButton) elements.deckBTrackButton.addEventListener('click', () => toggleDeckTrack('B'));
+  if (elements.whammy) elements.whammy.addEventListener('input', e => applyWhammy(Number(e.target.value || 0)));
 
   document.querySelectorAll('.drum-pad').forEach(button => {
     button.addEventListener('click', () => {
@@ -3718,6 +3880,7 @@ function init() {
   applyCrossfader(state.crossfader || 0);
   renderSongSections();
   refreshDeckTrackSelects();
+  applyWhammy(0);
   state.currentGenre = 'hiphop';
   applyGenreProfile();
   renderTracks();
