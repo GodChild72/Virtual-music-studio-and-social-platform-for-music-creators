@@ -773,6 +773,10 @@ const state = {
   },
   activeLoop: 'A',
   pendingLoop: null,
+  deckALoop: 'A',
+  deckBLoop: 'B',
+  crossfader: 0,
+  voiceDeck: null,
 
   audioCtx: null,
   masterGain: null,
@@ -811,6 +815,9 @@ const elements = {
   sequencing: document.getElementById('sequencer'),
   drums: document.getElementById('drumPads'),
   bpmInput: document.getElementById('bpmInput'),
+  crossfader: document.getElementById('crossfader'),
+  deckBLoop: document.getElementById('deckBLoop'),
+  crossfadeLabel: document.getElementById('crossfadeLabel'),
   presetSelect: document.getElementById('presetSelect'),
   recordInstruments: document.getElementById('recordInstruments'),
   qualitySelect: document.getElementById('qualitySelect'),
@@ -869,6 +876,15 @@ function ensureAudio() {
   instrumentGain.gain.value = 1;
   instrumentGain.connect(master);
 
+  // DJ deck buses: pattern voices run through their deck gain so
+  // the crossfader can blend two loops; both feed the main mix.
+  const deckGainA = ctx.createGain();
+  deckGainA.gain.value = Math.cos((state.crossfader || 0) * Math.PI / 2);
+  const deckGainB = ctx.createGain();
+  deckGainB.gain.value = Math.sin((state.crossfader || 0) * Math.PI / 2);
+  deckGainA.connect(instrumentGain);
+  deckGainB.connect(instrumentGain);
+
   const dest = ctx.createMediaStreamDestination();
   instrumentGain.connect(dest);
 
@@ -903,6 +919,8 @@ function ensureAudio() {
   state.compressor = compressor;
   state.limiter = limiter;
   state.instrumentGain = instrumentGain;
+  state.deckGainA = deckGainA;
+  state.deckGainB = deckGainB;
   state.instrumentDest = dest;
   state.reverbSend = reverbSend;
   state.reverbGain = reverbGain;
@@ -952,28 +970,46 @@ function makeNoiseBuffer(ctx, seconds) {
 
 
 // Routes a voice to the dry mix and, when amount > 0, to the reverb bus.
+// The deck a pattern voice belongs to (set while a pattern step plays);
+// null for sound-bank, keyboard and other direct voices.
+function deckLevel() {
+  if (state.voiceDeck === 'A' && state.deckGainA) return state.deckGainA.gain.value;
+  if (state.voiceDeck === 'B' && state.deckGainB) return state.deckGainB.gain.value;
+  return 1;
+}
+
+// Routes a voice to the dry mix and, when amounts > 0, to the hall
+// and room reverb buses. Pattern voices go through their deck bus so
+// the DJ crossfader blends them; reverb sends scale with the deck
+// level so a faded-out deck takes its space with it.
 function routeVoice(output, hallAmount = 0.15, roomAmount = 0) {
   const ctx = state.audioCtx;
-  output.connect(state.instrumentGain);
+  let dest = state.instrumentGain;
+  if (state.voiceDeck === 'A' && state.deckGainA) dest = state.deckGainA;
+  else if (state.voiceDeck === 'B' && state.deckGainB) dest = state.deckGainB;
+  output.connect(dest);
+  const level = deckLevel();
   if (hallAmount > 0 && state.reverbSend) {
     const send = ctx.createGain();
-    send.gain.value = hallAmount;
+    send.gain.value = hallAmount * level;
     output.connect(send);
     send.connect(state.reverbSend);
   }
   if (roomAmount > 0 && state.roomSend) {
     const send = ctx.createGain();
-    send.gain.value = roomAmount;
+    send.gain.value = roomAmount * level;
     output.connect(send);
     send.connect(state.roomSend);
   }
 }
 
 // Sends one layer (typically a drum room layer) into the room bus.
+// Sends one layer (typically a drum room layer) into the room bus,
+// scaled by the voice's deck level so faded decks stay faded.
 function addRoomLayer(source, amount = 1) {
   if (!state.roomSend || amount <= 0) return;
   const send = state.audioCtx.createGain();
-  send.gain.value = amount;
+  send.gain.value = amount * deckLevel();
   source.connect(send);
   send.connect(state.roomSend);
 }
@@ -2919,18 +2955,40 @@ function switchLoop(name) {
     return;
   }
   state.activeLoop = name;
+  state.deckALoop = name;
   state.pendingLoop = null;
   updateLoopButtons();
   renderPatternSelection();
 }
 
+
 function maybeSwitchLoop() {
   if (state.currentStep === 0 && state.pendingLoop) {
     state.activeLoop = state.pendingLoop;
+    state.deckALoop = state.pendingLoop;
     state.pendingLoop = null;
     updateLoopButtons();
   }
 }
+
+function setDeckBLoop(name) {
+  if (!state.loops[name]) return;
+  state.deckBLoop = name;
+}
+
+// Equal-power crossfader: at the center both decks sit at -3 dB, so
+// the total power stays constant instead of dipping in the middle.
+function applyCrossfader(x) {
+  state.crossfader = x;
+  if (state.audioCtx && state.deckGainA && state.deckGainB) {
+    state.deckGainA.gain.value = Math.cos(x * Math.PI / 2);
+    state.deckGainB.gain.value = Math.sin(x * Math.PI / 2);
+  }
+  if (elements.crossfadeLabel) {
+    elements.crossfadeLabel.textContent = `Deck A ${Math.round((1 - x) * 100)}% / Deck B ${Math.round(x * 100)}%`;
+  }
+}
+
 
 function buildSequencer() {
   elements.sequencing.innerHTML = '';
@@ -2952,6 +3010,36 @@ function buildSequencer() {
   }
 }
 
+
+// One shared clock tick: plays the current step of both decks, so the
+// two loops stay locked together while the crossfader blends them.
+function playStep() {
+  maybeSwitchLoop();
+  const stepButtons = document.querySelectorAll('.step-button');
+  stepButtons.forEach(button => button.classList.remove('active-highlight'));
+  const current = stepButtons[state.currentStep];
+  if (current) current.classList.add('active-highlight');
+
+  state.voiceDeck = 'A';
+  playLoopSteps(state.deckALoop);
+  if (state.deckBLoop !== state.deckALoop) {
+    state.voiceDeck = 'B';
+    playLoopSteps(state.deckBLoop);
+  }
+  state.voiceDeck = null;
+
+  state.currentStep = (state.currentStep + 1) % 16;
+}
+
+function playLoopSteps(loopName) {
+  const pattern = state.loops[loopName] || {};
+  Object.entries(pattern).forEach(([drum, steps]) => {
+    if (steps[state.currentStep]) {
+      triggerDrum(drum);
+    }
+  });
+}
+
 function playPattern() {
   if (state.isPlayingPattern) return;
 
@@ -2961,21 +3049,7 @@ function playPattern() {
 
   setPatternButtonState(true);
 
-  state.patternTimer = setInterval(() => {
-    maybeSwitchLoop();
-    const stepButtons = document.querySelectorAll('.step-button');
-    stepButtons.forEach(button => button.classList.remove('active-highlight'));
-    const current = stepButtons[state.currentStep];
-    if (current) current.classList.add('active-highlight');
-
-    Object.entries(currentPattern()).forEach(([drum, steps]) => {
-      if (steps[state.currentStep]) {
-        triggerDrum(drum);
-      }
-    });
-
-    state.currentStep = (state.currentStep + 1) % 16;
-  }, intervalMs);
+  state.patternTimer = setInterval(playStep, intervalMs);
 }
 
 function stopPattern() {
@@ -3269,6 +3343,9 @@ function bindControls() {
     button.addEventListener('click', () => switchLoop(button.dataset.loop));
   });
 
+  if (elements.crossfader) elements.crossfader.addEventListener('input', e => applyCrossfader(Number(e.target.value || 0) / 100));
+  if (elements.deckBLoop) elements.deckBLoop.addEventListener('change', e => setDeckBLoop(e.target.value));
+
   document.querySelectorAll('.drum-pad').forEach(button => {
     button.addEventListener('click', () => {
       document.querySelectorAll('.drum-pad').forEach(item => item.classList.remove('active'));
@@ -3297,6 +3374,7 @@ function init() {
   buildSoundBank();
   applyMasterLevel();
   updateLoopButtons();
+  applyCrossfader(state.crossfader || 0);
   state.currentGenre = 'hiphop';
   applyGenreProfile();
   renderTracks();
