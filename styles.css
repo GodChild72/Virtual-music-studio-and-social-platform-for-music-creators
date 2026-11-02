@@ -874,3 +874,14 @@ select {
   gap: 8px;
   flex-wrap: wrap;
 }
+
+.whammy-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.whammy-row input[type="range"] {
+  flex: 1;
+}
