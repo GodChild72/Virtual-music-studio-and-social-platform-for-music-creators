@@ -665,31 +665,115 @@ const state = {
   bpm: 110,
   patternTimer: null,
   currentStep: 0,
-  pattern: {
-    kick: [1,0,0,0,1,0,0,1,0,0,0,1,1,0,0,0],
-    snare: [0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0],
-    hihat: [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-    bongo: [0,0,0,0,1,0,0,1,0,0,1,0,0,0,1,0],
-    bongohigh: [0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0],
-    bongolow: [0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0],
-    tom: [0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,1],
-    tomhigh: [0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0],
-    tommid: [0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0],
-    tomlow: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0],
-    tomfloor: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-    clap: [0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0],
-    closedhat: [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],
-    openhat: [0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0],
-    rimshot: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0],
-    cowbell: [0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0],
-    shaker: [0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1],
-    crash: [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    ride: [1,0,0,1,0,0,1,0,0,0,1,0,0,0,1,0],
-    arenaclap: [0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0],
-    dropimpact: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-    sweepdown: [0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0],
-    stab: [0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0]
+  loops: {
+    A: {
+      kick: [1,0,0,0,1,0,0,1,0,0,0,1,1,0,0,0],
+      snare: [0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0],
+      hihat: [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+      bongo: [0,0,0,0,1,0,0,1,0,0,1,0,0,0,1,0],
+      bongohigh: [0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0],
+      bongolow: [0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0],
+      tom: [0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,1],
+      tomhigh: [0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0],
+      tommid: [0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0],
+      tomlow: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0],
+      tomfloor: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+      clap: [0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0],
+      closedhat: [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],
+      openhat: [0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0],
+      rimshot: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0],
+      cowbell: [0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0],
+      shaker: [0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1],
+      crash: [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      ride: [1,0,0,1,0,0,1,0,0,0,1,0,0,0,1,0],
+      arenaclap: [0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0],
+      dropimpact: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+      sweepdown: [0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0],
+      stab: [0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0],
+      fxrise: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    },
+    B: {
+      kick: [1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0],
+      snare: [0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0],
+      hihat: [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],
+      bongo: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      bongohigh: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      bongolow: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      tom: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      tomhigh: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      tommid: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      tomlow: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      tomfloor: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      clap: [0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0],
+      closedhat: [0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0],
+      openhat: [0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0],
+      rimshot: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      cowbell: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      shaker: [0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1],
+      crash: [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      ride: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      arenaclap: [0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0],
+      dropimpact: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+      sweepdown: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      stab: [0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0],
+      fxrise: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    },
+    C: {
+      kick: [1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0],
+      snare: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      hihat: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      bongo: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      bongohigh: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      bongolow: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      tom: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      tomhigh: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      tommid: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      tomlow: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      tomfloor: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      clap: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      closedhat: [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],
+      openhat: [0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0],
+      rimshot: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      cowbell: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      shaker: [0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1],
+      crash: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      ride: [1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0],
+      arenaclap: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      dropimpact: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      sweepdown: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      stab: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      fxrise: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    },
+    D: {
+      kick: [1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0],
+      snare: [0,0,0,0,0,0,0,0,1,0,1,0,1,1,1,1],
+      hihat: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      bongo: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      bongohigh: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      bongolow: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      tom: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      tomhigh: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0],
+      tommid: [0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0],
+      tomlow: [0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0],
+      tomfloor: [0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0],
+      clap: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      closedhat: [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+      openhat: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1],
+      rimshot: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      cowbell: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      shaker: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      crash: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+      ride: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      arenaclap: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      dropimpact: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      sweepdown: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      stab: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      fxrise: [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    },
   },
+  activeLoop: 'A',
+  pendingLoop: null,
+
   audioCtx: null,
   masterGain: null,
   masterFilter: null,
@@ -998,9 +1082,9 @@ function applyGenreProfile() {
   const profile = genreProfiles[genre];
   if (!profile) return;
 
-  state.pattern.kick = [...profile.kick];
-  state.pattern.snare = [...profile.snare];
-  state.pattern.hihat = [...profile.hihat];
+  state.loops.A.kick = [...profile.kick];
+  state.loops.A.snare = [...profile.snare];
+  state.loops.A.hihat = [...profile.hihat];
   if (elements.genreSelect) elements.genreSelect.value = genre;
   if (elements.bpmInput) elements.bpmInput.value = String(profile.bpm);
   state.bpm = profile.bpm;
@@ -1016,7 +1100,7 @@ function renderPatternSelection() {
   document.querySelectorAll('.step-button').forEach((button) => {
     const stepIndex = Number(button.dataset.index || 0);
     const currentDrum = document.querySelector('.drum-pad.active')?.dataset.drum || 'kick';
-    const active = !!state.pattern[currentDrum]?.[stepIndex];
+    const active = !!currentPattern()[currentDrum]?.[stepIndex];
     button.classList.toggle('active', active);
   });
 }
@@ -2793,6 +2877,7 @@ function triggerDrum(drum) {
     case 'tomlow': return playTomLow();
     case 'tomfloor': return playTomFloor();
     case 'clap': return playClap();
+    case 'fxrise': return playRiseFX();
     case 'closedhat': return playClosedHat();
     case 'openhat': return playOpenHat();
     case 'rimshot': return playRimshot();
@@ -2805,6 +2890,45 @@ function triggerDrum(drum) {
     case 'sweepdown': return playSweepDown();
     case 'stab': return playStab();
     default: return;
+  }
+}
+
+
+// DJ loop triggering: four 16-step loops for a live set. Loop A is the
+// main groove (and the one genre profiles write to); B is the drop,
+// C the breakdown, D the build. Tapping a loop while playing queues it
+// to start at the next bar, so the set never stops.
+function currentPattern() {
+  return state.loops[state.activeLoop] || state.loops.A;
+}
+
+function updateLoopButtons() {
+  document.querySelectorAll('.loop-btn').forEach(button => {
+    const loop = button.dataset.loop;
+    button.classList.toggle('active', loop === state.activeLoop);
+    button.classList.toggle('pending', loop === state.pendingLoop);
+  });
+}
+
+function switchLoop(name) {
+  if (!state.loops[name]) return;
+  if (state.isPlayingPattern) {
+    // Queue it; tapping the queued loop again cancels the queue.
+    state.pendingLoop = state.pendingLoop === name ? null : name;
+    updateLoopButtons();
+    return;
+  }
+  state.activeLoop = name;
+  state.pendingLoop = null;
+  updateLoopButtons();
+  renderPatternSelection();
+}
+
+function maybeSwitchLoop() {
+  if (state.currentStep === 0 && state.pendingLoop) {
+    state.activeLoop = state.pendingLoop;
+    state.pendingLoop = null;
+    updateLoopButtons();
   }
 }
 
@@ -2822,7 +2946,7 @@ function buildSequencer() {
       const isActive = button.classList.contains('active');
       button.classList.toggle('active', !isActive);
       button.dataset.drum = selectedDrum;
-      state.pattern[selectedDrum][i] = isActive ? 0 : 1;
+      currentPattern()[selectedDrum][i] = isActive ? 0 : 1;
     });
     elements.sequencing.appendChild(button);
   }
@@ -2838,12 +2962,13 @@ function playPattern() {
   setPatternButtonState(true);
 
   state.patternTimer = setInterval(() => {
+    maybeSwitchLoop();
     const stepButtons = document.querySelectorAll('.step-button');
     stepButtons.forEach(button => button.classList.remove('active-highlight'));
     const current = stepButtons[state.currentStep];
     if (current) current.classList.add('active-highlight');
 
-    Object.entries(state.pattern).forEach(([drum, steps]) => {
+    Object.entries(currentPattern()).forEach(([drum, steps]) => {
       if (steps[state.currentStep]) {
         triggerDrum(drum);
       }
@@ -3140,6 +3265,10 @@ function bindControls() {
     event.target.value = '';
   });
 
+  document.querySelectorAll('.loop-btn').forEach(button => {
+    button.addEventListener('click', () => switchLoop(button.dataset.loop));
+  });
+
   document.querySelectorAll('.drum-pad').forEach(button => {
     button.addEventListener('click', () => {
       document.querySelectorAll('.drum-pad').forEach(item => item.classList.remove('active'));
@@ -3167,6 +3296,7 @@ function init() {
   buildKeyboard();
   buildSoundBank();
   applyMasterLevel();
+  updateLoopButtons();
   state.currentGenre = 'hiphop';
   applyGenreProfile();
   renderTracks();
