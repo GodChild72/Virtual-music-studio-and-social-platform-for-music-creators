@@ -10,6 +10,11 @@ const soundBank = [
   { id: 'reesebass', name: 'Reese Bass', type: 'Bass' },
   { id: 'pluckbass', name: 'Pluck Bass', type: 'Bass' },
   { id: 'eightoheight', name: '808 Bass', type: 'Bass' },
+  { id: 'acidbass', name: 'Acid Bass', type: 'Bass' },
+  { id: 'wobblebass', name: 'Wobble Bass', type: 'Bass' },
+  { id: 'housebass', name: 'House Bass', type: 'Bass' },
+  { id: 'technobass', name: 'Techno Bass', type: 'Bass' },
+  { id: 'dnbbass', name: 'DnB Bass', type: 'Bass' },
   { id: 'lead', name: 'Analog Lead', type: 'Lead' },
   { id: 'trancelead', name: 'Trance Lead', type: 'Lead' },
   { id: 'pad', name: 'Ambient Pad', type: 'Pad' },
@@ -27,6 +32,17 @@ const soundBank = [
   { id: 'tomlow', name: 'Low Tom', type: 'Percussion' },
   { id: 'tomfloor', name: 'Floor Tom', type: 'Percussion' },
   { id: 'fxrise', name: 'Rise FX', type: 'FX' },
+  { id: 'closedhat', name: 'Closed Hat', type: 'Drum' },
+  { id: 'openhat', name: 'Open Hat', type: 'Drum' },
+  { id: 'rimshot', name: 'Rimshot', type: 'Percussion' },
+  { id: 'cowbell', name: 'Cowbell', type: 'Percussion' },
+  { id: 'shaker', name: 'Shaker', type: 'Percussion' },
+  { id: 'crash', name: 'Crash Cymbal', type: 'Drum' },
+  { id: 'ride', name: 'Ride Cymbal', type: 'Drum' },
+  { id: 'arenaclap', name: 'Arena Clap', type: 'Drum' },
+  { id: 'dropimpact', name: 'Drop Impact', type: 'FX' },
+  { id: 'sweepdown', name: 'Sweep Down', type: 'FX' },
+  { id: 'stab', name: 'House Stab', type: 'Lead' },
 ];
 
 const synthPresets = {
@@ -54,6 +70,8 @@ const synthPresets = {
     charGain: 0.25,
     airGain: 0.05,
     room: 0.05,
+    punchGain: 0.25,
+    sparkleGain: 0.08,
   },
 
 
@@ -81,6 +99,9 @@ const synthPresets = {
     charGain: 0.35,
     airGain: 0.08,
     room: 0.06,
+    punchGain: 0.3,
+    sparkleGain: 0.1,
+    gritGain: 0.05,
   },
 
 
@@ -108,6 +129,9 @@ const synthPresets = {
     charGain: 0.3,
     airGain: 0.05,
     room: 0.04,
+    punchGain: 0.3,
+    sparkleGain: 0.08,
+    gritGain: 0.05,
   },
 
   subbass: {
@@ -132,6 +156,8 @@ const synthPresets = {
     charGain: 0,
     airGain: 0.04,
     room: 0.03,
+    punchGain: 0.15,
+    sparkleGain: 0.05,
   },
   pyramidsub: {
     wave1: 'triangle',
@@ -155,6 +181,8 @@ const synthPresets = {
     charGain: 0.12,
     airGain: 0.06,
     room: 0.03,
+    punchGain: 0.2,
+    sparkleGain: 0.06,
   },
   warmbass: {
     wave1: 'triangle',
@@ -180,6 +208,8 @@ const synthPresets = {
     charGain: 0.2,
     airGain: 0.05,
     room: 0.04,
+    punchGain: 0.2,
+    sparkleGain: 0.08,
   },
   roundbass: {
     wave1: 'sine',
@@ -203,6 +233,8 @@ const synthPresets = {
     charGain: 0.2,
     airGain: 0.06,
     room: 0.04,
+    punchGain: 0.2,
+    sparkleGain: 0.08,
   },
   growlbass: {
     wave1: 'sawtooth',
@@ -228,6 +260,9 @@ const synthPresets = {
     charGain: 0.35,
     airGain: 0.08,
     room: 0.05,
+    punchGain: 0.25,
+    sparkleGain: 0.1,
+    gritGain: 0.12,
   },
   reesebass: {
     wave1: 'sawtooth',
@@ -253,6 +288,9 @@ const synthPresets = {
     charGain: 0.3,
     airGain: 0.07,
     room: 0.05,
+    punchGain: 0.25,
+    sparkleGain: 0.1,
+    gritGain: 0.1,
   },
   pluckbass: {
     wave1: 'sawtooth',
@@ -278,6 +316,9 @@ const synthPresets = {
     charGain: 0.3,
     airGain: 0.08,
     room: 0.04,
+    punchGain: 0.35,
+    sparkleGain: 0.1,
+    gritGain: 0.05,
   },
   eightoheight: {
     wave1: 'sine',
@@ -303,8 +344,150 @@ const synthPresets = {
     room: 0.03,
     pitchDrop: 1.8,
     pitchDropTime: 0.09,
+    punchGain: 0.3,
+    sparkleGain: 0.08,
   },
 
+  acidbass: {
+    wave1: 'sawtooth',
+    wave2: 'square',
+    ratio: 1,
+    filterType: 'lowpass',
+    filterFrequency: 900,
+    resonance: 7.0,
+    attack: 0.005,
+    release: 0.5,
+    gain: 0.88,
+    drive: 0.3,
+    stack: 2,
+    detune: 6,
+    sub: true,
+    subGain: 0.6,
+    filterEnv: true,
+    filterEnvAmount: 3.0,
+    filterEnvDecay: 0.15,
+    decay: 0.25,
+    sustain: 0.6,
+    reverb: 0.04,
+    charGain: 0.3,
+    airGain: 0.08,
+    room: 0.04,
+    punchGain: 0.3,
+    sparkleGain: 0.1,
+    gritGain: 0.08,
+  },
+  wobblebass: {
+    wave1: 'sawtooth',
+    wave2: 'square',
+    ratio: 1,
+    filterType: 'lowpass',
+    filterFrequency: 700,
+    resonance: 2.5,
+    attack: 0.01,
+    release: 0.8,
+    gain: 0.9,
+    drive: 0.35,
+    stack: 3,
+    detune: 12,
+    sub: true,
+    subGain: 0.7,
+    filterEnv: false,
+    decay: 0.4,
+    sustain: 0.85,
+    reverb: 0.05,
+    charGain: 0.35,
+    airGain: 0.07,
+    room: 0.05,
+    punchGain: 0.25,
+    sparkleGain: 0.08,
+    gritGain: 0.1,
+    wobble: true,
+    wobbleRate: 8,
+    wobbleDepth: 0.7,
+  },
+  housebass: {
+    wave1: 'triangle',
+    wave2: 'sine',
+    ratio: 1,
+    filterType: 'lowpass',
+    filterFrequency: 800,
+    resonance: 1.5,
+    attack: 0.005,
+    release: 0.4,
+    gain: 0.9,
+    drive: 0.3,
+    stack: 2,
+    detune: 5,
+    sub: true,
+    subGain: 0.7,
+    filterEnv: true,
+    filterEnvAmount: 1.5,
+    filterEnvDecay: 0.1,
+    decay: 0.25,
+    sustain: 0.7,
+    reverb: 0.04,
+    charGain: 0.25,
+    airGain: 0.06,
+    room: 0.04,
+    punchGain: 0.35,
+    sparkleGain: 0.1,
+    gritGain: 0.05,
+  },
+  technobass: {
+    wave1: 'sawtooth',
+    wave2: 'square',
+    ratio: 1,
+    filterType: 'lowpass',
+    filterFrequency: 600,
+    resonance: 2.0,
+    attack: 0.01,
+    release: 0.5,
+    gain: 0.9,
+    drive: 0.35,
+    stack: 3,
+    detune: 8,
+    sub: true,
+    subGain: 0.7,
+    filterEnv: false,
+    decay: 0.4,
+    sustain: 0.9,
+    reverb: 0.04,
+    charGain: 0.3,
+    airGain: 0.07,
+    room: 0.04,
+    punchGain: 0.3,
+    sparkleGain: 0.08,
+    gritGain: 0.1,
+  },
+  dnbbass: {
+    wave1: 'sawtooth',
+    wave2: 'sawtooth',
+    ratio: 1,
+    filterType: 'lowpass',
+    filterFrequency: 1000,
+    resonance: 2.2,
+    attack: 0.008,
+    release: 0.6,
+    gain: 0.9,
+    drive: 0.4,
+    stack: 5,
+    detune: 16,
+    sub: true,
+    subGain: 0.65,
+    filterEnv: false,
+    decay: 0.35,
+    sustain: 0.8,
+    reverb: 0.05,
+    charGain: 0.35,
+    airGain: 0.08,
+    room: 0.05,
+    punchGain: 0.3,
+    sparkleGain: 0.1,
+    gritGain: 0.12,
+    wobble: true,
+    wobbleRate: 12,
+    wobbleDepth: 0.5,
+  },
   lead: {
     wave1: 'sawtooth',
     wave2: 'square',
@@ -494,7 +677,18 @@ const state = {
     tommid: [0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0],
     tomlow: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0],
     tomfloor: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-    clap: [0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0]
+    clap: [0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0],
+    closedhat: [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],
+    openhat: [0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0],
+    rimshot: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0],
+    cowbell: [0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0],
+    shaker: [0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1],
+    crash: [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    ride: [1,0,0,1,0,0,1,0,0,0,1,0,0,0,1,0],
+    arenaclap: [0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0],
+    dropimpact: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+    sweepdown: [0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0],
+    stab: [0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0]
   },
   audioCtx: null,
   masterGain: null,
@@ -853,6 +1047,11 @@ function buildSoundBank() {
       else if (id === 'reesebass') playReeseBass();
       else if (id === 'pluckbass') playPluckBass();
       else if (id === 'eightoheight') play808Bass();
+      else if (id === 'acidbass') playAcidBass();
+      else if (id === 'wobblebass') playWobbleBass();
+      else if (id === 'housebass') playHouseBass();
+      else if (id === 'technobass') playTechnoBass();
+      else if (id === 'dnbbass') playDnBBass();
       else if (id === 'lead') playLead();
       else if (id === 'trancelead') playTranceLead();
       else if (id === 'pad') playPad();
@@ -870,6 +1069,17 @@ function buildSoundBank() {
       else if (id === 'tomlow') playTomLow();
       else if (id === 'tomfloor') playTomFloor();
       else if (id === 'fxrise') playRiseFX();
+      else if (id === 'closedhat') playClosedHat();
+      else if (id === 'openhat') playOpenHat();
+      else if (id === 'rimshot') playRimshot();
+      else if (id === 'cowbell') playCowbell();
+      else if (id === 'shaker') playShaker();
+      else if (id === 'crash') playCrash();
+      else if (id === 'ride') playRide();
+      else if (id === 'arenaclap') playArenaClap();
+      else if (id === 'dropimpact') playDropImpact();
+      else if (id === 'sweepdown') playSweepDown();
+      else if (id === 'stab') playStab();
     });
   });
 }
@@ -1208,6 +1418,19 @@ function playSynthVoice(freq, preset = 'heavybass', durationOverride = null) {
     filterLfo.start(now);
     filterLfo.stop(stopAt);
   }
+  // Wobble: a rhythmic filter LFO for dubstep and DnB basses.
+  if (config.wobble) {
+    const wob = ctx.createOscillator();
+    wob.type = 'sine';
+    wob.frequency.value = config.wobbleRate || 8;
+    const wobGain = ctx.createGain();
+    wobGain.gain.value = (config.filterFrequency || 1500) * (config.wobbleDepth || 0.6);
+    wob.connect(wobGain);
+    wobGain.connect(bodyFilter.frequency);
+    wob.start(now);
+    wob.stop(stopAt);
+  }
+
 
   // LAYER 3 — CHARACTER: a brighter, wider stack that fades in just
   // behind the attack, giving the note its recognizable color.
@@ -1241,6 +1464,49 @@ function playSynthVoice(freq, preset = 'heavybass', durationOverride = null) {
     air2.out.connect(voiceBus);
     air2.oscs.forEach(startStop);
   }
+  // LAYER 6 — PUNCH: a short pitch-dropped thump at the attack, the
+  // club punch that makes bass notes hit on a big system.
+  if ((config.punchGain || 0) > 0) {
+    const punch = ctx.createOscillator();
+    punch.type = 'sine';
+    punch.frequency.setValueAtTime(freq * 2, now);
+    punch.frequency.exponentialRampToValueAtTime(freq, now + 0.03);
+    const punchGain = ctx.createGain();
+    punchGain.gain.setValueAtTime(config.punchGain, now);
+    punchGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.05);
+    punch.connect(punchGain);
+    punchGain.connect(voiceBus);
+    punch.start(now);
+    punch.stop(now + 0.06);
+  }
+
+  // LAYER 7 — SPARKLE: a quiet detuned high pair that keeps bass
+  // audible on small speakers and phones.
+  if ((config.sparkleGain || 0) > 0) {
+    const sparkle = buildStack(ctx, { wave: 'sawtooth', freq: freq * 2, count: 2, spread: 15 });
+    const sparkleFilter = ctx.createBiquadFilter();
+    sparkleFilter.type = 'highpass';
+    sparkleFilter.frequency.value = 1000;
+    swellGain(sparkle.out.gain, config.sparkleGain, 0.1, now);
+    sparkle.out.connect(sparkleFilter);
+    sparkleFilter.connect(voiceBus);
+    sparkle.oscs.forEach(startStop);
+  }
+
+  // LAYER 8 — GRIT: a soft saturated square that gives aggressive
+  // basses teeth to cut through a club mix.
+  if ((config.gritGain || 0) > 0) {
+    const grit = buildStack(ctx, { wave: 'square', freq, count: 2, spread: 10 });
+    const gritFilter = ctx.createBiquadFilter();
+    gritFilter.type = 'lowpass';
+    gritFilter.frequency.value = 2000;
+    gritFilter.Q.value = 1;
+    grit.out.gain.value = config.gritGain;
+    grit.out.connect(gritFilter);
+    gritFilter.connect(voiceBus);
+    grit.oscs.forEach(startStop);
+  }
+
 
   // Gentle vibrato on leads: a slow pitch wobble that fades in.
   let lfo = null;
@@ -2062,6 +2328,373 @@ function playClap() {
 }
 
 
+// Club / house / rave pack: the one-shots and hits a DJ set runs on.
+
+function playClosedHat() {
+  const ctx = ensureAudio();
+  const now = ctx.currentTime;
+  const bus = ctx.createGain();
+  [587, 845, 1244, 1698, 2139, 2960].forEach(freq => {
+    const osc = ctx.createOscillator();
+    osc.type = 'square';
+    osc.frequency.value = freq;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.05, now);
+    g.gain.exponentialRampToValueAtTime(0.0001, now + 0.03);
+    osc.connect(g);
+    g.connect(bus);
+    osc.start(now);
+    osc.stop(now + 0.04);
+  });
+  const noise = ctx.createBufferSource();
+  noise.buffer = makeNoiseBuffer(ctx, 0.04);
+  const hp = ctx.createBiquadFilter();
+  hp.type = 'highpass';
+  hp.frequency.value = 8000;
+  const noiseGain = ctx.createGain();
+  noiseGain.gain.setValueAtTime(0.35, now);
+  noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.03);
+  noise.connect(hp);
+  hp.connect(noiseGain);
+  noiseGain.connect(bus);
+  routeVoice(bus, 0.05, 0.05);
+  noise.start(now);
+  noise.stop(now + 0.04);
+}
+
+function playOpenHat() {
+  const ctx = ensureAudio();
+  const now = ctx.currentTime;
+  const bus = ctx.createGain();
+  [587, 845, 1244, 1698, 2139, 2960].forEach(freq => {
+    const osc = ctx.createOscillator();
+    osc.type = 'square';
+    osc.frequency.value = freq;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.06, now);
+    g.gain.exponentialRampToValueAtTime(0.0001, now + 0.3);
+    osc.connect(g);
+    g.connect(bus);
+    osc.start(now);
+    osc.stop(now + 0.32);
+  });
+  const noise = ctx.createBufferSource();
+  noise.buffer = makeNoiseBuffer(ctx, 0.3);
+  const hp = ctx.createBiquadFilter();
+  hp.type = 'highpass';
+  hp.frequency.value = 7800;
+  const noiseGain = ctx.createGain();
+  noiseGain.gain.setValueAtTime(0.4, now);
+  noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.28);
+  noise.connect(hp);
+  hp.connect(noiseGain);
+  noiseGain.connect(bus);
+  routeVoice(bus, 0.08, 0.1);
+  noise.start(now);
+  noise.stop(now + 0.3);
+}
+
+function playRimshot() {
+  const ctx = ensureAudio();
+  const now = ctx.currentTime;
+  const bus = ctx.createGain();
+  const ping = ctx.createOscillator();
+  const pingGain = ctx.createGain();
+  ping.type = 'sine';
+  ping.frequency.setValueAtTime(1800, now);
+  ping.frequency.exponentialRampToValueAtTime(1500, now + 0.01);
+  pingGain.gain.setValueAtTime(0.5, now);
+  pingGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.025);
+  ping.connect(pingGain);
+  pingGain.connect(bus);
+  const noise = ctx.createBufferSource();
+  noise.buffer = makeNoiseBuffer(ctx, 0.03);
+  const band = ctx.createBiquadFilter();
+  band.type = 'bandpass';
+  band.frequency.value = 2000;
+  band.Q.value = 2;
+  const noiseGain = ctx.createGain();
+  noiseGain.gain.setValueAtTime(0.3, now);
+  noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.02);
+  noise.connect(band);
+  band.connect(noiseGain);
+  noiseGain.connect(bus);
+  routeVoice(bus, 0.05, 0.08);
+  ping.start(now);
+  ping.stop(now + 0.03);
+  noise.start(now);
+  noise.stop(now + 0.03);
+}
+
+function playCowbell() {
+  const ctx = ensureAudio();
+  const now = ctx.currentTime;
+  const bus = ctx.createGain();
+  const band = ctx.createBiquadFilter();
+  band.type = 'bandpass';
+  band.frequency.value = 800;
+  band.Q.value = 1;
+  const gain = ctx.createGain();
+  gain.gain.setValueAtTime(0.4, now);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.18);
+  band.connect(gain);
+  gain.connect(bus);
+  [540, 800].forEach(freq => {
+    const osc = ctx.createOscillator();
+    osc.type = 'square';
+    osc.frequency.value = freq;
+    osc.connect(band);
+    osc.start(now);
+    osc.stop(now + 0.2);
+  });
+  routeVoice(bus, 0.08, 0.05);
+}
+
+function playShaker() {
+  const ctx = ensureAudio();
+  const now = ctx.currentTime;
+  const bus = ctx.createGain();
+  const noise = ctx.createBufferSource();
+  noise.buffer = makeNoiseBuffer(ctx, 0.12);
+  const hp = ctx.createBiquadFilter();
+  hp.type = 'highpass';
+  hp.frequency.value = 5000;
+  const gain = ctx.createGain();
+  gain.gain.setValueAtTime(0.3, now);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
+  noise.connect(hp);
+  hp.connect(gain);
+  gain.connect(bus);
+  routeVoice(bus, 0.05, 0.08);
+  noise.start(now);
+  noise.stop(now + 0.13);
+}
+
+function playCrash() {
+  const ctx = ensureAudio();
+  const now = ctx.currentTime;
+  const bus = ctx.createGain();
+  const noise = ctx.createBufferSource();
+  noise.buffer = makeNoiseBuffer(ctx, 1.2);
+  const hp = ctx.createBiquadFilter();
+  hp.type = 'highpass';
+  hp.frequency.value = 5000;
+  const gain = ctx.createGain();
+  gain.gain.setValueAtTime(0.5, now);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + 1.2);
+  noise.connect(hp);
+  hp.connect(gain);
+  gain.connect(bus);
+  [587, 845, 1244, 1698].forEach(freq => {
+    const osc = ctx.createOscillator();
+    osc.type = 'square';
+    osc.frequency.value = freq;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.04, now);
+    g.gain.exponentialRampToValueAtTime(0.0001, now + 0.8);
+    osc.connect(g);
+    g.connect(bus);
+    osc.start(now);
+    osc.stop(now + 0.85);
+  });
+  routeVoice(bus, 0.2, 0.15);
+  noise.start(now);
+  noise.stop(now + 1.25);
+}
+
+function playRide() {
+  const ctx = ensureAudio();
+  const now = ctx.currentTime;
+  const bus = ctx.createGain();
+  [600, 900, 1250, 1700].forEach(freq => {
+    const osc = ctx.createOscillator();
+    osc.type = 'square';
+    osc.frequency.value = freq;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.05, now);
+    g.gain.exponentialRampToValueAtTime(0.0001, now + 0.5);
+    osc.connect(g);
+    g.connect(bus);
+    osc.start(now);
+    osc.stop(now + 0.55);
+  });
+  const noise = ctx.createBufferSource();
+  noise.buffer = makeNoiseBuffer(ctx, 0.5);
+  const hp = ctx.createBiquadFilter();
+  hp.type = 'highpass';
+  hp.frequency.value = 7000;
+  const gain = ctx.createGain();
+  gain.gain.setValueAtTime(0.25, now);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.4);
+  noise.connect(hp);
+  hp.connect(gain);
+  gain.connect(bus);
+  routeVoice(bus, 0.12, 0.1);
+  noise.start(now);
+  noise.stop(now + 0.5);
+}
+
+function playArenaClap() {
+  const ctx = ensureAudio();
+  const now = ctx.currentTime;
+  const bus = ctx.createGain();
+  const bursts = [
+    [0.0, 0.6], [0.012, 0.75], [0.024, 0.9], [0.036, 0.8], [0.05, 0.7], [0.065, 0.5],
+  ];
+  bursts.forEach(([offset, level]) => {
+    const burst = ctx.createBufferSource();
+    burst.buffer = makeNoiseBuffer(ctx, 0.03);
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.value = 1300;
+    filter.Q.value = 1.4;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(level, now + offset);
+    g.gain.exponentialRampToValueAtTime(0.0001, now + offset + 0.018);
+    burst.connect(filter);
+    filter.connect(g);
+    g.connect(bus);
+    burst.start(now + offset);
+    burst.stop(now + offset + 0.03);
+  });
+  const tail = ctx.createBufferSource();
+  tail.buffer = makeNoiseBuffer(ctx, 0.4);
+  const tailFilter = ctx.createBiquadFilter();
+  tailFilter.type = 'bandpass';
+  tailFilter.frequency.value = 1100;
+  tailFilter.Q.value = 0.7;
+  const tailGain = ctx.createGain();
+  tailGain.gain.setValueAtTime(0.45, now + 0.06);
+  tailGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.44);
+  tail.connect(tailFilter);
+  tailFilter.connect(tailGain);
+  tailGain.connect(bus);
+  const longTail = ctx.createBufferSource();
+  longTail.buffer = makeNoiseBuffer(ctx, 0.8);
+  const longFilter = ctx.createBiquadFilter();
+  longFilter.type = 'bandpass';
+  longFilter.frequency.value = 900;
+  longFilter.Q.value = 0.6;
+  const longGain = ctx.createGain();
+  longGain.gain.setValueAtTime(0.35, now + 0.08);
+  longGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.88);
+  longTail.connect(longFilter);
+  longFilter.connect(longGain);
+  longGain.connect(bus);
+  routeVoice(bus, 0.25, 0.2);
+  tail.start(now + 0.06);
+  tail.stop(now + 0.48);
+  longTail.start(now + 0.08);
+  longTail.stop(now + 0.9);
+}
+
+function playDropImpact() {
+  const ctx = ensureAudio();
+  const now = ctx.currentTime;
+  const bus = ctx.createGain();
+  const sub = ctx.createOscillator();
+  const subGain = ctx.createGain();
+  sub.type = 'sine';
+  sub.frequency.setValueAtTime(120, now);
+  sub.frequency.exponentialRampToValueAtTime(30, now + 0.8);
+  subGain.gain.setValueAtTime(1.0, now);
+  subGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.8);
+  sub.connect(subGain);
+  subGain.connect(bus);
+  const boom = ctx.createBufferSource();
+  boom.buffer = makeNoiseBuffer(ctx, 0.6);
+  const boomFilter = ctx.createBiquadFilter();
+  boomFilter.type = 'lowpass';
+  boomFilter.frequency.value = 300;
+  const boomGain = ctx.createGain();
+  boomGain.gain.setValueAtTime(0.6, now);
+  boomGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.6);
+  boom.connect(boomFilter);
+  boomFilter.connect(boomGain);
+  boomGain.connect(bus);
+  const click = ctx.createBufferSource();
+  click.buffer = makeNoiseBuffer(ctx, 0.02);
+  const clickFilter = ctx.createBiquadFilter();
+  clickFilter.type = 'highpass';
+  clickFilter.frequency.value = 3000;
+  const clickGain = ctx.createGain();
+  clickGain.gain.setValueAtTime(0.3, now);
+  clickGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.02);
+  click.connect(clickFilter);
+  clickFilter.connect(clickGain);
+  clickGain.connect(bus);
+  routeVoice(bus, 0.1, 0.15);
+  sub.start(now);
+  sub.stop(now + 0.85);
+  boom.start(now);
+  boom.stop(now + 0.65);
+  click.start(now);
+  click.stop(now + 0.03);
+}
+
+function playSweepDown() {
+  const ctx = ensureAudio();
+  const now = ctx.currentTime;
+  const bus = ctx.createGain();
+  const osc = ctx.createOscillator();
+  osc.type = 'sawtooth';
+  osc.frequency.setValueAtTime(4000, now);
+  osc.frequency.exponentialRampToValueAtTime(200, now + 1.0);
+  const filter = ctx.createBiquadFilter();
+  filter.type = 'bandpass';
+  filter.frequency.setValueAtTime(4000, now);
+  filter.frequency.exponentialRampToValueAtTime(500, now + 1.0);
+  filter.Q.value = 1;
+  const gain = ctx.createGain();
+  gain.gain.setValueAtTime(0.3, now);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + 1.0);
+  osc.connect(filter);
+  filter.connect(gain);
+  gain.connect(bus);
+  const noise = ctx.createBufferSource();
+  noise.buffer = makeNoiseBuffer(ctx, 1.0);
+  const noiseFilter = ctx.createBiquadFilter();
+  noiseFilter.type = 'bandpass';
+  noiseFilter.frequency.setValueAtTime(3000, now);
+  noiseFilter.frequency.exponentialRampToValueAtTime(500, now + 0.9);
+  noiseFilter.Q.value = 0.8;
+  const noiseGain = ctx.createGain();
+  noiseGain.gain.setValueAtTime(0.2, now);
+  noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.9);
+  noise.connect(noiseFilter);
+  noiseFilter.connect(noiseGain);
+  noiseGain.connect(bus);
+  routeVoice(bus, 0.3, 0.1);
+  osc.start(now);
+  osc.stop(now + 1.05);
+  noise.start(now);
+  noise.stop(now + 1.0);
+}
+
+// House stab: a short, detuned minor chord hit, the classic
+// house and techno stab, built from three saw stacks.
+function playStab() {
+  const ctx = ensureAudio();
+  const now = ctx.currentTime;
+  const bus = ctx.createGain();
+  [261.63, 311.13, 392.0].forEach(freq => {
+    const stack = buildStack(ctx, { wave: 'sawtooth', freq, count: 3, spread: 10 });
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.value = 2500;
+    filter.Q.value = 1;
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.linearRampToValueAtTime(0.3, now + 0.005);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.28);
+    stack.out.connect(filter);
+    filter.connect(gain);
+    gain.connect(bus);
+    stack.oscs.forEach(osc => { osc.start(now); osc.stop(now + 0.3); });
+  });
+  routeVoice(bus, 0.25, 0.05);
+}
+
 function playHeavyBass() {
   playSynthVoice(46, 'heavybass');
 }
@@ -2106,6 +2739,26 @@ function play808Bass() {
   playSynthVoice(41.2, 'eightoheight');
 }
 
+function playAcidBass() {
+  playSynthVoice(55, 'acidbass');
+}
+
+function playWobbleBass() {
+  playSynthVoice(49, 'wobblebass');
+}
+
+function playHouseBass() {
+  playSynthVoice(49, 'housebass');
+}
+
+function playTechnoBass() {
+  playSynthVoice(46.25, 'technobass');
+}
+
+function playDnBBass() {
+  playSynthVoice(55, 'dnbbass');
+}
+
 function playLead() {
   playSynthVoice(220, 'lead');
 }
@@ -2140,6 +2793,17 @@ function triggerDrum(drum) {
     case 'tomlow': return playTomLow();
     case 'tomfloor': return playTomFloor();
     case 'clap': return playClap();
+    case 'closedhat': return playClosedHat();
+    case 'openhat': return playOpenHat();
+    case 'rimshot': return playRimshot();
+    case 'cowbell': return playCowbell();
+    case 'shaker': return playShaker();
+    case 'crash': return playCrash();
+    case 'ride': return playRide();
+    case 'arenaclap': return playArenaClap();
+    case 'dropimpact': return playDropImpact();
+    case 'sweepdown': return playSweepDown();
+    case 'stab': return playStab();
     default: return;
   }
 }
