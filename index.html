@@ -131,6 +131,21 @@
               <button class="mini-btn loop-btn" data-loop="C" type="button">Loop C · Breakdown</button>
               <button class="mini-btn loop-btn" data-loop="D" type="button">Loop D · Build</button>
             </div>
+            <div class="crossfader-row">
+              <span class="crossfader-end">A</span>
+              <input id="crossfader" type="range" min="0" max="100" value="0" />
+              <span class="crossfader-end">B</span>
+            </div>
+            <div class="deck-row">
+              <label for="deckBLoop">Deck B loop</label>
+              <select id="deckBLoop">
+                <option value="A">A · Main</option>
+                <option value="B" selected>B · Drop</option>
+                <option value="C">C · Breakdown</option>
+                <option value="D">D · Build</option>
+              </select>
+              <span class="chip" id="crossfadeLabel">Deck A 100% / Deck B 0%</span>
+            </div>
             <div class="sequencer" id="sequencer"></div>
             <div class="drum-pad-grid" id="drumPads">
               <button class="drum-pad" data-drum="kick">Kick</button>
