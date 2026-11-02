@@ -29,3 +29,7 @@ If you want, the next version can include:
 - a checkout success page
 - a subscription billing model
 - more polished branding and animations
+
+## Co-creators
+
+GodChild72 is co-created by Robert Stephens and Cosmo.

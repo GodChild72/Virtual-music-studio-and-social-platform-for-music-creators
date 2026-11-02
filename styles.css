@@ -898,3 +898,14 @@ select {
   flex-wrap: wrap;
   margin-bottom: 10px;
 }
+
+.site-footer {
+  text-align: center;
+  padding: 18px 12px 24px;
+  color: #9fb4d8;
+  font-size: 13px;
+}
+
+.site-footer p {
+  margin: 4px 0;
+}
