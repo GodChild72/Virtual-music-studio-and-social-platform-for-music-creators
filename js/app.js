@@ -2,6 +2,14 @@ const soundBank = [
   { id: 'heavybass', name: 'Heavy Sub Bass', type: 'Bass' },
   { id: 'clubbass', name: 'Club Bass', type: 'Bass' },
   { id: 'trapbass', name: 'Trap Bass', type: 'Bass' },
+  { id: 'subbass', name: 'Pure Sub Bass', type: 'Bass' },
+  { id: 'pyramidsub', name: 'Pyramid Sub', type: 'Bass' },
+  { id: 'warmbass', name: 'Warm Analog Bass', type: 'Bass' },
+  { id: 'roundbass', name: 'Round Bass', type: 'Bass' },
+  { id: 'growlbass', name: 'Growl Bass', type: 'Bass' },
+  { id: 'reesebass', name: 'Reese Bass', type: 'Bass' },
+  { id: 'pluckbass', name: 'Pluck Bass', type: 'Bass' },
+  { id: 'eightoheight', name: '808 Bass', type: 'Bass' },
   { id: 'lead', name: 'Analog Lead', type: 'Lead' },
   { id: 'trancelead', name: 'Trance Lead', type: 'Lead' },
   { id: 'pad', name: 'Ambient Pad', type: 'Pad' },
@@ -11,7 +19,13 @@ const soundBank = [
   { id: 'snare', name: 'Crack Snare', type: 'Drum' },
   { id: 'hihat', name: 'Open Hat', type: 'Drum' },
   { id: 'bongo', name: 'Bongo Rush', type: 'Percussion' },
+  { id: 'bongohigh', name: 'Macho Bongo', type: 'Percussion' },
+  { id: 'bongolow', name: 'Hembra Bongo', type: 'Percussion' },
   { id: 'tom', name: 'Tom Depth', type: 'Percussion' },
+  { id: 'tomhigh', name: 'High Tom', type: 'Percussion' },
+  { id: 'tommid', name: 'Mid Tom', type: 'Percussion' },
+  { id: 'tomlow', name: 'Low Tom', type: 'Percussion' },
+  { id: 'tomfloor', name: 'Floor Tom', type: 'Percussion' },
   { id: 'fxrise', name: 'Rise FX', type: 'FX' },
 ];
 
@@ -21,76 +35,276 @@ const synthPresets = {
     wave2: 'triangle',
     ratio: 0.5,
     filterType: 'lowpass',
-    filterFrequency: 850,
-    resonance: 2.4,
-    attack: 0.01,
-    release: 0.7,
+    filterFrequency: 700,
+    resonance: 1.4,
+    attack: 0.02,
+    release: 1.4,
     gain: 0.95,
-    drive: 0.7,
+    drive: 0.25,
     stack: 3,
     detune: 6,
     sub: true,
-    subGain: 0.65,
+    subGain: 0.7,
     filterEnv: true,
-    filterEnvAmount: 3.5,
-    filterEnvDecay: 0.18,
-    decay: 0.22,
-    sustain: 0.3,
+    filterEnvAmount: 1.4,
+    filterEnvDecay: 0.3,
+    decay: 0.4,
+    sustain: 0.85,
     reverb: 0.05,
-    charGain: 0.3,
-    airGain: 0.06,
+    charGain: 0.25,
+    airGain: 0.05,
     room: 0.05,
   },
+
+
   clubbass: {
     wave1: 'sawtooth',
     wave2: 'square',
     ratio: 0.5,
     filterType: 'lowpass',
-    filterFrequency: 1200,
-    resonance: 3.1,
-    attack: 0.012,
-    release: 0.82,
+    filterFrequency: 900,
+    resonance: 1.8,
+    attack: 0.02,
+    release: 1.3,
     gain: 0.9,
-    drive: 0.9,
+    drive: 0.3,
     stack: 3,
     detune: 8,
     sub: true,
-    subGain: 0.6,
+    subGain: 0.65,
     filterEnv: true,
-    filterEnvAmount: 3,
-    filterEnvDecay: 0.15,
-    decay: 0.2,
-    sustain: 0.35,
+    filterEnvAmount: 1.5,
+    filterEnvDecay: 0.25,
+    decay: 0.4,
+    sustain: 0.85,
     reverb: 0.05,
     charGain: 0.35,
     airGain: 0.08,
     room: 0.06,
   },
+
+
   trapbass: {
     wave1: 'square',
     wave2: 'triangle',
     ratio: 0.25,
     filterType: 'lowpass',
-    filterFrequency: 950,
-    resonance: 4.2,
-    attack: 0.006,
-    release: 0.55,
+    filterFrequency: 800,
+    resonance: 2.0,
+    attack: 0.015,
+    release: 1.2,
     gain: 0.88,
-    drive: 1.2,
+    drive: 0.35,
     stack: 2,
     detune: 5,
     sub: true,
-    subGain: 0.8,
+    subGain: 0.85,
     filterEnv: true,
-    filterEnvAmount: 2.5,
-    filterEnvDecay: 0.12,
-    decay: 0.3,
-    sustain: 0.45,
+    filterEnvAmount: 1.4,
+    filterEnvDecay: 0.2,
+    decay: 0.4,
+    sustain: 0.85,
     reverb: 0.03,
     charGain: 0.3,
     airGain: 0.05,
     room: 0.04,
   },
+
+  subbass: {
+    wave1: 'sine',
+    wave2: 'sine',
+    ratio: 1,
+    filterType: 'lowpass',
+    filterFrequency: 250,
+    resonance: 1.0,
+    attack: 0.02,
+    release: 1.8,
+    gain: 0.95,
+    drive: 0,
+    stack: 1,
+    detune: 0,
+    sub: true,
+    subGain: 0.95,
+    filterEnv: false,
+    decay: 0.5,
+    sustain: 0.95,
+    reverb: 0.03,
+    charGain: 0,
+    airGain: 0.04,
+    room: 0.03,
+  },
+  pyramidsub: {
+    wave1: 'triangle',
+    wave2: 'sine',
+    ratio: 2,
+    filterType: 'lowpass',
+    filterFrequency: 300,
+    resonance: 1.0,
+    attack: 0.03,
+    release: 2.0,
+    gain: 1.0,
+    drive: 0,
+    stack: 2,
+    detune: 4,
+    sub: true,
+    subGain: 0.9,
+    filterEnv: false,
+    decay: 0.6,
+    sustain: 0.95,
+    reverb: 0.03,
+    charGain: 0.12,
+    airGain: 0.06,
+    room: 0.03,
+  },
+  warmbass: {
+    wave1: 'triangle',
+    wave2: 'sine',
+    ratio: 1,
+    filterType: 'lowpass',
+    filterFrequency: 500,
+    resonance: 1.2,
+    attack: 0.02,
+    release: 1.2,
+    gain: 0.9,
+    drive: 0.15,
+    stack: 3,
+    detune: 6,
+    sub: true,
+    subGain: 0.7,
+    filterEnv: true,
+    filterEnvAmount: 1.3,
+    filterEnvDecay: 0.3,
+    decay: 0.4,
+    sustain: 0.85,
+    reverb: 0.05,
+    charGain: 0.2,
+    airGain: 0.05,
+    room: 0.04,
+  },
+  roundbass: {
+    wave1: 'sine',
+    wave2: 'triangle',
+    ratio: 1,
+    filterType: 'lowpass',
+    filterFrequency: 700,
+    resonance: 1.2,
+    attack: 0.02,
+    release: 1.0,
+    gain: 0.9,
+    drive: 0.1,
+    stack: 2,
+    detune: 5,
+    sub: true,
+    subGain: 0.65,
+    filterEnv: false,
+    decay: 0.4,
+    sustain: 0.85,
+    reverb: 0.05,
+    charGain: 0.2,
+    airGain: 0.06,
+    room: 0.04,
+  },
+  growlbass: {
+    wave1: 'sawtooth',
+    wave2: 'square',
+    ratio: 1,
+    filterType: 'lowpass',
+    filterFrequency: 900,
+    resonance: 2.0,
+    attack: 0.015,
+    release: 0.9,
+    gain: 0.88,
+    drive: 0.4,
+    stack: 3,
+    detune: 9,
+    sub: true,
+    subGain: 0.7,
+    filterEnv: true,
+    filterEnvAmount: 1.6,
+    filterEnvDecay: 0.2,
+    decay: 0.35,
+    sustain: 0.8,
+    reverb: 0.05,
+    charGain: 0.35,
+    airGain: 0.08,
+    room: 0.05,
+  },
+  reesebass: {
+    wave1: 'sawtooth',
+    wave2: 'sawtooth',
+    ratio: 1,
+    filterType: 'lowpass',
+    filterFrequency: 800,
+    resonance: 1.6,
+    attack: 0.02,
+    release: 1.1,
+    gain: 0.88,
+    drive: 0.3,
+    stack: 5,
+    detune: 18,
+    sub: true,
+    subGain: 0.6,
+    filterEnv: true,
+    filterEnvAmount: 1.4,
+    filterEnvDecay: 0.35,
+    decay: 0.4,
+    sustain: 0.85,
+    reverb: 0.06,
+    charGain: 0.3,
+    airGain: 0.07,
+    room: 0.05,
+  },
+  pluckbass: {
+    wave1: 'sawtooth',
+    wave2: 'square',
+    ratio: 1,
+    filterType: 'lowpass',
+    filterFrequency: 1400,
+    resonance: 2.2,
+    attack: 0.005,
+    release: 0.6,
+    gain: 0.9,
+    drive: 0.25,
+    stack: 2,
+    detune: 7,
+    sub: true,
+    subGain: 0.6,
+    filterEnv: true,
+    filterEnvAmount: 2.0,
+    filterEnvDecay: 0.12,
+    decay: 0.25,
+    sustain: 0.6,
+    reverb: 0.05,
+    charGain: 0.3,
+    airGain: 0.08,
+    room: 0.04,
+  },
+  eightoheight: {
+    wave1: 'sine',
+    wave2: 'triangle',
+    ratio: 1,
+    filterType: 'lowpass',
+    filterFrequency: 400,
+    resonance: 1.0,
+    attack: 0.005,
+    release: 1.4,
+    gain: 0.95,
+    drive: 0.1,
+    stack: 1,
+    detune: 0,
+    sub: true,
+    subGain: 0.9,
+    filterEnv: false,
+    decay: 0.5,
+    sustain: 0.9,
+    reverb: 0.03,
+    charGain: 0.15,
+    airGain: 0.05,
+    room: 0.03,
+    pitchDrop: 1.8,
+    pitchDropTime: 0.09,
+  },
+
   lead: {
     wave1: 'sawtooth',
     wave2: 'square',
@@ -160,6 +374,7 @@ const synthPresets = {
     decay: 0.8,
     sustain: 0.8,
     reverb: 0.4,
+    air2Gain: 0.08,
     foundationGain: 0.5,
     charGain: 0.3,
     airGain: 0.22,
@@ -185,6 +400,7 @@ const synthPresets = {
     decay: 0.9,
     sustain: 0.85,
     reverb: 0.45,
+    air2Gain: 0.12,
     foundationGain: 0.5,
     charGain: 0.35,
     airGain: 0.28,
@@ -208,6 +424,7 @@ const synthPresets = {
     decay: 0.35,
     sustain: 0.12,
     reverb: 0.25,
+    air2Gain: 0.04,
     foundationGain: 0.4,
     charGain: 0.2,
     tine2: true,
@@ -270,7 +487,13 @@ const state = {
     snare: [0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0],
     hihat: [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
     bongo: [0,0,0,0,1,0,0,1,0,0,1,0,0,0,1,0],
+    bongohigh: [0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0],
+    bongolow: [0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0],
     tom: [0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,1],
+    tomhigh: [0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0],
+    tommid: [0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0],
+    tomlow: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0],
+    tomfloor: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
     clap: [0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0]
   },
   audioCtx: null,
@@ -622,6 +845,14 @@ function buildSoundBank() {
       if (id === 'heavybass') playHeavyBass();
       else if (id === 'clubbass') playClubBass();
       else if (id === 'trapbass') playTrapBass();
+      else if (id === 'subbass') playSubBass();
+      else if (id === 'pyramidsub') playPyramidSub();
+      else if (id === 'warmbass') playWarmBass();
+      else if (id === 'roundbass') playRoundBass();
+      else if (id === 'growlbass') playGrowlBass();
+      else if (id === 'reesebass') playReeseBass();
+      else if (id === 'pluckbass') playPluckBass();
+      else if (id === 'eightoheight') play808Bass();
       else if (id === 'lead') playLead();
       else if (id === 'trancelead') playTranceLead();
       else if (id === 'pad') playPad();
@@ -631,7 +862,13 @@ function buildSoundBank() {
       else if (id === 'snare') playSnare();
       else if (id === 'hihat') playHiHat();
       else if (id === 'bongo') playBongo();
+      else if (id === 'bongohigh') playBongoHigh();
+      else if (id === 'bongolow') playBongoLow();
       else if (id === 'tom') playTom();
+      else if (id === 'tomhigh') playTomHigh();
+      else if (id === 'tommid') playTomMid();
+      else if (id === 'tomlow') playTomLow();
+      else if (id === 'tomfloor') playTomFloor();
       else if (id === 'fxrise') playRiseFX();
     });
   });
@@ -891,6 +1128,7 @@ function playSynthVoice(freq, preset = 'heavybass', durationOverride = null) {
   const isPad = preset === 'pad' || preset === 'trancepad';
 
   const voiceBus = ctx.createGain();
+  const cleanBus = ctx.createGain();
   const drive = ctx.createWaveShaper();
   const gain = ctx.createGain();
 
@@ -902,18 +1140,31 @@ function playSynthVoice(freq, preset = 'heavybass', durationOverride = null) {
   const stopAt = now + envSeconds + release + 0.1;
   const oscs = [];
   const startStop = osc => { osc.start(now); osc.stop(stopAt); oscs.push(osc); };
+  // 808-style pitch drop: body and sub start high and fall to the note.
+  const drop = config.pitchDrop || 0;
+  const dropTime = config.pitchDropTime || 0.1;
+  const applyDrop = (osc, baseFreq) => {
+    if (!drop) return;
+    osc.frequency.setValueAtTime(baseFreq * drop, now);
+    osc.frequency.exponentialRampToValueAtTime(baseFreq, now + dropTime);
+  };
 
-  // LAYER 1 — FOUNDATION: low weight that stays clean (bypasses drive).
-  // Bass presets use a true sub; everything else gets a warm low body.
+  // LAYER 1 — FOUNDATION on a CLEAN path: the sub and low body bypass
+  // the waveshaper entirely, so bass stays smooth instead of rattly.
+  // Everything else still runs through the drive for warmth.
+  let subOsc = null;
+  let subBaseFreq = 0;
   if (config.sub) {
-    const sub = ctx.createOscillator();
-    sub.type = 'sine';
-    sub.frequency.value = freq * (config.subRatio || 0.5);
+    subOsc = ctx.createOscillator();
+    subOsc.type = 'sine';
+    subBaseFreq = freq * (config.subRatio || 0.5);
+    subOsc.frequency.value = subBaseFreq;
     const subGain = ctx.createGain();
     subGain.gain.value = config.subGain || 0.6;
-    sub.connect(subGain);
-    subGain.connect(voiceBus);
-    startStop(sub);
+    subOsc.connect(subGain);
+    subGain.connect(cleanBus);
+    applyDrop(subOsc, subBaseFreq);
+    startStop(subOsc);
   } else if (config.foundationGain) {
     const found = ctx.createOscillator();
     found.type = 'triangle';
@@ -921,7 +1172,7 @@ function playSynthVoice(freq, preset = 'heavybass', durationOverride = null) {
     const foundGain = ctx.createGain();
     foundGain.gain.value = config.foundationGain;
     found.connect(foundGain);
-    foundGain.connect(voiceBus);
+    foundGain.connect(cleanBus);
     startStop(found);
   }
 
@@ -938,6 +1189,7 @@ function playSynthVoice(freq, preset = 'heavybass', durationOverride = null) {
     });
   }
   const body = buildStack(ctx, { wave: config.wave1, freq, count: config.stack || 3, spread: config.detune || 8 });
+  body.oscs.forEach(osc => applyDrop(osc, freq));
   body.out.connect(bodyFilter);
   bodyFilter.connect(voiceBus);
   body.oscs.forEach(startStop);
@@ -979,6 +1231,15 @@ function playSynthVoice(freq, preset = 'heavybass', durationOverride = null) {
     swellGain(air.out.gain, config.airGain, isPad ? 0.8 : 0.3, now);
     air.out.connect(voiceBus);
     air.oscs.forEach(startStop);
+  }
+
+  // LAYER 5 — HIGH AIR: a very quiet two-octave shimmer that blooms
+  // in last, for pads and keys that need to float.
+  if ((config.air2Gain || 0) > 0) {
+    const air2 = buildStack(ctx, { wave: 'sine', freq: freq * 4, count: 2, spread: 15 });
+    swellGain(air2.out.gain, config.air2Gain, 1.2, now);
+    air2.out.connect(voiceBus);
+    air2.oscs.forEach(startStop);
   }
 
   // Gentle vibrato on leads: a slow pitch wobble that fades in.
@@ -1041,8 +1302,14 @@ function playSynthVoice(freq, preset = 'heavybass', durationOverride = null) {
     hammer.stop(now + 0.02);
   }
 
-  voiceBus.connect(drive);
-  drive.connect(gain);
+  // Drive only when it adds warmth; smooth basses skip it entirely.
+  if ((config.drive || 0) > 0.05) {
+    voiceBus.connect(drive);
+    drive.connect(gain);
+  } else {
+    voiceBus.connect(gain);
+  }
+  cleanBus.connect(gain);
   applyAdsr(gain.gain, now, {
     peak: config.gain || 0.7,
     attack: config.attack || 0.02,
@@ -1168,6 +1435,16 @@ function playKick() {
   body.connect(bodyGain);
   bodyGain.connect(bus);
 
+  // Chest layer: a steady low sine that you feel more than hear.
+  const chest = ctx.createOscillator();
+  const chestGain = ctx.createGain();
+  chest.type = 'sine';
+  chest.frequency.value = 55;
+  chestGain.gain.setValueAtTime(0.3, now);
+  chestGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.3);
+  chest.connect(chestGain);
+  chestGain.connect(bus);
+
   // Click: the beater attack that cuts through a mix.
   const click = ctx.createBufferSource();
   click.buffer = makeNoiseBuffer(ctx, 0.02);
@@ -1215,6 +1492,8 @@ function playKick() {
   sub.stop(now + 0.5);
   body.start(now);
   body.stop(now + 0.2);
+  chest.start(now);
+  chest.stop(now + 0.32);
   click.start(now);
   click.stop(now + 0.03);
   top.start(now);
@@ -1222,6 +1501,8 @@ function playKick() {
   roomNoise.start(now);
   roomNoise.stop(now + 0.25);
 }
+
+
 
 function playSnare() {
   const ctx = ensureAudio();
@@ -1254,6 +1535,20 @@ function playSnare() {
   snap.connect(snapFilter);
   snapFilter.connect(snapGain);
   snapGain.connect(bus);
+
+  // Wire rattle: the snare wires buzzing after the hit.
+  const wire = ctx.createBufferSource();
+  wire.buffer = makeNoiseBuffer(ctx, 0.15);
+  const wireFilter = ctx.createBiquadFilter();
+  wireFilter.type = 'bandpass';
+  wireFilter.frequency.value = 3500;
+  wireFilter.Q.value = 0.9;
+  const wireGain = ctx.createGain();
+  wireGain.gain.setValueAtTime(0.25, now);
+  wireGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.15);
+  wire.connect(wireFilter);
+  wireFilter.connect(wireGain);
+  wireGain.connect(bus);
 
   // Body: the drum's low tone.
   const tone = ctx.createOscillator();
@@ -1300,9 +1595,13 @@ function playSnare() {
   noise.stop(now + 0.25);
   snap.start(now);
   snap.stop(now + 0.06);
+  wire.start(now);
+  wire.stop(now + 0.16);
   roomNoise.start(now);
   roomNoise.stop(now + 0.32);
 }
+
+
 
 function playHiHat() {
   const ctx = ensureAudio();
@@ -1498,6 +1797,208 @@ function playTom() {
   roomNoise.stop(now + 0.32);
 }
 
+// One tom voice, six layers: membrane, shell partial, shell resonance,
+// stick knock, head slap, and room bloom. Sizes differ by pitch.
+function playTomVoice({ fund, fundEnd, partial, partialEnd, decay, shellFreq, roomAmt }) {
+  const ctx = ensureAudio();
+  const now = ctx.currentTime;
+  const bus = ctx.createGain();
+
+  const drum = ctx.createOscillator();
+  const drumGain = ctx.createGain();
+  drum.type = 'sine';
+  drum.frequency.setValueAtTime(fund, now);
+  drum.frequency.exponentialRampToValueAtTime(fundEnd, now + decay * 0.55);
+  drumGain.gain.setValueAtTime(0.9, now);
+  drumGain.gain.exponentialRampToValueAtTime(0.0001, now + decay);
+  drum.connect(drumGain);
+  drumGain.connect(bus);
+
+  const part = ctx.createOscillator();
+  const partGain = ctx.createGain();
+  part.type = 'triangle';
+  part.frequency.setValueAtTime(partial, now);
+  part.frequency.exponentialRampToValueAtTime(partialEnd, now + decay * 0.45);
+  partGain.gain.setValueAtTime(0.3, now);
+  partGain.gain.exponentialRampToValueAtTime(0.0001, now + decay * 0.65);
+  part.connect(partGain);
+  partGain.connect(bus);
+
+  const shell = ctx.createOscillator();
+  const shellGain = ctx.createGain();
+  shell.type = 'sine';
+  shell.frequency.setValueAtTime(shellFreq, now);
+  shell.frequency.exponentialRampToValueAtTime(shellFreq * 0.8, now + 0.1);
+  shellGain.gain.setValueAtTime(0.18, now);
+  shellGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
+  shell.connect(shellGain);
+  shellGain.connect(bus);
+
+  const knock = ctx.createBufferSource();
+  knock.buffer = makeNoiseBuffer(ctx, 0.02);
+  const knockFilter = ctx.createBiquadFilter();
+  knockFilter.type = 'lowpass';
+  knockFilter.frequency.value = 900;
+  const knockGain = ctx.createGain();
+  knockGain.gain.setValueAtTime(0.25, now);
+  knockGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.02);
+  knock.connect(knockFilter);
+  knockFilter.connect(knockGain);
+  knockGain.connect(bus);
+
+  const slap = ctx.createBufferSource();
+  slap.buffer = makeNoiseBuffer(ctx, 0.02);
+  const slapFilter = ctx.createBiquadFilter();
+  slapFilter.type = 'bandpass';
+  slapFilter.frequency.value = 1000;
+  slapFilter.Q.value = 1;
+  const slapGain = ctx.createGain();
+  slapGain.gain.setValueAtTime(0.15, now);
+  slapGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.02);
+  slap.connect(slapFilter);
+  slapFilter.connect(slapGain);
+  slapGain.connect(bus);
+
+  const roomNoise = ctx.createBufferSource();
+  roomNoise.buffer = makeNoiseBuffer(ctx, decay);
+  const roomFilter = ctx.createBiquadFilter();
+  roomFilter.type = 'lowpass';
+  roomFilter.frequency.value = 600;
+  const roomGain = ctx.createGain();
+  roomGain.gain.setValueAtTime(0.25, now);
+  roomGain.gain.exponentialRampToValueAtTime(0.0001, now + decay * 0.7);
+  roomNoise.connect(roomFilter);
+  roomFilter.connect(roomGain);
+  addRoomLayer(roomGain, 1);
+
+  routeVoice(bus, 0.1, roomAmt);
+  drum.start(now);
+  drum.stop(now + decay + 0.05);
+  part.start(now);
+  part.stop(now + decay * 0.7);
+  shell.start(now);
+  shell.stop(now + 0.14);
+  knock.start(now);
+  knock.stop(now + 0.03);
+  slap.start(now);
+  slap.stop(now + 0.03);
+  roomNoise.start(now);
+  roomNoise.stop(now + decay);
+}
+
+function playTomHigh() {
+  playTomVoice({ fund: 200, fundEnd: 110, partial: 300, partialEnd: 165, decay: 0.4, shellFreq: 400, roomAmt: 0.12 });
+}
+
+function playTomMid() {
+  playTomVoice({ fund: 165, fundEnd: 85, partial: 250, partialEnd: 130, decay: 0.45, shellFreq: 330, roomAmt: 0.12 });
+}
+
+function playTomLow() {
+  playTomVoice({ fund: 130, fundEnd: 65, partial: 195, partialEnd: 95, decay: 0.5, shellFreq: 260, roomAmt: 0.14 });
+}
+
+function playTomFloor() {
+  playTomVoice({ fund: 100, fundEnd: 45, partial: 150, partialEnd: 70, decay: 0.6, shellFreq: 200, roomAmt: 0.16 });
+}
+
+// One bongo voice, six layers: membrane, shell partial, hand slap,
+// skin resonance, high skin overtone, and room bloom. The pair is
+// macho (high, smaller drum) and hembra (low, larger drum).
+function playBongoVoice({ fund, fundEnd, shell, shellEnd, reso, roomAmt }) {
+  const ctx = ensureAudio();
+  const now = ctx.currentTime;
+  const bus = ctx.createGain();
+
+  const membrane = ctx.createOscillator();
+  const membraneGain = ctx.createGain();
+  membrane.type = 'sine';
+  membrane.frequency.setValueAtTime(fund, now);
+  membrane.frequency.exponentialRampToValueAtTime(fundEnd, now + 0.12);
+  membraneGain.gain.setValueAtTime(0.85, now);
+  membraneGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.26);
+  membrane.connect(membraneGain);
+  membraneGain.connect(bus);
+
+  const shellOsc = ctx.createOscillator();
+  const shellGain = ctx.createGain();
+  shellOsc.type = 'triangle';
+  shellOsc.frequency.setValueAtTime(shell, now);
+  shellOsc.frequency.exponentialRampToValueAtTime(shellEnd, now + 0.08);
+  shellGain.gain.setValueAtTime(0.35, now);
+  shellGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.14);
+  shellOsc.connect(shellGain);
+  shellGain.connect(bus);
+
+  const slap = ctx.createBufferSource();
+  slap.buffer = makeNoiseBuffer(ctx, 0.03);
+  const slapFilter = ctx.createBiquadFilter();
+  slapFilter.type = 'bandpass';
+  slapFilter.frequency.value = 1200;
+  slapFilter.Q.value = 1.2;
+  const slapGain = ctx.createGain();
+  slapGain.gain.setValueAtTime(0.3, now);
+  slapGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.03);
+  slap.connect(slapFilter);
+  slapFilter.connect(slapGain);
+  slapGain.connect(bus);
+
+  const resoOsc = ctx.createOscillator();
+  const resoGain = ctx.createGain();
+  resoOsc.type = 'sine';
+  resoOsc.frequency.setValueAtTime(reso, now);
+  resoOsc.frequency.exponentialRampToValueAtTime(reso * 0.82, now + 0.1);
+  resoGain.gain.setValueAtTime(0.15, now);
+  resoGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
+  resoOsc.connect(resoGain);
+  resoGain.connect(bus);
+
+  const overtone = ctx.createOscillator();
+  const overtoneGain = ctx.createGain();
+  overtone.type = 'sine';
+  overtone.frequency.setValueAtTime(fund * 2, now);
+  overtone.frequency.exponentialRampToValueAtTime(fund * 1.8, now + 0.08);
+  overtoneGain.gain.setValueAtTime(0.1, now);
+  overtoneGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.08);
+  overtone.connect(overtoneGain);
+  overtoneGain.connect(bus);
+
+  const roomNoise = ctx.createBufferSource();
+  roomNoise.buffer = makeNoiseBuffer(ctx, 0.15);
+  const roomFilter = ctx.createBiquadFilter();
+  roomFilter.type = 'bandpass';
+  roomFilter.frequency.value = 800;
+  roomFilter.Q.value = 0.8;
+  const roomGain = ctx.createGain();
+  roomGain.gain.setValueAtTime(0.2, now);
+  roomGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.15);
+  roomNoise.connect(roomFilter);
+  roomFilter.connect(roomGain);
+  addRoomLayer(roomGain, 1);
+
+  routeVoice(bus, 0.1, roomAmt);
+  membrane.start(now);
+  membrane.stop(now + 0.3);
+  shellOsc.start(now);
+  shellOsc.stop(now + 0.18);
+  resoOsc.start(now);
+  resoOsc.stop(now + 0.14);
+  overtone.start(now);
+  overtone.stop(now + 0.1);
+  slap.start(now);
+  slap.stop(now + 0.04);
+  roomNoise.start(now);
+  roomNoise.stop(now + 0.16);
+}
+
+function playBongoHigh() {
+  playBongoVoice({ fund: 280, fundEnd: 200, shell: 420, shellEnd: 300, reso: 560, roomAmt: 0.1 });
+}
+
+function playBongoLow() {
+  playBongoVoice({ fund: 200, fundEnd: 140, shell: 300, shellEnd: 210, reso: 400, roomAmt: 0.1 });
+}
+
 function playClap() {
   const ctx = ensureAudio();
   const now = ctx.currentTime;
@@ -1573,6 +2074,38 @@ function playTrapBass() {
   playSynthVoice(41.2, 'trapbass');
 }
 
+function playSubBass() {
+  playSynthVoice(41.2, 'subbass');
+}
+
+function playPyramidSub() {
+  playSynthVoice(36.71, 'pyramidsub');
+}
+
+function playWarmBass() {
+  playSynthVoice(43.65, 'warmbass');
+}
+
+function playRoundBass() {
+  playSynthVoice(46.25, 'roundbass');
+}
+
+function playGrowlBass() {
+  playSynthVoice(49, 'growlbass');
+}
+
+function playReeseBass() {
+  playSynthVoice(55, 'reesebass');
+}
+
+function playPluckBass() {
+  playSynthVoice(58.27, 'pluckbass');
+}
+
+function play808Bass() {
+  playSynthVoice(41.2, 'eightoheight');
+}
+
 function playLead() {
   playSynthVoice(220, 'lead');
 }
@@ -1599,7 +2132,13 @@ function triggerDrum(drum) {
     case 'snare': return playSnare();
     case 'hihat': return playHiHat();
     case 'bongo': return playBongo();
+    case 'bongohigh': return playBongoHigh();
+    case 'bongolow': return playBongoLow();
     case 'tom': return playTom();
+    case 'tomhigh': return playTomHigh();
+    case 'tommid': return playTomMid();
+    case 'tomlow': return playTomLow();
+    case 'tomfloor': return playTomFloor();
     case 'clap': return playClap();
     default: return;
   }
