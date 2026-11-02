@@ -777,6 +777,19 @@ const state = {
   deckBLoop: 'B',
   crossfader: 0,
   voiceDeck: null,
+  song: [
+    { name: 'Intro', loop: 'A', bars: 2 },
+    { name: 'Build', loop: 'D', bars: 2 },
+    { name: 'Drop', loop: 'B', bars: 4 },
+    { name: 'Breakdown', loop: 'C', bars: 2 },
+    { name: 'Drop', loop: 'B', bars: 4 },
+    { name: 'Outro', loop: 'A', bars: 2 },
+  ],
+  songMode: false,
+  songIndex: 0,
+  songBarsPlayed: 0,
+  songRepeat: true,
+  songQueued: false,
 
   audioCtx: null,
   masterGain: null,
@@ -818,6 +831,10 @@ const elements = {
   crossfader: document.getElementById('crossfader'),
   deckBLoop: document.getElementById('deckBLoop'),
   crossfadeLabel: document.getElementById('crossfadeLabel'),
+  songModeButton: document.getElementById('songModeButton'),
+  songRepeatButton: document.getElementById('songRepeatButton'),
+  songAddButton: document.getElementById('songAddButton'),
+  songSections: document.getElementById('songSections'),
   presetSelect: document.getElementById('presetSelect'),
   recordInstruments: document.getElementById('recordInstruments'),
   qualitySelect: document.getElementById('qualitySelect'),
@@ -2948,6 +2965,7 @@ function updateLoopButtons() {
 
 function switchLoop(name) {
   if (!state.loops[name]) return;
+  if (state.songMode) setSongMode(false);
   if (state.isPlayingPattern) {
     // Queue it; tapping the queued loop again cancels the queue.
     state.pendingLoop = state.pendingLoop === name ? null : name;
@@ -2989,6 +3007,191 @@ function applyCrossfader(x) {
   }
 }
 
+// ---- Song sections: an arrangement of named sections that plays
+// itself, handing deck A from one section to the next on bar lines.
+
+const SONG_NAMES = ['Intro', 'Verse', 'Pre-Chorus', 'Chorus', 'Drop', 'Breakdown', 'Build', 'Bridge', 'Outro'];
+const LOOP_NAMES = { A: 'A · Main', B: 'B · Drop', C: 'C · Breakdown', D: 'D · Build' };
+
+function setSongMode(on) {
+  state.songMode = on;
+  if (!on) state.songQueued = false;
+  if (elements.songModeButton) {
+    elements.songModeButton.textContent = on ? 'Song Mode: On' : 'Song Mode: Off';
+  }
+  renderSongSections();
+}
+
+function startSong() {
+  if (!state.song.length) return;
+  state.songIndex = 0;
+  state.songBarsPlayed = 0;
+  state.pendingLoop = null;
+  state.activeLoop = state.song[0].loop;
+  state.deckALoop = state.song[0].loop;
+  updateLoopButtons();
+  renderPatternSelection();
+  renderSongSections();
+}
+
+function advanceSongIfNeeded() {
+  if (!state.song.length) return true;
+  const section = state.song[state.songIndex];
+  if (state.songBarsPlayed < section.bars) return true;
+  const next = state.songIndex + 1;
+  if (next >= state.song.length) {
+    if (state.songRepeat) {
+      state.songIndex = 0;
+    } else {
+      setSongMode(false);
+      stopPattern();
+      return false;
+    }
+  } else {
+    state.songIndex = next;
+  }
+  state.songBarsPlayed = 0;
+  state.activeLoop = state.song[state.songIndex].loop;
+  state.deckALoop = state.song[state.songIndex].loop;
+  updateLoopButtons();
+  renderPatternSelection();
+  renderSongSections();
+  return true;
+}
+
+function toggleSongMode() {
+  if (state.songMode) {
+    setSongMode(false);
+    return;
+  }
+  if (!state.song.length) return;
+  setSongMode(true);
+  if (state.isPlayingPattern) {
+    // Start the arrangement at the next bar, never mid-bar.
+    state.songQueued = true;
+  } else {
+    startSong();
+  }
+}
+
+function toggleSongRepeat() {
+  state.songRepeat = !state.songRepeat;
+  if (elements.songRepeatButton) {
+    elements.songRepeatButton.textContent = state.songRepeat ? 'Repeat: On' : 'Repeat: Off';
+  }
+}
+
+function addSongSection() {
+  state.song.push({ name: 'Verse', loop: 'A', bars: 2 });
+  renderSongSections();
+}
+
+function deleteSongSection(index) {
+  if (state.song.length <= 1) return;
+  state.song.splice(index, 1);
+  if (state.songMode) {
+    if (index < state.songIndex) {
+      state.songIndex -= 1;
+    } else if (index === state.songIndex) {
+      if (state.songIndex >= state.song.length) state.songIndex = state.song.length - 1;
+      state.songBarsPlayed = 0;
+      state.activeLoop = state.song[state.songIndex].loop;
+      state.deckALoop = state.song[state.songIndex].loop;
+      updateLoopButtons();
+      renderPatternSelection();
+    }
+  }
+  renderSongSections();
+}
+
+function updateSongSection(index, field, value) {
+  const section = state.song[index];
+  if (!section) return;
+  if (field === 'bars') {
+    section.bars = Math.max(1, Math.min(16, Number(value) || 1));
+  } else if (field === 'loop') {
+    if (!state.loops[value]) return;
+    section.loop = value;
+    if (state.songMode && index === state.songIndex) {
+      state.activeLoop = value;
+      state.deckALoop = value;
+      updateLoopButtons();
+      renderPatternSelection();
+    }
+  } else if (field === 'name') {
+    section.name = value;
+  }
+  renderSongSections();
+}
+
+function renderSongSections() {
+  const container = elements.songSections;
+  if (!container) return;
+  container.innerHTML = '';
+  state.song.forEach((section, index) => {
+    const row = document.createElement('div');
+    row.className = 'song-row' + (state.songMode && index === state.songIndex ? ' current' : '');
+    const number = document.createElement('span');
+    number.className = 'song-row-number';
+    number.textContent = String(index + 1);
+    row.appendChild(number);
+
+    const nameSelect = document.createElement('select');
+    nameSelect.className = 'song-name';
+    SONG_NAMES.forEach(name => {
+      const option = document.createElement('option');
+      option.value = name;
+      option.textContent = name;
+      if (name === section.name) option.selected = true;
+      nameSelect.appendChild(option);
+    });
+    nameSelect.value = section.name;
+    nameSelect.addEventListener('change', e => updateSongSection(index, 'name', e.target.value));
+    row.appendChild(nameSelect);
+
+    const loopSelect = document.createElement('select');
+    loopSelect.className = 'song-loop';
+    Object.entries(LOOP_NAMES).forEach(([key, label]) => {
+      const option = document.createElement('option');
+      option.value = key;
+      option.textContent = label;
+      if (key === section.loop) option.selected = true;
+      loopSelect.appendChild(option);
+    });
+    loopSelect.value = section.loop;
+    loopSelect.addEventListener('change', e => updateSongSection(index, 'loop', e.target.value));
+    row.appendChild(loopSelect);
+
+    const minus = document.createElement('button');
+    minus.type = 'button';
+    minus.className = 'song-bars-button';
+    minus.textContent = '−';
+    minus.addEventListener('click', () => updateSongSection(index, 'bars', section.bars - 1));
+    row.appendChild(minus);
+
+    const bars = document.createElement('span');
+    bars.className = 'song-bars';
+    bars.textContent = `${section.bars} bar${section.bars === 1 ? '' : 's'}`;
+    row.appendChild(bars);
+
+    const plus = document.createElement('button');
+    plus.type = 'button';
+    plus.className = 'song-bars-button';
+    plus.textContent = '+';
+    plus.addEventListener('click', () => updateSongSection(index, 'bars', section.bars + 1));
+    row.appendChild(plus);
+
+    const remove = document.createElement('button');
+    remove.type = 'button';
+    remove.className = 'song-delete';
+    remove.textContent = '×';
+    remove.addEventListener('click', () => deleteSongSection(index));
+    row.appendChild(remove);
+
+    container.appendChild(row);
+  });
+}
+
 
 function buildSequencer() {
   elements.sequencing.innerHTML = '';
@@ -3014,6 +3217,14 @@ function buildSequencer() {
 // One shared clock tick: plays the current step of both decks, so the
 // two loops stay locked together while the crossfader blends them.
 function playStep() {
+  // Song mode owns deck A: a queued song start lands on the bar, and
+  // a finished section hands over to the next one, also on the bar.
+  if (state.songQueued && state.currentStep === 0) {
+    startSong();
+    state.songQueued = false;
+  } else if (state.songMode) {
+    if (!advanceSongIfNeeded()) return;
+  }
   maybeSwitchLoop();
   const stepButtons = document.querySelectorAll('.step-button');
   stepButtons.forEach(button => button.classList.remove('active-highlight'));
@@ -3029,6 +3240,9 @@ function playStep() {
   state.voiceDeck = null;
 
   state.currentStep = (state.currentStep + 1) % 16;
+  if (state.currentStep === 0 && state.songMode) {
+    state.songBarsPlayed += 1;
+  }
 }
 
 function playLoopSteps(loopName) {
@@ -3045,6 +3259,7 @@ function playPattern() {
 
   state.isPlayingPattern = true;
   state.currentStep = 0;
+  if (state.songMode) startSong();
   const intervalMs = (60 / Number(elements.bpmInput.value || 110)) / 2 * 1000;
 
   setPatternButtonState(true);
@@ -3345,6 +3560,9 @@ function bindControls() {
 
   if (elements.crossfader) elements.crossfader.addEventListener('input', e => applyCrossfader(Number(e.target.value || 0) / 100));
   if (elements.deckBLoop) elements.deckBLoop.addEventListener('change', e => setDeckBLoop(e.target.value));
+  if (elements.songModeButton) elements.songModeButton.addEventListener('click', toggleSongMode);
+  if (elements.songRepeatButton) elements.songRepeatButton.addEventListener('click', toggleSongRepeat);
+  if (elements.songAddButton) elements.songAddButton.addEventListener('click', addSongSection);
 
   document.querySelectorAll('.drum-pad').forEach(button => {
     button.addEventListener('click', () => {
@@ -3375,6 +3593,7 @@ function init() {
   applyMasterLevel();
   updateLoopButtons();
   applyCrossfader(state.crossfader || 0);
+  renderSongSections();
   state.currentGenre = 'hiphop';
   applyGenreProfile();
   renderTracks();
