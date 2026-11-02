@@ -37,6 +37,9 @@ const synthPresets = {
     decay: 0.22,
     sustain: 0.3,
     reverb: 0.05,
+    charGain: 0.3,
+    airGain: 0.06,
+    room: 0.05,
   },
   clubbass: {
     wave1: 'sawtooth',
@@ -59,6 +62,9 @@ const synthPresets = {
     decay: 0.2,
     sustain: 0.35,
     reverb: 0.05,
+    charGain: 0.35,
+    airGain: 0.08,
+    room: 0.06,
   },
   trapbass: {
     wave1: 'square',
@@ -81,6 +87,9 @@ const synthPresets = {
     decay: 0.3,
     sustain: 0.45,
     reverb: 0.03,
+    charGain: 0.3,
+    airGain: 0.05,
+    room: 0.04,
   },
   lead: {
     wave1: 'sawtooth',
@@ -102,6 +111,10 @@ const synthPresets = {
     decay: 0.3,
     sustain: 0.55,
     reverb: 0.22,
+    foundationGain: 0.3,
+    charGain: 0.35,
+    airGain: 0.14,
+    room: 0.05,
   },
   trancelead: {
     wave1: 'sawtooth',
@@ -123,6 +136,10 @@ const synthPresets = {
     decay: 0.35,
     sustain: 0.6,
     reverb: 0.28,
+    foundationGain: 0.35,
+    charGain: 0.4,
+    airGain: 0.18,
+    room: 0.06,
   },
   pad: {
     wave1: 'triangle',
@@ -143,6 +160,11 @@ const synthPresets = {
     decay: 0.8,
     sustain: 0.8,
     reverb: 0.4,
+    foundationGain: 0.5,
+    charGain: 0.3,
+    airGain: 0.22,
+    room: 0.08,
+    filterLfo: true,
   },
   trancepad: {
     wave1: 'sine',
@@ -163,6 +185,11 @@ const synthPresets = {
     decay: 0.9,
     sustain: 0.85,
     reverb: 0.45,
+    foundationGain: 0.5,
+    charGain: 0.35,
+    airGain: 0.28,
+    room: 0.08,
+    filterLfo: true,
   },
   epiano: {
     wave1: 'triangle',
@@ -181,6 +208,12 @@ const synthPresets = {
     decay: 0.35,
     sustain: 0.12,
     reverb: 0.25,
+    foundationGain: 0.4,
+    charGain: 0.2,
+    tine2: true,
+    hammer: true,
+    airGain: 0.1,
+    room: 0.1,
   },
 };
 
@@ -248,6 +281,10 @@ const state = {
   reverbSend: null,
   reverbGain: null,
   convolver: null,
+  roomSend: null,
+  roomGain: null,
+  roomConvolver: null,
+  noiseCache: {},
   instrumentGain: null,
   instrumentDest: null,
   mediaRecorder: null,
@@ -334,7 +371,7 @@ function ensureAudio() {
   const dest = ctx.createMediaStreamDestination();
   instrumentGain.connect(dest);
 
-  // Generated room reverb: no audio files needed. Voices send into
+  // Generated hall reverb: no audio files needed. Voices send into
   // reverbSend, and the wet signal returns into instrumentGain, so
   // reverb is heard live AND captured in exported mixes.
   const reverbSend = ctx.createGain();
@@ -347,6 +384,18 @@ function ensureAudio() {
   convolver.connect(reverbGain);
   reverbGain.connect(instrumentGain);
 
+  // Short room reverb for drums: a tight space, distinct from the hall,
+  // so drums sit in a room while synths live in a bigger space.
+  const roomSend = ctx.createGain();
+  roomSend.gain.value = 1;
+  const roomConvolver = ctx.createConvolver();
+  roomConvolver.buffer = makeImpulseResponse(ctx, 0.7, 2.0);
+  const roomGain = ctx.createGain();
+  roomGain.gain.value = 0.25;
+  roomSend.connect(roomConvolver);
+  roomConvolver.connect(roomGain);
+  roomGain.connect(instrumentGain);
+
   state.audioCtx = ctx;
   state.masterGain = master;
   state.masterFilter = filter;
@@ -357,6 +406,9 @@ function ensureAudio() {
   state.reverbSend = reverbSend;
   state.reverbGain = reverbGain;
   state.convolver = convolver;
+  state.roomSend = roomSend;
+  state.roomGain = roomGain;
+  state.roomConvolver = roomConvolver;
 
   return ctx;
 }
@@ -385,24 +437,70 @@ function makeImpulseResponse(ctx, seconds = 2.4, decay = 3.0) {
 }
 
 function makeNoiseBuffer(ctx, seconds) {
-  const length = Math.max(1, Math.floor(ctx.sampleRate * seconds));
-  const buffer = ctx.createBuffer(1, length, ctx.sampleRate);
-  const data = buffer.getChannelData(0);
-  for (let i = 0; i < length; i++) data[i] = Math.random() * 2 - 1;
-  return buffer;
+  state.noiseCache = state.noiseCache || {};
+  const key = seconds.toFixed(3);
+  if (!state.noiseCache[key]) {
+    const length = Math.max(1, Math.floor(ctx.sampleRate * seconds));
+    const buffer = ctx.createBuffer(1, length, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < length; i++) data[i] = Math.random() * 2 - 1;
+    state.noiseCache[key] = buffer;
+  }
+  return state.noiseCache[key];
 }
 
+
 // Routes a voice to the dry mix and, when amount > 0, to the reverb bus.
-function routeVoice(output, reverbAmount = 0.15) {
+function routeVoice(output, hallAmount = 0.15, roomAmount = 0) {
   const ctx = state.audioCtx;
   output.connect(state.instrumentGain);
-  if (reverbAmount > 0 && state.reverbSend) {
+  if (hallAmount > 0 && state.reverbSend) {
     const send = ctx.createGain();
-    send.gain.value = reverbAmount;
+    send.gain.value = hallAmount;
     output.connect(send);
     send.connect(state.reverbSend);
   }
+  if (roomAmount > 0 && state.roomSend) {
+    const send = ctx.createGain();
+    send.gain.value = roomAmount;
+    output.connect(send);
+    send.connect(state.roomSend);
+  }
 }
+
+// Sends one layer (typically a drum room layer) into the room bus.
+function addRoomLayer(source, amount = 1) {
+  if (!state.roomSend || amount <= 0) return;
+  const send = state.audioCtx.createGain();
+  send.gain.value = amount;
+  source.connect(send);
+  send.connect(state.roomSend);
+}
+
+// A detuned oscillator stack: several slightly out-of-tune voices
+// summed into one output gain. Returns { oscs, out }.
+function buildStack(ctx, { wave = 'sawtooth', freq, count = 3, spread = 8, level = 1 }) {
+  const out = ctx.createGain();
+  out.gain.value = level;
+  const oscs = [];
+  for (let i = 0; i < count; i++) {
+    const osc = ctx.createOscillator();
+    osc.type = wave;
+    osc.frequency.value = freq;
+    osc.detune.value = (i - (count - 1) / 2) * spread;
+    osc.connect(out);
+    oscs.push(osc);
+  }
+  return { oscs, out };
+}
+
+// Fades a layer in from silence over `swell` seconds, so upper layers
+// bloom in after the attack instead of all hitting at once.
+function swellGain(param, level, swell, now) {
+  param.setValueAtTime(0.0001, now);
+  param.linearRampToValueAtTime(Math.max(0.0002, level), now + Math.max(0.01, swell));
+}
+
 
 // ADSR envelope on a gain param: attack to peak, decay to sustain,
 // hold until holdEnd, then release to silence.
@@ -790,63 +888,97 @@ function playSynthVoice(freq, preset = 'heavybass', durationOverride = null) {
   const ctx = ensureAudio();
   const now = ctx.currentTime;
   const config = synthPresets[preset] || synthPresets.heavybass;
+  const isPad = preset === 'pad' || preset === 'trancepad';
 
-  const filter = ctx.createBiquadFilter();
+  const voiceBus = ctx.createGain();
   const drive = ctx.createWaveShaper();
   const gain = ctx.createGain();
 
   drive.curve = makeDriveCurve(config.drive || 0.5);
   drive.oversample = '4x';
 
-  filter.type = config.filterType || 'lowpass';
-  filter.frequency.value = config.filterFrequency || 1500;
-  filter.Q.value = config.resonance || 1.5;
-
-  const envSeconds = durationOverride || (preset === 'pad' || preset === 'trancepad' ? 1.8 : 0.7);
+  const envSeconds = durationOverride || (isPad ? 1.8 : 0.7);
   const release = config.release || 0.5;
   const stopAt = now + envSeconds + release + 0.1;
+  const oscs = [];
+  const startStop = osc => { osc.start(now); osc.stop(stopAt); oscs.push(osc); };
 
-  // Detuned oscillator stack: the thickness real synths get from
-  // several slightly out-of-tune voices playing together.
-  const stackCount = config.stack || 3;
-  const spread = config.detune || 8;
-  const voices = [];
-  for (let i = 0; i < stackCount; i++) {
-    const osc = ctx.createOscillator();
-    osc.type = config.wave1;
-    osc.frequency.value = freq;
-    osc.detune.value = (i - (stackCount - 1) / 2) * spread;
-    osc.connect(filter);
-    voices.push(osc);
-  }
-  // Second waveform, detuned the other way for width.
-  const oscB = ctx.createOscillator();
-  oscB.type = config.wave2;
-  oscB.frequency.value = freq * (config.ratio || 1);
-  oscB.detune.value = spread / 2;
-  oscB.connect(filter);
-  voices.push(oscB);
-
-  // Sub oscillator: pure low weight that stays clean (bypasses drive).
-  let sub = null;
-  let subGain = null;
+  // LAYER 1 — FOUNDATION: low weight that stays clean (bypasses drive).
+  // Bass presets use a true sub; everything else gets a warm low body.
   if (config.sub) {
-    sub = ctx.createOscillator();
+    const sub = ctx.createOscillator();
     sub.type = 'sine';
     sub.frequency.value = freq * (config.subRatio || 0.5);
-    subGain = ctx.createGain();
+    const subGain = ctx.createGain();
     subGain.gain.value = config.subGain || 0.6;
     sub.connect(subGain);
-    subGain.connect(gain);
+    subGain.connect(voiceBus);
+    startStop(sub);
+  } else if (config.foundationGain) {
+    const found = ctx.createOscillator();
+    found.type = 'triangle';
+    found.frequency.value = freq;
+    const foundGain = ctx.createGain();
+    foundGain.gain.value = config.foundationGain;
+    found.connect(foundGain);
+    foundGain.connect(voiceBus);
+    startStop(found);
   }
 
-  // Filter envelope: the cutoff sweeps as the note plays.
+  // LAYER 2 — BODY: the main detuned stack through the filter envelope.
+  const bodyFilter = ctx.createBiquadFilter();
+  bodyFilter.type = config.filterType || 'lowpass';
+  bodyFilter.frequency.value = config.filterFrequency || 1500;
+  bodyFilter.Q.value = config.resonance || 1.5;
   if (config.filterEnv) {
-    applyFilterEnvelope(filter, now, {
+    applyFilterEnvelope(bodyFilter, now, {
       start: (config.filterFrequency || 1500) * (config.filterEnvAmount || 3),
       end: config.filterFrequency || 1500,
       decay: config.filterEnvDecay || 0.25,
     });
+  }
+  const body = buildStack(ctx, { wave: config.wave1, freq, count: config.stack || 3, spread: config.detune || 8 });
+  body.out.connect(bodyFilter);
+  bodyFilter.connect(voiceBus);
+  body.oscs.forEach(startStop);
+
+  // Slow filter movement on pads: the cutoff breathes while the note holds.
+  let filterLfo = null;
+  let filterLfoGain = null;
+  if (config.filterLfo) {
+    filterLfo = ctx.createOscillator();
+    filterLfo.type = 'sine';
+    filterLfo.frequency.value = 0.12;
+    filterLfoGain = ctx.createGain();
+    filterLfoGain.gain.value = (config.filterFrequency || 1500) * 0.35;
+    filterLfo.connect(filterLfoGain);
+    filterLfoGain.connect(bodyFilter.frequency);
+    filterLfo.start(now);
+    filterLfo.stop(stopAt);
+  }
+
+  // LAYER 3 — CHARACTER: a brighter, wider stack that fades in just
+  // behind the attack, giving the note its recognizable color.
+  let character = null;
+  if ((config.charGain || 0) > 0) {
+    const charFilter = ctx.createBiquadFilter();
+    charFilter.type = 'lowpass';
+    charFilter.frequency.value = (config.filterFrequency || 1500) * 2.5;
+    charFilter.Q.value = 1;
+    character = buildStack(ctx, { wave: config.wave2, freq: freq * (config.ratio || 1), count: 2, spread: (config.detune || 8) * 1.5 });
+    swellGain(character.out.gain, config.charGain, 0.12, now);
+    character.out.connect(charFilter);
+    charFilter.connect(voiceBus);
+    character.oscs.forEach(startStop);
+  }
+
+  // LAYER 4 — AIR: a quiet octave-up shimmer that swells in slowly,
+  // the layer that makes a sound feel expensive on good speakers.
+  if ((config.airGain || 0) > 0) {
+    const air = buildStack(ctx, { wave: 'sine', freq: freq * 2, count: 2, spread: 12 });
+    swellGain(air.out.gain, config.airGain, isPad ? 0.8 : 0.3, now);
+    air.out.connect(voiceBus);
+    air.oscs.forEach(startStop);
   }
 
   // Gentle vibrato on leads: a slow pitch wobble that fades in.
@@ -860,24 +992,56 @@ function playSynthVoice(freq, preset = 'heavybass', durationOverride = null) {
     lfoGain.gain.setValueAtTime(0, now);
     lfoGain.gain.linearRampToValueAtTime(freq * 0.006, now + 0.15);
     lfo.connect(lfoGain);
-    voices.forEach(osc => lfoGain.connect(osc.frequency));
+    body.oscs.forEach(osc => lfoGain.connect(osc.frequency));
+    if (character) character.oscs.forEach(osc => lfoGain.connect(osc.frequency));
+    lfo.start(now);
+    lfo.stop(stopAt);
   }
 
   // EP tine: a short, bright harmonic ping on top of electric pianos.
-  let tine = null;
-  let tineGain = null;
   if (config.tine) {
-    tine = ctx.createOscillator();
+    const tine = ctx.createOscillator();
     tine.type = 'sine';
     tine.frequency.value = freq * 3.98;
-    tineGain = ctx.createGain();
+    const tineGain = ctx.createGain();
     tineGain.gain.setValueAtTime(0.16, now);
     tineGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.25);
     tine.connect(tineGain);
-    tineGain.connect(gain);
+    tineGain.connect(voiceBus);
+    tine.start(now);
+    tine.stop(now + 0.3);
+  }
+  // Second tine partial: the glassy overtone that sells a real EP.
+  if (config.tine2) {
+    const tine2 = ctx.createOscillator();
+    tine2.type = 'sine';
+    tine2.frequency.value = freq * 9.96;
+    const tine2Gain = ctx.createGain();
+    tine2Gain.gain.setValueAtTime(0.05, now);
+    tine2Gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
+    tine2.connect(tine2Gain);
+    tine2Gain.connect(voiceBus);
+    tine2.start(now);
+    tine2.stop(now + 0.15);
+  }
+  // Hammer transient: the tiny felt hit at the very start of an EP note.
+  if (config.hammer) {
+    const hammer = ctx.createBufferSource();
+    hammer.buffer = makeNoiseBuffer(ctx, 0.02);
+    const hammerFilter = ctx.createBiquadFilter();
+    hammerFilter.type = 'highpass';
+    hammerFilter.frequency.value = 4000;
+    const hammerGain = ctx.createGain();
+    hammerGain.gain.setValueAtTime(0.04, now);
+    hammerGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.015);
+    hammer.connect(hammerFilter);
+    hammerFilter.connect(hammerGain);
+    hammerGain.connect(voiceBus);
+    hammer.start(now);
+    hammer.stop(now + 0.02);
   }
 
-  filter.connect(drive);
+  voiceBus.connect(drive);
   drive.connect(gain);
   applyAdsr(gain.gain, now, {
     peak: config.gain || 0.7,
@@ -887,12 +1051,7 @@ function playSynthVoice(freq, preset = 'heavybass', durationOverride = null) {
     holdEnd: now + envSeconds,
     release,
   });
-  routeVoice(gain, config.reverb != null ? config.reverb : 0.15);
-
-  voices.forEach(osc => { osc.start(now); osc.stop(stopAt); });
-  if (sub) { sub.start(now); sub.stop(stopAt); }
-  if (lfo) { lfo.start(now); lfo.stop(stopAt); }
-  if (tine) { tine.start(now); tine.stop(now + 0.3); }
+  routeVoice(gain, config.reverb != null ? config.reverb : 0.15, config.room || 0);
 }
 
 
@@ -933,11 +1092,52 @@ function playRiseFX() {
   noiseFilter.connect(noiseGain);
   noiseGain.connect(bus);
 
-  routeVoice(bus, 0.5);
+  // Sub sweep underneath: the riser gains weight as it climbs.
+  const sub = ctx.createOscillator();
+  sub.type = 'sine';
+  sub.frequency.setValueAtTime(60, now);
+  sub.frequency.exponentialRampToValueAtTime(300, now + 1.3);
+  const subGain = ctx.createGain();
+  subGain.gain.setValueAtTime(0.0001, now);
+  subGain.gain.linearRampToValueAtTime(0.3, now + 1.1);
+  subGain.gain.exponentialRampToValueAtTime(0.0001, now + 1.5);
+  sub.connect(subGain);
+  subGain.connect(bus);
+
+  // Shimmer on top: a high sine that sparkles near the peak.
+  const shim = ctx.createOscillator();
+  shim.type = 'sine';
+  shim.frequency.setValueAtTime(2400, now);
+  shim.frequency.exponentialRampToValueAtTime(4800, now + 1.3);
+  const shimGain = ctx.createGain();
+  shimGain.gain.setValueAtTime(0.0001, now);
+  shimGain.gain.linearRampToValueAtTime(0.08, now + 1.1);
+  shimGain.gain.exponentialRampToValueAtTime(0.0001, now + 1.45);
+  shim.connect(shimGain);
+  shimGain.connect(bus);
+
+  // Impact at the peak: a soft thump where the riser lands.
+  const impact = ctx.createOscillator();
+  impact.type = 'sine';
+  impact.frequency.setValueAtTime(160, now + 1.3);
+  impact.frequency.exponentialRampToValueAtTime(45, now + 1.6);
+  const impactGain = ctx.createGain();
+  impactGain.gain.setValueAtTime(0.5, now + 1.3);
+  impactGain.gain.exponentialRampToValueAtTime(0.0001, now + 1.65);
+  impact.connect(impactGain);
+  impactGain.connect(bus);
+
+  routeVoice(bus, 0.4, 0.1);
   osc.start(now);
   osc.stop(now + 1.55);
   noise.start(now);
   noise.stop(now + 1.5);
+  sub.start(now);
+  sub.stop(now + 1.55);
+  shim.start(now);
+  shim.stop(now + 1.5);
+  impact.start(now + 1.3);
+  impact.stop(now + 1.7);
 }
 
 function playKick() {
@@ -981,11 +1181,35 @@ function playKick() {
   clickFilter.connect(clickGain);
   clickGain.connect(bus);
 
+  // Top snap: a second, brighter beater layer for definition.
+  const top = ctx.createOscillator();
+  const topGain = ctx.createGain();
+  top.type = 'square';
+  top.frequency.setValueAtTime(3000, now);
+  top.frequency.exponentialRampToValueAtTime(1500, now + 0.008);
+  topGain.gain.setValueAtTime(0.12, now);
+  topGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.012);
+  top.connect(topGain);
+  topGain.connect(bus);
+
+  // Room layer: the kick breathing in a small space.
+  const roomNoise = ctx.createBufferSource();
+  roomNoise.buffer = makeNoiseBuffer(ctx, 0.25);
+  const roomFilter = ctx.createBiquadFilter();
+  roomFilter.type = 'lowpass';
+  roomFilter.frequency.value = 500;
+  const roomGain = ctx.createGain();
+  roomGain.gain.setValueAtTime(0.3, now);
+  roomGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.22);
+  roomNoise.connect(roomFilter);
+  roomFilter.connect(roomGain);
+  addRoomLayer(roomGain, 1);
+
   const drive = ctx.createWaveShaper();
   drive.curve = makeDriveCurve(0.35);
   drive.oversample = '2x';
   bus.connect(drive);
-  routeVoice(drive, 0.04);
+  routeVoice(drive, 0.02, 0.05);
 
   sub.start(now);
   sub.stop(now + 0.5);
@@ -993,6 +1217,10 @@ function playKick() {
   body.stop(now + 0.2);
   click.start(now);
   click.stop(now + 0.03);
+  top.start(now);
+  top.stop(now + 0.02);
+  roomNoise.start(now);
+  roomNoise.stop(now + 0.25);
 }
 
 function playSnare() {
@@ -1038,13 +1266,42 @@ function playSnare() {
   tone.connect(toneGain);
   toneGain.connect(bus);
 
-  routeVoice(bus, 0.18);
+  // Thump: a low knock that gives the snare weight.
+  const thump = ctx.createOscillator();
+  const thumpGain = ctx.createGain();
+  thump.type = 'sine';
+  thump.frequency.setValueAtTime(120, now);
+  thump.frequency.exponentialRampToValueAtTime(90, now + 0.08);
+  thumpGain.gain.setValueAtTime(0.3, now);
+  thumpGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.1);
+  thump.connect(thumpGain);
+  thumpGain.connect(bus);
+
+  // Room layer: the snare ringing in a space.
+  const roomNoise = ctx.createBufferSource();
+  roomNoise.buffer = makeNoiseBuffer(ctx, 0.3);
+  const roomFilter = ctx.createBiquadFilter();
+  roomFilter.type = 'bandpass';
+  roomFilter.frequency.value = 900;
+  roomFilter.Q.value = 0.7;
+  const roomGain = ctx.createGain();
+  roomGain.gain.setValueAtTime(0.5, now);
+  roomGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.3);
+  roomNoise.connect(roomFilter);
+  roomFilter.connect(roomGain);
+  addRoomLayer(roomGain, 1);
+
+  routeVoice(bus, 0.1, 0.08);
   tone.start(now);
   tone.stop(now + 0.2);
+  thump.start(now);
+  thump.stop(now + 0.12);
   noise.start(now);
   noise.stop(now + 0.25);
   snap.start(now);
   snap.stop(now + 0.06);
+  roomNoise.start(now);
+  roomNoise.stop(now + 0.32);
 }
 
 function playHiHat() {
@@ -1080,9 +1337,25 @@ function playHiHat() {
   hp.connect(noiseGain);
   noiseGain.connect(bus);
 
-  routeVoice(bus, 0.12);
+  // Top air: an extra-bright band that keeps hats present in a mix.
+  const airNoise = ctx.createBufferSource();
+  airNoise.buffer = makeNoiseBuffer(ctx, 0.05);
+  const airFilter = ctx.createBiquadFilter();
+  airFilter.type = 'bandpass';
+  airFilter.frequency.value = 12000;
+  airFilter.Q.value = 0.8;
+  const airGain = ctx.createGain();
+  airGain.gain.setValueAtTime(0.2, now);
+  airGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.05);
+  airNoise.connect(airFilter);
+  airFilter.connect(airGain);
+  airGain.connect(bus);
+
+  routeVoice(bus, 0.08, 0.12);
   noise.start(now);
   noise.stop(now + 0.1);
+  airNoise.start(now);
+  airNoise.stop(now + 0.06);
 }
 
 function playBongo() {
@@ -1125,13 +1398,42 @@ function playBongo() {
   slapFilter.connect(slapGain);
   slapGain.connect(bus);
 
-  routeVoice(bus, 0.15);
+  // Resonance: a short high partial that rings like a real skin.
+  const reso = ctx.createOscillator();
+  const resoGain = ctx.createGain();
+  reso.type = 'sine';
+  reso.frequency.setValueAtTime(460, now);
+  reso.frequency.exponentialRampToValueAtTime(380, now + 0.1);
+  resoGain.gain.setValueAtTime(0.15, now);
+  resoGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
+  reso.connect(resoGain);
+  resoGain.connect(bus);
+
+  // Room layer: the bongo in a small space.
+  const roomNoise = ctx.createBufferSource();
+  roomNoise.buffer = makeNoiseBuffer(ctx, 0.15);
+  const roomFilter = ctx.createBiquadFilter();
+  roomFilter.type = 'bandpass';
+  roomFilter.frequency.value = 800;
+  roomFilter.Q.value = 0.8;
+  const roomGain = ctx.createGain();
+  roomGain.gain.setValueAtTime(0.2, now);
+  roomGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.15);
+  roomNoise.connect(roomFilter);
+  roomFilter.connect(roomGain);
+  addRoomLayer(roomGain, 1);
+
+  routeVoice(bus, 0.1, 0.1);
   membrane.start(now);
   membrane.stop(now + 0.3);
   shell.start(now);
   shell.stop(now + 0.18);
+  reso.start(now);
+  reso.stop(now + 0.14);
   slap.start(now);
   slap.stop(now + 0.04);
+  roomNoise.start(now);
+  roomNoise.stop(now + 0.16);
 }
 
 function playTom() {
@@ -1159,11 +1461,41 @@ function playTom() {
   partial.connect(partialGain);
   partialGain.connect(bus);
 
-  routeVoice(bus, 0.15);
+  // Knock: the stick attack that defines the hit.
+  const knock = ctx.createBufferSource();
+  knock.buffer = makeNoiseBuffer(ctx, 0.02);
+  const knockFilter = ctx.createBiquadFilter();
+  knockFilter.type = 'lowpass';
+  knockFilter.frequency.value = 900;
+  const knockGain = ctx.createGain();
+  knockGain.gain.setValueAtTime(0.25, now);
+  knockGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.02);
+  knock.connect(knockFilter);
+  knockFilter.connect(knockGain);
+  knockGain.connect(bus);
+
+  // Room layer: the tom's low bloom in a space.
+  const roomNoise = ctx.createBufferSource();
+  roomNoise.buffer = makeNoiseBuffer(ctx, 0.3);
+  const roomFilter = ctx.createBiquadFilter();
+  roomFilter.type = 'lowpass';
+  roomFilter.frequency.value = 600;
+  const roomGain = ctx.createGain();
+  roomGain.gain.setValueAtTime(0.25, now);
+  roomGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.3);
+  roomNoise.connect(roomFilter);
+  roomFilter.connect(roomGain);
+  addRoomLayer(roomGain, 1);
+
+  routeVoice(bus, 0.1, 0.12);
   drum.start(now);
   drum.stop(now + 0.5);
   partial.start(now);
   partial.stop(now + 0.34);
+  knock.start(now);
+  knock.stop(now + 0.03);
+  roomNoise.start(now);
+  roomNoise.stop(now + 0.32);
 }
 
 function playClap() {
@@ -1207,9 +1539,25 @@ function playClap() {
   tailFilter.connect(tailGain);
   tailGain.connect(bus);
 
-  routeVoice(bus, 0.3);
+  // Long tail: a second, slower wash that makes the clap feel big.
+  const longTail = ctx.createBufferSource();
+  longTail.buffer = makeNoiseBuffer(ctx, 0.6);
+  const longFilter = ctx.createBiquadFilter();
+  longFilter.type = 'bandpass';
+  longFilter.frequency.value = 900;
+  longFilter.Q.value = 0.6;
+  const longGain = ctx.createGain();
+  longGain.gain.setValueAtTime(0.3, now + 0.05);
+  longGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.65);
+  longTail.connect(longFilter);
+  longFilter.connect(longGain);
+  longGain.connect(bus);
+
+  routeVoice(bus, 0.2, 0.15);
   tail.start(now + 0.03);
   tail.stop(now + 0.42);
+  longTail.start(now + 0.05);
+  longTail.stop(now + 0.68);
 }
 
 
