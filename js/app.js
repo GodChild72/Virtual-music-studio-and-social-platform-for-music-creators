@@ -77,8 +77,8 @@ const synthPresets = {
     charGain: 0.25,
     airGain: 0.05,
     room: 0.05,
-    punchGain: 0.18,
-    sparkleGain: 0.04,
+    punchGain: 0.28,
+    sparkleGain: 0.14,
   },
 
 
@@ -106,8 +106,8 @@ const synthPresets = {
     charGain: 0.35,
     airGain: 0.08,
     room: 0.06,
-    punchGain: 0.18,
-    sparkleGain: 0.05,
+    punchGain: 0.28,
+    sparkleGain: 0.14,
     gritGain: 0,
   },
 
@@ -136,8 +136,8 @@ const synthPresets = {
     charGain: 0.3,
     airGain: 0.05,
     room: 0.04,
-    punchGain: 0.18,
-    sparkleGain: 0.04,
+    punchGain: 0.28,
+    sparkleGain: 0.14,
     gritGain: 0,
   },
 
@@ -163,8 +163,8 @@ const synthPresets = {
     charGain: 0,
     airGain: 0.04,
     room: 0.03,
-    punchGain: 0.15,
-    sparkleGain: 0.03,
+    punchGain: 0.24,
+    sparkleGain: 0.20,
   },
   pyramidsub: {
     wave1: 'triangle',
@@ -188,8 +188,8 @@ const synthPresets = {
     charGain: 0.12,
     airGain: 0.06,
     room: 0.03,
-    punchGain: 0.18,
-    sparkleGain: 0.03,
+    punchGain: 0.28,
+    sparkleGain: 0.20,
   },
   warmbass: {
     wave1: 'triangle',
@@ -215,8 +215,8 @@ const synthPresets = {
     charGain: 0.2,
     airGain: 0.05,
     room: 0.04,
-    punchGain: 0.18,
-    sparkleGain: 0.04,
+    punchGain: 0.28,
+    sparkleGain: 0.20,
   },
   roundbass: {
     wave1: 'sine',
@@ -240,8 +240,8 @@ const synthPresets = {
     charGain: 0.2,
     airGain: 0.06,
     room: 0.04,
-    punchGain: 0.18,
-    sparkleGain: 0.04,
+    punchGain: 0.28,
+    sparkleGain: 0.20,
   },
   growlbass: {
     wave1: 'sawtooth',
@@ -267,8 +267,8 @@ const synthPresets = {
     charGain: 0.35,
     airGain: 0.08,
     room: 0.05,
-    punchGain: 0.18,
-    sparkleGain: 0.05,
+    punchGain: 0.28,
+    sparkleGain: 0.14,
     gritGain: 0.05,
   },
   reesebass: {
@@ -295,8 +295,8 @@ const synthPresets = {
     charGain: 0.3,
     airGain: 0.07,
     room: 0.05,
-    punchGain: 0.18,
-    sparkleGain: 0.05,
+    punchGain: 0.28,
+    sparkleGain: 0.14,
     gritGain: 0,
   },
   pluckbass: {
@@ -323,8 +323,8 @@ const synthPresets = {
     charGain: 0.3,
     airGain: 0.08,
     room: 0.04,
-    punchGain: 0.18,
-    sparkleGain: 0.05,
+    punchGain: 0.28,
+    sparkleGain: 0.14,
     gritGain: 0,
   },
   eightoheight: {
@@ -351,8 +351,10 @@ const synthPresets = {
     room: 0.03,
     pitchDrop: 1.5,
     pitchDropTime: 0.09,
-    punchGain: 0.18,
-    sparkleGain: 0.04,
+    glide: true,
+    glideTime: 0.12,
+    punchGain: 0.28,
+    sparkleGain: 0.20,
   },
 
   acidbass: {
@@ -379,8 +381,8 @@ const synthPresets = {
     charGain: 0.3,
     airGain: 0.08,
     room: 0.04,
-    punchGain: 0.18,
-    sparkleGain: 0.05,
+    punchGain: 0.28,
+    sparkleGain: 0.14,
     gritGain: 0,
   },
   wobblebass: {
@@ -405,8 +407,8 @@ const synthPresets = {
     charGain: 0.35,
     airGain: 0.07,
     room: 0.05,
-    punchGain: 0.18,
-    sparkleGain: 0.04,
+    punchGain: 0.28,
+    sparkleGain: 0.14,
     gritGain: 0,
     wobble: true,
     wobbleRate: 8,
@@ -436,8 +438,8 @@ const synthPresets = {
     charGain: 0.25,
     airGain: 0.06,
     room: 0.04,
-    punchGain: 0.18,
-    sparkleGain: 0.05,
+    punchGain: 0.28,
+    sparkleGain: 0.20,
     gritGain: 0,
   },
   technobass: {
@@ -462,8 +464,8 @@ const synthPresets = {
     charGain: 0.3,
     airGain: 0.07,
     room: 0.04,
-    punchGain: 0.18,
-    sparkleGain: 0.04,
+    punchGain: 0.28,
+    sparkleGain: 0.14,
     gritGain: 0,
   },
   dnbbass: {
@@ -488,8 +490,8 @@ const synthPresets = {
     charGain: 0.35,
     airGain: 0.08,
     room: 0.05,
-    punchGain: 0.18,
-    sparkleGain: 0.05,
+    punchGain: 0.28,
+    sparkleGain: 0.14,
     gritGain: 0,
     wobble: true,
     wobbleRate: 12,
@@ -518,10 +520,10 @@ const synthPresets = {
     charGain: 0.1,
     airGain: 0.04,
     room: 0.03,
-    punchGain: 0.18,
+    punchGain: 0.28,
     punchStart: 1.5,
     punchTime: 0.09,
-    sparkleGain: 0.03,
+    sparkleGain: 0.20,
   },
   windowbass: {
     wave1: 'triangle',
@@ -546,10 +548,10 @@ const synthPresets = {
     charGain: 0.08,
     airGain: 0.04,
     room: 0.03,
-    punchGain: 0.18,
+    punchGain: 0.28,
     punchStart: 1.5,
     punchTime: 0.07,
-    sparkleGain: 0.03,
+    sparkleGain: 0.20,
   },
   bodybass: {
     wave1: 'sine',
@@ -576,10 +578,10 @@ const synthPresets = {
     room: 0.03,
     pitchDrop: 1.3,
     pitchDropTime: 0.08,
-    punchGain: 0.18,
+    punchGain: 0.28,
     punchStart: 1.5,
     punchTime: 0.12,
-    sparkleGain: 0.04,
+    sparkleGain: 0.20,
   },
   quakebass: {
     wave1: 'sine',
@@ -606,10 +608,12 @@ const synthPresets = {
     room: 0.03,
     pitchDrop: 1.6,
     pitchDropTime: 0.1,
-    punchGain: 0.18,
+    glide: true,
+    glideTime: 0.12,
+    punchGain: 0.28,
     punchStart: 1.5,
     punchTime: 0.1,
-    sparkleGain: 0.04,
+    sparkleGain: 0.20,
   },
   lead: {
     wave1: 'sawtooth',
@@ -1783,12 +1787,36 @@ function playPianoChord() {
   playGuitarVoice(392.0, 'piano', t + 0.04);
 }
 
+// Trap 808 glide memory: the last 808-family voice played. Only
+// presets with glide:true read or write this; everything else ignores it.
+let last808Voice = null;
+
 function playSynthVoice(freq, preset = 'heavybass', durationOverride = null) {
   const ctx = ensureAudio();
   if (preset.startsWith('guitar') || preset === 'piano') return playGuitarVoice(freq, preset);
   const now = ctx.currentTime;
   const config = synthPresets[preset] || synthPresets.heavybass;
   const isPad = preset === 'pad' || preset === 'trancepad';
+
+  // Trap 808 glide: if this is an 808-family note and a previous 808
+  // note is remembered, the new voice slides from the old pitch.
+  // The old voice fades fast so the line stays monophonic.
+  const glideTime = config.glideTime || 0.12;
+  const glideFrom = (config.glide && last808Voice) ? last808Voice.freq : 0;
+  const gliding = config.glide && glideFrom > 0 && glideFrom !== freq;
+  if (config.glide && last808Voice) {
+    last808Voice.gainNode.gain.cancelScheduledValues(now);
+    last808Voice.gainNode.gain.setTargetAtTime(0.0001, now, 0.03);
+  }
+  // Helper: glide one oscillator from the previous 808 pitch to its
+  // target pitch. Returns true when it glided (caller skips other
+  // pitch automation for that oscillator in that case).
+  const glideOsc = (osc, target) => {
+    if (!gliding) return false;
+    osc.frequency.setValueAtTime(glideFrom * (target / freq), now);
+    osc.frequency.exponentialRampToValueAtTime(target, now + glideTime);
+    return true;
+  };
 
   const voiceBus = ctx.createGain();
   const cleanBus = ctx.createGain();
@@ -1822,6 +1850,7 @@ function playSynthVoice(freq, preset = 'heavybass', durationOverride = null) {
     subOsc.type = 'sine';
     subBaseFreq = freq * (config.subRatio || 0.5);
     subOsc.frequency.value = subBaseFreq;
+    glideOsc(subOsc, subBaseFreq);
     const subGain = ctx.createGain();
     subGain.gain.value = config.subGain || 0.6;
     subOsc.connect(subGain);
@@ -1847,6 +1876,7 @@ function playSynthVoice(freq, preset = 'heavybass', durationOverride = null) {
     trunk.type = 'sine';
     const trunkBaseFreq = freq * 0.25;
     trunk.frequency.value = trunkBaseFreq;
+    glideOsc(trunk, trunkBaseFreq);
     const trunkGainNode = ctx.createGain();
     trunkGainNode.gain.value = config.trunkGain;
     trunk.connect(trunkGainNode);
@@ -1867,7 +1897,7 @@ function playSynthVoice(freq, preset = 'heavybass', durationOverride = null) {
     });
   }
   const body = buildStack(ctx, { wave: config.wave1, freq, count: config.stack || 3, spread: config.detune || 8 });
-  body.oscs.forEach(osc => applyDrop(osc, freq));
+  body.oscs.forEach(osc => { if (!glideOsc(osc, freq)) applyDrop(osc, freq); });
   body.out.connect(bodyFilter);
   bodyFilter.connect(voiceBus);
   body.oscs.forEach(startStop);
@@ -1909,6 +1939,7 @@ function playSynthVoice(freq, preset = 'heavybass', durationOverride = null) {
     charFilter.frequency.value = (config.filterFrequency || 1500) * 2.5;
     charFilter.Q.value = 1;
     character = buildStack(ctx, { wave: config.wave2, freq: freq * (config.ratio || 1), count: 2, spread: (config.detune || 8) * 1.5 });
+    character.oscs.forEach(osc => glideOsc(osc, freq * (config.ratio || 1)));
     swellGain(character.out.gain, config.charGain, 0.12, now);
     character.out.connect(charFilter);
     charFilter.connect(voiceBus);
@@ -1919,6 +1950,7 @@ function playSynthVoice(freq, preset = 'heavybass', durationOverride = null) {
   // the layer that makes a sound feel expensive on good speakers.
   if ((config.airGain || 0) > 0) {
     const air = buildStack(ctx, { wave: 'sine', freq: freq * 2, count: 2, spread: 12 });
+    air.oscs.forEach(osc => glideOsc(osc, freq * 2));
     swellGain(air.out.gain, config.airGain, isPad ? 0.8 : 0.3, now);
     air.out.connect(voiceBus);
     air.oscs.forEach(startStop);
@@ -1928,6 +1960,7 @@ function playSynthVoice(freq, preset = 'heavybass', durationOverride = null) {
   // in last, for pads and keys that need to float.
   if ((config.air2Gain || 0) > 0) {
     const air2 = buildStack(ctx, { wave: 'sine', freq: freq * 4, count: 2, spread: 15 });
+    air2.oscs.forEach(osc => glideOsc(osc, freq * 4));
     swellGain(air2.out.gain, config.air2Gain, 1.2, now);
     air2.out.connect(voiceBus);
     air2.oscs.forEach(startStop);
@@ -1948,16 +1981,18 @@ function playSynthVoice(freq, preset = 'heavybass', durationOverride = null) {
     punch.stop(now + (config.punchTime || 0.05) + 0.01);
   }
 
-  // LAYER 7 — SPARKLE: a quiet detuned high pair that keeps bass
-  // audible on small speakers and phones.
+  // LAYER 7 — SOUNDBAR CARRIER: a clean triangle first harmonic
+  // (2x the note) that carries pitch and fullness on speakers with
+  // no subwoofer. It is NOT highpassed: the old 1000 Hz highpass
+  // muted this layer for deep notes and nearly all of it for every
+  // note, which is why v12 sounded thin on a soundbar. Triangle at
+  // 2x has no low rumble to filter, so it connects straight to the
+  // voice bus and follows the note's ADSR envelope.
   if ((config.sparkleGain || 0) > 0) {
     const sparkle = buildStack(ctx, { wave: 'triangle', freq: freq * 2, count: 2, spread: 15 });
-    const sparkleFilter = ctx.createBiquadFilter();
-    sparkleFilter.type = 'highpass';
-    sparkleFilter.frequency.value = 1000;
-    swellGain(sparkle.out.gain, config.sparkleGain, 0.1, now);
-    sparkle.out.connect(sparkleFilter);
-    sparkleFilter.connect(voiceBus);
+    sparkle.oscs.forEach(osc => glideOsc(osc, freq * 2));
+    swellGain(sparkle.out.gain, config.sparkleGain, 0.05, now);
+    sparkle.out.connect(voiceBus);
     sparkle.oscs.forEach(startStop);
   }
 
@@ -1965,6 +2000,7 @@ function playSynthVoice(freq, preset = 'heavybass', durationOverride = null) {
   // basses teeth to cut through a club mix.
   if ((config.gritGain || 0) > 0) {
     const grit = buildStack(ctx, { wave: 'square', freq, count: 2, spread: 10 });
+    grit.oscs.forEach(osc => glideOsc(osc, freq));
     const gritFilter = ctx.createBiquadFilter();
     gritFilter.type = 'lowpass';
     gritFilter.frequency.value = 2000;
@@ -2053,6 +2089,7 @@ function playSynthVoice(freq, preset = 'heavybass', durationOverride = null) {
     release,
   });
   routeVoice(gain, config.reverb != null ? config.reverb : 0.15, config.room || 0);
+  if (config.glide) last808Voice = { freq, gainNode: gain };
 }
 
 
